@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.SettingsActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/activity_settings_gl_tv_et"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="100dp" />
+
+    <TextView
+        android:id="@+id/activity_settings_tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/name_text"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_settings_et_name"
+        app:layout_constraintEnd_toStartOf="@+id/activity_settings_gl_tv_et"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_settings_et_name" />
+
+    <EditText
+        android:id="@+id/activity_settings_et_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/name_text"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/activity_settings_gl_tv_et"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/activity_settings_et_surname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/surname_text"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/activity_settings_gl_tv_et"
+        app:layout_constraintTop_toBottomOf="@+id/activity_settings_et_name" />
+
+    <EditText
+        android:id="@+id/activity_settings_et_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/email_text"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/activity_settings_gl_tv_et"
+        app:layout_constraintTop_toBottomOf="@+id/activity_settings_et_surname" />
+
+    <EditText
+        android:id="@+id/activity_settings_et_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/new_password_text"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/activity_settings_gl_tv_et"
+        app:layout_constraintTop_toBottomOf="@+id/activity_settings_et_email" />
+
+    <EditText
+        android:id="@+id/activity_settings_et_confirm_new_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/confirm_new_password_text"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/activity_settings_gl_tv_et"
+        app:layout_constraintTop_toBottomOf="@+id/activity_settings_et_password" />
+
+    <EditText
+        android:id="@+id/activity_settings_et_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/phone_text"
+        android:inputType="phone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/activity_settings_gl_tv_et"
+        app:layout_constraintTop_toBottomOf="@+id/activity_settings_et_confirm_new_password" />
+
+    <TextView
+        android:id="@+id/activity_settings_tv_surname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/surname_text"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_settings_et_surname"
+        app:layout_constraintEnd_toStartOf="@+id/activity_settings_gl_tv_et"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_settings_et_surname" />
+
+    <TextView
+        android:id="@+id/activity_settings_tv_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/email_text"
+        app:layout_constraintBottom_toTopOf="@+id/activity_settings_et_password"
+        app:layout_constraintEnd_toStartOf="@+id/activity_settings_gl_tv_et"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_settings_et_email" />
+
+    <TextView
+        android:id="@+id/activity_settings_tv_new_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/password_text"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_settings_et_password"
+        app:layout_constraintEnd_toStartOf="@+id/activity_settings_gl_tv_et"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_settings_et_password" />
+
+    <TextView
+        android:id="@+id/activity_settings_tv_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/phone_text"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_settings_et_phone"
+        app:layout_constraintEnd_toStartOf="@+id/activity_settings_gl_tv_et"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_settings_et_phone" />
+
+    <Button
+        android:id="@+id/activity_settings_but_save"
+        android:layout_width="@dimen/activity_settings_but_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/darkWhite"
+        android:text="@string/save_changes_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_settings_et_phone" />
+
+    <Button
+        android:id="@+id/activity_settings_but_cancel"
+        android:layout_width="@dimen/activity_settings_but_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/dark"
+        android:textColor="@color/darkWhite"
+        android:text="@string/cancel_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_settings_but_save" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1079032668233",
+    "firebase_url": "https://swiftlift-aa95b.firebaseio.com",
+    "project_id": "swiftlift-aa95b",
+    "storage_bucket": "swiftlift-aa95b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079032668233:android:7267627cd3f51044",
+        "android_client_info": {
+          "package_name": "com.snavi.swiftlift"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1079032668233-6p1pt2q2np1ti2c1gqdnb8rph5fsk53o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD69qqU7ARIJp00cWizArGzqkylcBlnsgs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1079032668233-6p1pt2q2np1ti2c1gqdnb8rph5fsk53o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

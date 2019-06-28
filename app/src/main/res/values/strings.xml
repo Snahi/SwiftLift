@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">SwiftLift</string>
+    <string name="log_in_text">log in</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="email_text">email</string>
+    <string name="sign_up_text">Sign up</string>
+    <string name="password_text">password</string>
+    <string name="name_text">Name</string>
+    <string name="surname_text">Surname</string>
+    <string name="confirm_email_text">Confirm email</string>
+    <string name="phone_text">Phone</string>
+    <string name="confirm_password_text">Confirm password</string>
+    <string name="name_obligatory_text">Name*</string>
+    <string name="surname_obligatory_text">Surname*</string>
+    <string name="email_obligatory_text">Email*</string>
+    <string name="password_obligatory_text">Password*</string>
+    <string name="phone_obligatory_text">Phone*</string>
+    <string name="name_error">Length of name must be greater than 2 and smaller than 30</string>
+    <string name="surname_error">Length of surname must be greater than 2 and smaller than 30</string>
+    <string name="password_error">Length of password must be greater than 6 and smaller than 30</string>
+    <string name="confirm_password_error">Passwords must be the same!</string>
+    <string name="email_error">Invalid email</string>
+    <string name="confirm_email_error">Emails must be the same!</string>
+    <string name="phone_error">Invalid phone</string>
+    <string name="registration_successful">You were successfully registered! Now confirm your email address.</string>
+    <string name='registration_failure_email_in_use'>Sorry, this email is already in use</string>
+    <string name="registration_failure_unknown_error">Error has occurred, try later or with different data</string>
+    <string name="log_out_text">Log out</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="bad_login_data">There is no user with such email and password</string>
+    <string name="incomplete_register">We couldn\'t complete your registration. You are registered, but some data may be missing. You can complete it manually in your profile settings. Now you must verify your email address</string>
+    <string name="network_error">Problem with internet occurred</string>
+    <string name="menu_signed_user_add_lift_title">add lift</string>
+    <string name="menu_signed_user_settings_title">settings</string>
+    <string name="login_unknown_error">Unknown error occurred during logging in</string>
+    <string name="unverified_email">You must verify your email first!</string>
+    <string name="activity_signed_user_main_create_new_lift_text">&#160;Create new lift</string>
+    <string name="sign_out_text">Sign out</string>
+    <string name="new_password_text">new password</string>
+    <string name="confirm_new_password_text">confirm new password</string>
+    <string name="save_changes_text">Save changes</string>
+    <string name="cancel_text">Cancel</string>
+</resources>

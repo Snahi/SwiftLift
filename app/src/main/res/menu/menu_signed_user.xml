@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:title="@string/menu_signed_user_add_lift_title"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/add_icon"/>
+
+    <item
+        android:title="@string/menu_signed_user_settings_title"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/settings_icon"/>
+
+</menu>
