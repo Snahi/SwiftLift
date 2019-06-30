@@ -62,4 +62,5 @@
     <string name="edit_in_progress_error">Your previous edit is still in progress. You must wait for it.</string>
     <string name="login_error_null_auth_or_user">Can\'t sign in. Try later.</string>
     <string name="cant_sign_out">Can\'t sign out</string>
+    <string name="resend_text">resend</string>
 </resources>

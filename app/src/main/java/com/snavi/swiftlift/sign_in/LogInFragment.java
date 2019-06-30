@@ -196,7 +196,7 @@ public class LogInFragment extends DialogFragment {
                     }
                     else
                     {
-                        showUnverifiedAccountSnackbar();
+                        showUnverifiedAccountSnackbar(user);
                         enableButtons();
                     }
                 }
@@ -207,12 +207,15 @@ public class LogInFragment extends DialogFragment {
 
 
 
-    private void showUnverifiedAccountSnackbar()
+    private void showUnverifiedAccountSnackbar(final FirebaseUser user)
     {
         Snackbar.make(m_view, R.string.unverified_email, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.snackbar_ok, new View.OnClickListener() {
+                .setAction(R.string.resend_text, new View.OnClickListener() {
                     @Override
-                    public void onClick(View view) {}
+                    public void onClick(View view) {
+                        if (user != null)
+                            user.sendEmailVerification();
+                    }
                 }).show();
     }
 
