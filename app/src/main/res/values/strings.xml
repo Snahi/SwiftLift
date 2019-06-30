@@ -42,4 +42,24 @@
     <string name="confirm_new_password_text">confirm new password</string>
     <string name="save_changes_text">Save changes</string>
     <string name="cancel_text">Cancel</string>
+    <string name="reauthentication_error">Incorrect password</string>
+    <string name="settings_change_succes">Changes saved!</string>
+    <string name="unknown_error">Error occurred, try again later</string>
+    <string name="password_authentication">Your password:</string>
+    <string name="current_password_text">Current password</string>
+    <string name="new_email_text">New email</string>
+    <string name="confirm_text">Confirm</string>
+    <string name="confirm_your_identity_text">Confirm your identity</string>
+    <string name="successful_password_update">Your password was successfully updated</string>
+    <string name="password_update_failure">Error occurred during password updating</string>
+    <string name="credential_failure">Authentication failed</string>
+    <string name="successful_update">Update success!</string>
+    <string name="update_fail">Update failed!</string>
+    <string name="load_data_failure">Couldn\'t load your data. Check internet connection and sign in again</string>
+    <string name="edit_personal_data_text">edit personal data</string>
+    <string name="change_password_text">change password</string>
+    <string name="change_email_text">Change email</string>
+    <string name="edit_in_progress_error">Your previous edit is still in progress. You must wait for it.</string>
+    <string name="login_error_null_auth_or_user">Can\'t sign in. Try later.</string>
+    <string name="cant_sign_out">Can\'t sign out</string>
 </resources>

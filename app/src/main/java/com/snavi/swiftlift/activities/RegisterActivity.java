@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -22,7 +23,6 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.snavi.swiftlift.R;
-import com.snavi.swiftlift.custom_views.WaitingSpinner;
 import com.snavi.swiftlift.database_objects.Const;
 import com.snavi.swiftlift.utils.InputValidator;
 
@@ -54,7 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
     private String m_email;
     private String m_password;
     private String m_phone;
-    private WaitingSpinner m_waitingSpinner;
+    private ProgressBar m_progressBar;
     private FirebaseFirestore m_db;
 
 
@@ -64,8 +64,8 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        m_waitingSpinner = findViewById(R.id.activity_register_spinner);
-        m_firebaseAuth   = FirebaseAuth.getInstance();
+        m_progressBar  = findViewById(R.id.activity_register_progress_bar);
+        m_firebaseAuth = FirebaseAuth.getInstance();
         m_db = FirebaseFirestore.getInstance();
 
         setSignUpButtonListener();
@@ -83,12 +83,29 @@ public class RegisterActivity extends AppCompatActivity {
                 boolean isCorrect = validateInputs();
                 if (isCorrect)
                 {
-                    m_waitingSpinner.start();
+                    disableSignUpButton();
+                    m_progressBar.setVisibility(View.VISIBLE);
                     loadUserData();
                     createNewUser();
                 }
             }
         });
+    }
+
+
+
+    private void disableSignUpButton()
+    {
+        Button signUp = findViewById(R.id.activity_register_but_sign_up);
+        signUp.setEnabled(false);
+    }
+
+
+
+    private void enableSignUpButton()
+    {
+        Button signUp = findViewById(R.id.activity_register_but_sign_up);
+        signUp.setEnabled(true);
     }
 
 
@@ -110,16 +127,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     private boolean validateInputs()
     {
-//        boolean nameRes    = validateName();
-//        boolean surnameRes = validateSurname();
-//        boolean emailRes   = validateEmail();
-//        boolean confEmail  = validateConfirmEmail();
-//        boolean passRes    = validatePassword();
-//        boolean confPass   = validateConfirmPassword();
-//        boolean phoneRes   = validatePhone();
-//
-//        return nameRes && surnameRes && emailRes && confEmail && passRes && confPass && phoneRes;
-
         Resources res = getResources();
         boolean name = InputValidator.validateName(
                 (EditText) findViewById(R.id.activity_register_et_name),
@@ -145,100 +152,6 @@ public class RegisterActivity extends AppCompatActivity {
                 RegisterActivity.MIN_PHONE_LEN, RegisterActivity.MAX_PHONE_LEN, res);
 
         return name && surname && email && confirmEmail && password && confirmPassword && phone;
-    }
-
-
-
-    private boolean validateName()
-    {
-        EditText name   = findViewById(R.id.activity_register_et_name);
-        boolean isValid = InputValidator.validateLength(name.getText().toString(), MIN_NAME_LEN, MAX_NAME_LEN);
-        if (!isValid)
-            name.setError(getResources().getString(R.string.name_error));
-
-        return isValid;
-    }
-
-
-
-    private boolean validateSurname()
-    {
-        EditText sur = findViewById(R.id.activity_register_et_surname);
-        boolean isValid = InputValidator.validateLength(sur.getText().toString(), MIN_SURNAME_LEN, MAX_SURNAME_LEN);
-        if (!isValid)
-            sur.setError(getResources().getString(R.string.surname_error));
-
-        return isValid;
-    }
-
-
-
-    private boolean validateEmail()
-    {
-        EditText email = findViewById(R.id.activity_register_et_email);
-        boolean isValid = InputValidator.validateEmailRegex(email.getText().toString());
-        if (!isValid)
-            email.setError(getResources().getString(R.string.email_error));
-
-        return isValid;
-    }
-
-
-
-    private boolean validateConfirmEmail()
-    {
-        EditText email = findViewById(R.id.activity_register_et_email);
-        EditText confirmEmail = findViewById(R.id.activity_register_et_confirm_email);
-
-        String emailT = email.getText().toString();
-        String confirmT = confirmEmail.getText().toString();
-
-        boolean isValid = emailT.equals(confirmT);
-        if (!isValid)
-            confirmEmail.setError(getResources().getString(R.string.confirm_email_error));
-
-        return isValid;
-    }
-
-
-
-    private boolean validatePassword()
-    {
-        EditText pass = findViewById(R.id.activity_register_et_password);
-        boolean isValid = InputValidator.validateLength(pass.getText().toString(), MIN_PASSWORD_LEN, MAX_PASSWORD_LEN);
-        if (!isValid)
-            pass.setError(getResources().getString(R.string.password_error));
-
-        return isValid;
-    }
-
-
-
-    private boolean validateConfirmPassword()
-    {
-        EditText confPass = findViewById(R.id.activity_register_et_confirm_password);
-        EditText pass = findViewById(R.id.activity_register_et_password);
-
-        String confPassT = confPass.getText().toString();
-        String passT = pass.getText().toString();
-
-        boolean isValid = confPassT.equals(passT);
-        if (!isValid)
-            confPass.setError(getResources().getString(R.string.confirm_password_error));
-
-        return isValid;
-    }
-
-
-
-    private boolean validatePhone()
-    {
-        EditText phone = findViewById(R.id.activity_register_et_phone);
-        boolean isValid = InputValidator.validateLength(phone.getText().toString(), MIN_PHONE_LEN, MAX_PHONE_LEN);
-        if (!isValid)
-            phone.setError(getResources().getString(R.string.phone_error));
-
-        return isValid;
     }
 
 
@@ -273,7 +186,8 @@ public class RegisterActivity extends AppCompatActivity {
                 else
                 {
                     dealWithRegistrationFailure(task);
-                    m_waitingSpinner.stop();
+                    m_progressBar.setVisibility(View.GONE);
+                    enableSignUpButton();
                 }
             }
         });
@@ -316,7 +230,7 @@ public class RegisterActivity extends AppCompatActivity {
                 getResources().getText(R.string.registration_successful),
                 Toast.LENGTH_LONG)
                 .show();
-        m_waitingSpinner.stop();
+        m_progressBar.setVisibility(View.GONE);
         setResult(Activity.RESULT_OK);
         finish();
     }
@@ -326,7 +240,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void dealWithAdditionalUserDataWriteFailure()
     {
         showSnackbarIncompleteRegister();
-        m_waitingSpinner.stop();
+        m_progressBar.setVisibility(View.GONE);
         setResult(ACTIVITY_RESULT_ADDITIONAL_DATA_NOT_LOADED);
         finish();
     }

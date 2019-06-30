@@ -2,100 +2,85 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_log_in_cl"
+    android:id="@+id/activity_email_update_cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".sign_in.LogInFragment">
-
+    tools:context=".activities.EmailUpdateActivity">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
+        android:id="@+id/guideline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="100dp" />
-
-    <TextView
-        android:id="@+id/fragment_log_tv_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/email_text"
-        app:layout_constraintBottom_toBottomOf="@+id/fragment_log_in_et_email"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/fragment_log_in_et_email" />
+        app:layout_constraintGuide_begin="101dp" />
 
     <EditText
-        android:id="@+id/fragment_log_in_et_email"
-        android:layout_width="wrap_content"
+        android:id="@+id/activity_email_update_et_new_email"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
+        android:hint="@string/new_email_text"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/guideline5"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/fragment_log_in_tv_password"
+        android:id="@+id/activity_email_update_tv_new_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:text="@string/password_text"
-        app:layout_constraintBottom_toBottomOf="@+id/fragment_log_in_et_password"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        android:text="@string/new_email_text"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_email_update_et_new_email"
+        app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/fragment_log_in_et_password" />
+        app:layout_constraintTop_toTopOf="@+id/activity_email_update_et_new_email" />
 
     <EditText
-        android:id="@+id/fragment_log_in_et_password"
-        android:layout_width="wrap_content"
+        android:id="@+id/activity_email_update_et_confirm_email"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
-        android:inputType="textPassword"
+        android:hint="@string/confirm_email_text"
+        android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_log_in_et_email" />
+        app:layout_constraintStart_toStartOf="@+id/guideline5"
+        app:layout_constraintTop_toBottomOf="@+id/activity_email_update_et_new_email" />
 
-    <Button
-        android:id="@+id/fragment_log_but_log_in"
+    <TextView
+        android:id="@+id/activity_email_update_tv_confirm_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="17dp"
         android:layout_marginEnd="8dp"
-        android:textColor="@color/dark"
-        android:text="@string/log_in_text"
+        android:text="@string/confirm_email_text"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_email_update_et_confirm_email"
+        app:layout_constraintEnd_toStartOf="@+id/guideline5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_email_update_et_confirm_email" />
+
+    <Button
+        android:id="@+id/activity_email_update_but_save"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="8dp"
         android:backgroundTint="@color/colorPrimaryDark"
+        android:text="@string/save_changes_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_log_in_et_password" />
-
-    <Button
-        android:id="@+id/fragment_log_but_sign_up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textColor="@color/dark"
-        android:text="@string/sign_up_text"
-        android:backgroundTint="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_log_but_log_in" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_email_update_et_confirm_email" />
 
     <ProgressBar
-        android:id="@+id/fragment_log_in_progress_bar"
+        android:id="@+id/activity_email_update_progress_bar"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -104,9 +89,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/fragment_log_but_sign_up"
+        app:layout_constraintBottom_toTopOf="@+id/activity_email_update_but_save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

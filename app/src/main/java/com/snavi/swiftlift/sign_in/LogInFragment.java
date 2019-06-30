@@ -1,49 +1,40 @@
-package com.snavi.swiftlift.login;
+package com.snavi.swiftlift.sign_in;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.snavi.swiftlift.R;
-import com.snavi.swiftlift.activities.MainActivity;
-import com.snavi.swiftlift.activities.RegisterActivity;
-import com.snavi.swiftlift.activities.SignedUserMainActivity;
-import com.snavi.swiftlift.custom_views.WaitingSpinner;
 
 
 public class LogInFragment extends DialogFragment {
 
 
-    // CONST ///////////////////////////////////////////////////////////////////////////////////////
-    public static final int REGISTER_ACTIVITY_RES_CODE = 6969;
-
-
     // fields //////////////////////////////////////////////////////////////////////////////////////
     private OnFragmentInteractionListener m_listener;
-    private View m_view;
     private Activity m_activity;
     private FirebaseAuth m_auth;
-    private WaitingSpinner m_waitingSpinner;
 
+    // views
+    private ProgressBar m_progressBar;
+    private View m_view;
 
 
     public LogInFragment()
@@ -79,7 +70,7 @@ public class LogInFragment extends DialogFragment {
 
         m_view = getView();
         m_activity = getActivity();
-        m_waitingSpinner = m_view.findViewById(R.id.fragment_log_in_sv_spinner);
+        m_progressBar = m_view.findViewById(R.id.fragment_log_in_progress_bar);
 
         setButtonsListeners();
     }
@@ -104,10 +95,11 @@ public class LogInFragment extends DialogFragment {
                 String email = getEmail();
                 String password = getPassword();
                 if (email.isEmpty() && password.isEmpty())
-                    dealWithLoginFailure();
+                    dealWithLoginFailureDataNotMatching();
                 else
                 {
-                    m_waitingSpinner.start();
+                    disableButtons();
+                    m_progressBar.setVisibility(View.VISIBLE);
                     signIn(email, password);
                 }
             }
@@ -116,8 +108,37 @@ public class LogInFragment extends DialogFragment {
 
 
 
+    private void disableButtons()
+    {
+        Button logIn = m_view.findViewById(R.id.fragment_log_but_log_in);
+        logIn.setEnabled(false);
+
+        Button signIn = m_view.findViewById(R.id.fragment_log_but_sign_up);
+        signIn.setEnabled(false);
+    }
+
+
+
+    private void enableButtons()
+    {
+        Button logIn = m_view.findViewById(R.id.fragment_log_but_log_in);
+        logIn.setEnabled(true);
+
+        Button signIn = m_view.findViewById(R.id.fragment_log_but_sign_up);
+        signIn.setEnabled(true);
+    }
+
+
+
     private void signIn(String email, String password)
     {
+        if (m_auth == null)
+        {
+            m_progressBar.setVisibility(View.GONE);
+            showLogInErrorToast();
+            dismiss();
+            return;
+        }
         m_auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -127,8 +148,16 @@ public class LogInFragment extends DialogFragment {
                             dealWithSignInSuccess();
                         else
                         {
-                            dealWithLoginFailure();
-                            m_waitingSpinner.stop();
+                            Exception e = task.getException();
+                            if (e instanceof FirebaseNetworkException)
+                                dealWithNetworkException();
+                            else if (e instanceof FirebaseAuthException)
+                                dealWithLoginFailureDataNotMatching();
+                            else
+                                dealWithUnknownException();
+
+                            m_progressBar.setVisibility(View.GONE);
+                            enableButtons();
                         }
                     }
                 });
@@ -154,39 +183,26 @@ public class LogInFragment extends DialogFragment {
 
     private void dealWithSignInSuccess()
     {
-        m_listener.successfulLogin();
-
         final FirebaseUser user = m_auth.getCurrentUser();
         if (user != null)
             user.reload().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    m_waitingSpinner.stop();
+                    m_progressBar.setVisibility(View.GONE);
                     if (user.isEmailVerified())
                     {
+                        m_listener.successfulLogin();
                         dismiss();                                                                  // close DialogFragment
-                        saveUserToAutoSignIn();
-                        startSignedUserActivity();
                     }
                     else
+                    {
                         showUnverifiedAccountSnackbar();
+                        enableButtons();
+                    }
                 }
             });
         else
             showUnknownUserError();
-    }
-
-
-
-    private void saveUserToAutoSignIn()
-    {
-        SharedPreferences prefs = m_activity.getSharedPreferences(MainActivity.PREFERENCES_KEY,
-                Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(MainActivity.IS_LOGGED_IN_KEY, true);
-        editor.putString(MainActivity.EMAIL_KEY, getEmail());
-        editor.putString(MainActivity.PASSWORD_KEY, getPassword());
-        editor.apply();
     }
 
 
@@ -202,14 +218,6 @@ public class LogInFragment extends DialogFragment {
 
 
 
-    private void startSignedUserActivity()
-    {
-        Intent intent = new Intent(m_activity, SignedUserMainActivity.class);
-        startActivity(intent);
-    }
-
-
-
     private void showUnknownUserError()
     {
         Toast.makeText(m_activity, getResources().getString(R.string.login_unknown_error),
@@ -218,9 +226,31 @@ public class LogInFragment extends DialogFragment {
 
 
 
-    private void dealWithLoginFailure()
+    private void dealWithLoginFailureDataNotMatching()
     {
         Snackbar.make(m_view, R.string.bad_login_data, Snackbar.LENGTH_LONG).show();
+    }
+
+
+
+    private void dealWithNetworkException()
+    {
+        Snackbar.make(m_view, R.string.network_error, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.snackbar_ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {}
+                }).show();
+    }
+
+
+
+    private void dealWithUnknownException()
+    {
+        Snackbar.make(m_view, R.string.login_unknown_error, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.snackbar_ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {}
+                }).show();
     }
 
 
@@ -231,8 +261,7 @@ public class LogInFragment extends DialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(m_activity, RegisterActivity.class);
-                m_activity.startActivity(intent);
+                m_listener.userWantsToRegister();
             }
         });
     }
@@ -262,9 +291,24 @@ public class LogInFragment extends DialogFragment {
 
 
 
+    // Toasts && snackbars /////////////////////////////////////////////////////////////////////////
+
+
+
+    private void showLogInErrorToast()
+    {
+        Toast.makeText(m_activity, R.string.login_error_null_auth_or_user, Toast.LENGTH_LONG).show();
+    }
+
+
+
+    // listener interface //////////////////////////////////////////////////////////////////////////
+
+
 
     public interface OnFragmentInteractionListener
     {
         void successfulLogin();
+        void userWantsToRegister();
     }
 }
