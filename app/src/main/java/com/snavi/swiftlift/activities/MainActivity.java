@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.snavi.swiftlift.activities.users_data.RegisterActivity;
 import com.snavi.swiftlift.sign_in.LogInFragment;
 import com.snavi.swiftlift.R;
 

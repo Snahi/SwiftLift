@@ -25,6 +25,7 @@ import com.snavi.swiftlift.R;
 
 
 public class LogInFragment extends DialogFragment {
+    // TODO forgot password
 
 
     // fields //////////////////////////////////////////////////////////////////////////////////////

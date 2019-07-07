@@ -1,14 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/signed_user_fragment_bg"
     tools:context=".signed_in_fragments.FindLiftFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+    <EditText
+        android:id="@+id/fragment_find_lift_et_from"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/fragment_find_lift_side_margin"
+        android:ems="10"
+        android:hint="@string/from_text"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/fragment_find_lift_et_to"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="@dimen/fragment_find_lift_side_margin"
+        android:ems="10"
+        android:hint="@string/to_text"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_dist_from" />
+
+    <EditText
+        android:id="@+id/fragment_find_lift_et_earliest_dep"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="@dimen/fragment_find_lift_side_margin"
+        android:ems="10"
+        android:hint="@string/earliest_departure_date_time_text"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_dist_to" />
+
+    <EditText
+        android:id="@+id/fragment_find_lift_et_dist_from"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/fragment_find_lift_side_margin"
+        android:ems="10"
+        android:hint="@string/max_distance_from_starting_point_in_km_text"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_from" />
+
+    <EditText
+        android:id="@+id/fragment_find_lift_et_dist_to"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/fragment_find_lift_side_margin"
+        android:ems="10"
+        android:hint="@string/max_distance_from_end_point_in_km_text"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_to" />
+
+    <ImageButton
+        android:id="@+id/fragment_find_lift_but_search"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="37dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:scaleType="fitXY"
+        android:src="@drawable/search_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_earliest_dep" />
+</androidx.constraintlayout.widget.ConstraintLayout>

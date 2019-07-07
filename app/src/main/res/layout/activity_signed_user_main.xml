@@ -8,7 +8,7 @@
 
 
     <ImageView
-        android:id="@+id/activity_main_img_background"
+        android:id="@+id/activity_singed_user_img_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
@@ -18,30 +18,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/road_signed_user" />
+        app:srcCompat="@drawable/road_signed_user4" />
 
 
-    <androidx.viewpager.widget.ViewPager
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/activity_signed_user_main_top_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-    <com.google.android.material.tabs.TabLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp">
-
-    </com.google.android.material.tabs.TabLayout>
-
-
-    </androidx.viewpager.widget.ViewPager>
-
+    <!-- top menu -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="#B358b368"
+        android:background="@color/top_bar_color"
         app:layout_constraintBottom_toTopOf="@id/activity_signed_user_main_top_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -102,6 +86,34 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="69dp" />
+
+
+
+
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/activity_signed_user_main_vp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/activity_signed_user_main_top_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/activity_signed_user_main_tl"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/top_bar_color"
+        app:tabTextColor="@color/darkWhite"
+        >
+
+    </com.google.android.material.tabs.TabLayout>
+
+
+    </androidx.viewpager.widget.ViewPager>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

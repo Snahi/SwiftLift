@@ -6,4 +6,6 @@
     <color name="darkWhite">#e8efe9</color>
     <color name="darkWhite70">#70e8efe9</color>
     <color name="dark">#454d66</color>
+    <color name="top_bar_color">#B358b368</color>
+    <color name="signed_user_fragment_bg">#50B7CADB</color>
 </resources>

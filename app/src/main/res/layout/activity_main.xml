@@ -27,11 +27,12 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="69dp" />
 
+    <!-- top bar -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="#B358b368"
+        android:background="@color/top_bar_color"
         app:layout_constraintBottom_toTopOf="@id/activity_main_hg_top_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
