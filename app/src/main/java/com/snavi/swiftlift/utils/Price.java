@@ -70,10 +70,10 @@ public class Price {
     public String toString()
     {
         return String.format(m_locale,
-                "%d.%d %s",
+                "%d.%02d %s",
                 m_mainPart,
                 m_fractionalPart,
-                m_currency.getDisplayName());
+                m_currency.getCurrencyCode());
     }
 
 

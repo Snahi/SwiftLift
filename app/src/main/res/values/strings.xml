@@ -98,4 +98,5 @@
     <string name="stretch_add_error">Error occurred during adding stretch. Try again.</string>
     <string name="save_text">Save</string>
     <string name="auth_error">Authentication error occurred. Try to login again</string>
+    <string name="too_big_price_error">Price is too big!</string>
 </resources>

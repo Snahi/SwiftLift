@@ -2,22 +2,26 @@ package com.snavi.swiftlift.lift;
 
 import com.snavi.swiftlift.utils.Price;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
 
-public class Lift {
+public class Lift implements Serializable {
 
     @NonNull private ArrayList<Stretch> m_stretches;
     @NonNull private Currency m_currency;
+    @NonNull private String m_id;
 
 
-    public Lift(@NonNull ArrayList<Stretch> stretches, @NonNull Currency currency)
+    public Lift(@NonNull ArrayList<Stretch> stretches, @NonNull Currency currency,
+                @NonNull String id)
     {
         m_stretches = stretches;
         m_currency = currency;
+        m_id = id;
     }
 
 
@@ -78,5 +82,12 @@ public class Lift {
         }
 
         return res.toString();
+    }
+
+
+
+    public String getId()
+    {
+        return m_id;
     }
 }

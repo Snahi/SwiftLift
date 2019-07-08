@@ -6,6 +6,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,10 +25,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.snavi.swiftlift.R;
 import com.snavi.swiftlift.database_objects.Const;
 import com.snavi.swiftlift.lift.AddStretchDialogFragment;
+import com.snavi.swiftlift.lift.Lift;
 import com.snavi.swiftlift.lift.Stretch;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Locale;
 
 /**
@@ -36,6 +39,8 @@ import java.util.Locale;
 public class LiftActivity extends AppCompatActivity implements
         AddStretchDialogFragment.OnFragmentInteractionListener {
 
+    // TODO only one currency!
+
     // CONST //////////////////////////////////////////////////////////////////////////////////////
     public static final String TAG = LiftActivity.class.getName();
     public static final String NULL_INTENT_ERROR = "null intent error, can't get stretches";
@@ -43,6 +48,7 @@ public class LiftActivity extends AppCompatActivity implements
     public static final String STRETCHES_ARRAY_KEY = "stretches";
     public static final String LIFT_DOCUMENT_KEY = "lift_id";
     public static final String STRETCHES_TYPE_EXCEPTION = "Stretches passed to this activity should be in ArrayList<Stretch>, not ";
+    public static final String RESULT_LIFT_KEY = "success";
 
 
     // fields /////////////////////////////////////////////////////////////////////////////////////
@@ -109,6 +115,9 @@ public class LiftActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 AddStretchDialogFragment addStretchDial = new AddStretchDialogFragment();
+                Bundle bun = new Bundle();
+                bun.putString(AddStretchDialogFragment.LIFT_ID_KEY, m_liftId);
+                addStretchDial.setArguments(bun);
                 addStretchDial.show(getSupportFragmentManager(), ADD_STRETCH_DIALOD_TAG);
             }
         });
@@ -123,6 +132,25 @@ public class LiftActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view)
             {
+                ArrayList<Stretch> stretches = m_adapter.m_stretches;
+
+                Intent data = new Intent();
+
+                if (stretches.isEmpty())
+                {
+                    Lift lift = new Lift(stretches, Currency.getInstance(Locale.getDefault()),
+                            m_liftId);
+                    data.putExtra(RESULT_LIFT_KEY, lift);
+                    setResult(Activity.RESULT_CANCELED, data);
+                }
+                else
+                {
+                    Lift lift = new Lift(stretches, stretches.get(0).getPrice().getCurrency(),
+                            m_liftId);
+                    data.putExtra(RESULT_LIFT_KEY, lift);
+                    setResult(Activity.RESULT_OK, data);
+                }
+                // TODO parcelable lift
                 finish();
             }
         });
@@ -171,7 +199,6 @@ public class LiftActivity extends AppCompatActivity implements
     {
         final ProgressBar progBar = findViewById(R.id.activity_lift_progress_bar);
         progBar.setVisibility(View.VISIBLE);
-        stretch.setLiftId(m_liftId);
 
         m_stretchesCollection.document().set(stretch.getFirestoreObject()).addOnCompleteListener(
                 new OnCompleteListener<Void>() {

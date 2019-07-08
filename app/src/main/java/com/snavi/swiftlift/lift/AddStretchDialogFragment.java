@@ -48,7 +48,8 @@ import java.util.Locale;
 
 public class AddStretchDialogFragment extends DialogFragment {
 
-    // TODO max price (so that it fits in int)
+    // TODO pass proper location
+    // TODO make the date and time pickers more user frinedly (no double click)
 
     // CONST ///////////////////////////////////////////////////////////////////////////////////////
     private static final int FROM_COORDS_REQ_CODE = 7771;
@@ -57,11 +58,14 @@ public class AddStretchDialogFragment extends DialogFragment {
     private static final String TAG = AddStretchDialogFragment.class.getName();
     private static final String IOEXCEPTION_GEOCODING = "io exception occured during geocoding";
     private static final String NULL_CONTEXT_ERROR = "null context error";
+    public static final String LIFT_ID_KEY = "l_id";
+    private static final String LIFT_BUNDLE_EXCEPTION = "You must pass bundle with lift id!";
 
 
     // fields //////////////////////////////////////////////////////////////////////////////////////
     private OnFragmentInteractionListener m_listener;
     private LatLng m_initCoords;
+    private String m_liftId;
 
     // result
     private Calendar m_depDate;
@@ -86,6 +90,23 @@ public class AddStretchDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         m_depDate = Calendar.getInstance();
         m_arrDate = Calendar.getInstance();
+        setupLiftId();
+    }
+
+
+    /**
+     * can throw runtime exception if programmer didn't passed bundle with id
+     */
+    private void setupLiftId()
+    {
+        Bundle bun = getArguments();
+        if (bun == null)
+            throw new RuntimeException(LIFT_BUNDLE_EXCEPTION);
+
+        m_liftId = bun.getString(LIFT_ID_KEY);
+
+        if (m_liftId == null)
+            throw new RuntimeException(LIFT_BUNDLE_EXCEPTION);
     }
 
 
@@ -458,7 +479,7 @@ public class AddStretchDialogFragment extends DialogFragment {
 
                 m_price = getPrice(view);
                 Stretch res = new Stretch(m_depCoords, m_arrCoords, m_depAddr, m_arrAddr, m_depDate,
-                        m_arrDate, m_price);
+                        m_arrDate, m_price, m_liftId);
 
                 m_listener.onFragmentInteraction(res);
                 dismiss();
@@ -630,9 +651,16 @@ public class AddStretchDialogFragment extends DialogFragment {
         boolean isValid = true;
 
         EditText price = view.findViewById(R.id.fragment_add_stretch_dialog_et_price);
-        if (price.getText().toString().isEmpty())
+        String priceText = price.getText().toString();
+        if (priceText.isEmpty())
         {
             price.setError(resources.getString(R.string.empty_field_error));
+            isValid = false;
+        }
+
+        if (!isInIntRange(priceText))
+        {
+            price.setError(resources.getString(R.string.too_big_price_error));
             isValid = false;
         }
 
@@ -643,6 +671,21 @@ public class AddStretchDialogFragment extends DialogFragment {
             isValid = false;
 
         return isValid;
+    }
+
+
+
+    private boolean isInIntRange(String number)
+    {
+        try
+        {
+            double num = Double.parseDouble(number);
+            return num < Integer.MAX_VALUE;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
     }
 
 

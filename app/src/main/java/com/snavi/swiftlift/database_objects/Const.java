@@ -22,6 +22,10 @@ public interface Const {
     String STRETCH_ARR          = "arrDate";
     String STRETCH_PRICE        = "price";
 
+    // coordinates /////////////////////////////////////////////////////////////////////////////////
+    String COORDINATE_LATITUDE  = "latitude";
+    String COORDINATE_LONGITUDE = "longitude";
+
     // price ///////////////////////////////////////////////////////////////////////////////////////
     String PRICE_MAIN_PART     = "mainPart";
     String PRICE_FRAC_PART     = "fractionalPart";

@@ -1,5 +1,6 @@
 package com.snavi.swiftlift.signed_in_fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -81,18 +82,9 @@ public class DriverFragment extends Fragment {
         initRecyclerView(view, lifts);
 
         setAddLiftButtonListener(view);
+        loadLifts(m_adapter.m_lifts);
 
         return view;
-    }
-
-
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        m_adapter.m_lifts.clear();
-        loadLifts(m_adapter.m_lifts);
     }
 
 
@@ -139,7 +131,7 @@ public class DriverFragment extends Fragment {
     private void createLifts(final ArrayList<Lift> lifts, ArrayList<String> ids)
     {
         Log.d("MY", "in create lifts");
-        for (String id : ids)
+        for (final String id : ids)
         {
             Log.d("MY", "id: " + id);
             m_stretchesCollection.whereEqualTo(Const.STRETCH_LIFT_ID, id).get()
@@ -155,7 +147,7 @@ public class DriverFragment extends Fragment {
                                     Currency.getInstance(Locale.getDefault())
                                     :
                                     stretches.get(0).getPrice().getCurrency();
-                            lifts.add(new Lift(stretches, currency));
+                            lifts.add(new Lift(stretches, currency, id));
                             m_adapter.notifyItemChanged(lifts.size() - 1);
                         }
             });
@@ -167,8 +159,15 @@ public class DriverFragment extends Fragment {
     private ArrayList<Stretch> getStretches(List<DocumentSnapshot> docs)
     {
         ArrayList<Stretch> stretches = new ArrayList<>();
+        Stretch stretch;
         for (DocumentSnapshot doc : docs)
-            stretches.add(new Stretch(doc));
+        {
+            Log.d("MY", "in getStretches for loop");
+            stretch = Stretch.loadFromDoc(doc);
+            Log.d("MY", "stretch = " + stretch);
+            if (stretch != null)
+                stretches.add(stretch);
+        }
 
         return stretches;
     }
@@ -192,6 +191,45 @@ public class DriverFragment extends Fragment {
                 startActivityForResult(intent, CREATE_LIFT_RES_CODE);
             }
         });
+    }
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode)
+        {
+            case CREATE_LIFT_RES_CODE : dealWithCreateLiftResult(resultCode, data);
+        }
+    }
+
+
+
+    private void dealWithCreateLiftResult(int resCode, Intent data)
+    {
+        Lift lift = (Lift) data.getSerializableExtra(LiftActivity.RESULT_LIFT_KEY);
+        if (resCode == Activity.RESULT_CANCELED)
+            deleteLift(lift.getId());
+        else
+            addLiftToRecyclerView(lift);
+    }
+
+
+
+    private void deleteLift(String liftId)
+    {
+        m_liftsCollection.document(liftId).delete();
+    }
+
+
+
+    private void addLiftToRecyclerView(Lift lift)
+    {
+        m_adapter.m_lifts.add(lift);
+        m_adapter.notifyItemChanged(m_adapter.m_lifts.size() - 1);
     }
 
 
@@ -285,6 +323,15 @@ public class DriverFragment extends Fragment {
             Lift lift = m_lifts.get(position);
             holder.bind(lift.getFrom(), lift.getTo(), lift.getDepDate(), lift.getArrDate(),
                     lift.getPrice());
+
+            if (getActivity() == null)
+                return;
+
+            TextView tvNoLifts = getActivity().findViewById(R.id.fragment_driver_tv_no_lifts);
+            if (m_lifts.isEmpty())
+                tvNoLifts.setVisibility(View.VISIBLE);
+            else
+                tvNoLifts.setVisibility(View.GONE);
         }
 
 
