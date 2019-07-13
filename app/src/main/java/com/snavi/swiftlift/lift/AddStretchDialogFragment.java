@@ -7,8 +7,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-
-import java.util.Arrays;
 import java.util.Currency;
 import android.location.Address;
 import android.location.Geocoder;
@@ -50,22 +48,30 @@ public class AddStretchDialogFragment extends DialogFragment {
 
     // TODO pass proper location
     // TODO make the date and time pickers more user frinedly (no double click)
+    // TODO select location button change when user clicked
+    // TODO error toast if data is invalid
 
     // CONST ///////////////////////////////////////////////////////////////////////////////////////
     private static final int FROM_COORDS_REQ_CODE = 7771;
     private static final int TO_COORDS_REQ_CODE   = 7772;
     public static final String INIT_COORDINATES_KEY = "initial_coordinates";
+    public static final String CURRECY_KEY = "currency";
     private static final String TAG = AddStretchDialogFragment.class.getName();
     private static final String IOEXCEPTION_GEOCODING = "io exception occured during geocoding";
     private static final String NULL_CONTEXT_ERROR = "null context error";
     public static final String LIFT_ID_KEY = "l_id";
     private static final String LIFT_BUNDLE_EXCEPTION = "You must pass bundle with lift id!";
+    private static final String NO_CURRENCY_PASSED_EXCEPTION = "Currency wasn't passed in arguments. It's obligatory";
 
 
     // fields //////////////////////////////////////////////////////////////////////////////////////
     private OnFragmentInteractionListener m_listener;
     private LatLng m_initCoords;
     private String m_liftId;
+    /**
+     * currency in which all prices in current lift are
+     */
+    private Currency m_currency;
 
     // result
     private Calendar m_depDate;
@@ -90,23 +96,42 @@ public class AddStretchDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         m_depDate = Calendar.getInstance();
         m_arrDate = Calendar.getInstance();
-        setupLiftId();
+        Bundle bun = getNonNullArguments();
+        setupLiftId(bun);
+        setupCurrency(bun);
     }
+
 
 
     /**
      * can throw runtime exception if programmer didn't passed bundle with id
      */
-    private void setupLiftId()
+    private Bundle getNonNullArguments()
     {
         Bundle bun = getArguments();
         if (bun == null)
             throw new RuntimeException(LIFT_BUNDLE_EXCEPTION);
 
+        return bun;
+    }
+
+
+
+    private void setupLiftId(Bundle bun)
+    {
         m_liftId = bun.getString(LIFT_ID_KEY);
 
         if (m_liftId == null)
             throw new RuntimeException(LIFT_BUNDLE_EXCEPTION);
+    }
+
+
+
+    private void setupCurrency(Bundle bun)
+    {
+        m_currency = (Currency) bun.getSerializable(CURRECY_KEY);
+        if (m_currency == null)
+            throw new RuntimeException(NO_CURRENCY_PASSED_EXCEPTION);
     }
 
 
@@ -451,19 +476,21 @@ public class AddStretchDialogFragment extends DialogFragment {
 
     private void setupCurrency(View view)
     {
-        if (getContext() == null)
-        {
-            Log.e(TAG, NULL_CONTEXT_ERROR);
-            return;
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_list_item_1, Price.CURRENCIES);
-
-        AutoCompleteTextView currency = view.findViewById(
-                R.id.fragment_add_stretch_dialog_acet_currency);
-        currency.setAdapter(adapter);
-        currency.setThreshold(1);
+        TextView curr = view.findViewById(R.id.fragment_add_stretch_dialog_tv_currency);
+        curr.setText(m_currency.getCurrencyCode());
+//        if (getContext() == null)
+//        {
+//            Log.e(TAG, NULL_CONTEXT_ERROR);
+//            return;
+//        }
+//
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+//                android.R.layout.simple_list_item_1, Price.CURRENCIES);
+//
+//        AutoCompleteTextView currency = view.findViewById(
+//                R.id.fragment_add_stretch_dialog_acet_currency);
+//        currency.setAdapter(adapter);
+//        currency.setThreshold(1);
     }
 
 
@@ -500,10 +527,10 @@ public class AddStretchDialogFragment extends DialogFragment {
         int fracPart = fracString.length() == 1 ? Integer.parseInt(fracString) * 10 :
                 Integer.parseInt(fracString);
 
-        AutoCompleteTextView currencyEt = view.findViewById(
-                R.id.fragment_add_stretch_dialog_acet_currency);
-        Currency currency = Currency.getInstance(currencyEt.getText().toString());
-        return new Price(mainPart, fracPart, currency);
+//        AutoCompleteTextView currencyEt = view.findViewById(
+//                R.id.fragment_add_stretch_dialog_acet_currency);
+//        Currency currency = Currency.getInstance(currencyEt.getText().toString());
+        return new Price(mainPart, fracPart, m_currency);
     }
 
 
@@ -667,8 +694,8 @@ public class AddStretchDialogFragment extends DialogFragment {
         if (isValid)
             price.setError(null);
 
-        if (!validateCurrency(resources, view))
-            isValid = false;
+//        if (!validateCurrency(resources, view))
+//            isValid = false;
 
         return isValid;
     }
@@ -690,28 +717,28 @@ public class AddStretchDialogFragment extends DialogFragment {
 
 
 
-    private boolean validateCurrency(Resources resources, View view)
-    {
-        EditText currency = view.findViewById(R.id.fragment_add_stretch_dialog_acet_currency);
-        String currStr = currency.getText().toString();
-        if (currStr.isEmpty())
-        {
-            currency.setError(resources.getString(R.string.empty_field_error));
-            return false;
-        }
-
-        try
-        {
-            Currency.getInstance(currStr);
-        }
-        catch (IllegalArgumentException e)
-        {
-            currency.setError(resources.getString(R.string.invalid_currency_error));
-            return false;
-        }
-
-        return true;
-    }
+//    private boolean validateCurrency(Resources resources, View view)
+//    {
+//        EditText currency = view.findViewById(R.id.fragment_add_stretch_dialog_acet_currency);
+//        String currStr = currency.getText().toString();
+//        if (currStr.isEmpty())
+//        {
+//            currency.setError(resources.getString(R.string.empty_field_error));
+//            return false;
+//        }
+//
+//        try
+//        {
+//            Currency.getInstance(currStr);
+//        }
+//        catch (IllegalArgumentException e)
+//        {
+//            currency.setError(resources.getString(R.string.invalid_currency_error));
+//            return false;
+//        }
+//
+//        return true;
+//    }
 
 
 

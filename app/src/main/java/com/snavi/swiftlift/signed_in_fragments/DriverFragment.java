@@ -1,6 +1,7 @@
 package com.snavi.swiftlift.signed_in_fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -16,9 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,13 +29,15 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.snavi.swiftlift.R;
 import com.snavi.swiftlift.activities.LiftActivity;
 import com.snavi.swiftlift.database_objects.Const;
 import com.snavi.swiftlift.lift.Lift;
 import com.snavi.swiftlift.lift.Stretch;
+import com.snavi.swiftlift.utils.InternetUtils;
+import com.snavi.swiftlift.utils.Toasts;
 
 import java.util.ArrayList;
 import java.util.Currency;
@@ -47,13 +51,17 @@ public class DriverFragment extends Fragment {
 
 
     // CONST //////////////////////////////////////////////////////////////////////////////////////
-    private static final int CREATE_LIFT_RES_CODE = 7831;
+    private static final int CREATE_LIFT_REQ_CODE = 7831;
+    private static final int EDIT_LIFT_REQ_CODE   = 7832;
+    private static final String NULL_INTENT_ERROR = "Null data intent in onActivityResult. LiftActivity must return intent";
 
 
     // fields /////////////////////////////////////////////////////////////////////////////////////
-    private LiftsAdapter m_adapter;
+    private LiftsAdapter        m_adapter;
+    private FirebaseFirestore   m_db;
     private CollectionReference m_liftsCollection;
     private CollectionReference m_stretchesCollection;
+    private ProgressBar m_progressBar;
 
 
     public DriverFragment() {
@@ -65,9 +73,9 @@ public class DriverFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        m_liftsCollection = db.collection(Const.LIFTS_COLLECTION);
-        m_stretchesCollection = db.collection(Const.STRETCHES_COLLECTION);
+        m_db = FirebaseFirestore.getInstance();
+        m_liftsCollection = m_db.collection(Const.LIFTS_COLLECTION);
+        m_stretchesCollection = m_db.collection(Const.STRETCHES_COLLECTION);
     }
 
 
@@ -80,6 +88,8 @@ public class DriverFragment extends Fragment {
 
         ArrayList<Lift> lifts = new ArrayList<>();
         initRecyclerView(view, lifts);
+
+        m_progressBar = view.findViewById(R.id.fragment_driver_progress_bar);
 
         setAddLiftButtonListener(view);
         loadLifts(m_adapter.m_lifts);
@@ -106,17 +116,16 @@ public class DriverFragment extends Fragment {
         if (userId == null)
         {
             showAuthErrorSnackbar();
+            m_progressBar.setVisibility(View.GONE);
             return;
         }
-        Log.d("MY", "before lifts query");
+
         m_liftsCollection.whereEqualTo(Const.LIFT_OWNER, userId).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots)
                     {
-                        Log.d("MY", "in lifts query on success");
                         List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
-                        Log.d("MY", "docs size: " + docs.size());
                         ArrayList<String> ids = new ArrayList<>(docs.size());
                         for (DocumentSnapshot doc : docs)
                             ids.add(doc.getId());
@@ -130,17 +139,14 @@ public class DriverFragment extends Fragment {
 
     private void createLifts(final ArrayList<Lift> lifts, ArrayList<String> ids)
     {
-        Log.d("MY", "in create lifts");
         for (final String id : ids)
         {
-            Log.d("MY", "id: " + id);
             m_stretchesCollection.whereEqualTo(Const.STRETCH_LIFT_ID, id).get()
                     .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots)
                         {
                             List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
-                            Log.d("MY", "stretches size: " + docs.size());
 
                             ArrayList<Stretch> stretches = getStretches(docs);
                             Currency currency = stretches.isEmpty() ?
@@ -152,6 +158,8 @@ public class DriverFragment extends Fragment {
                         }
             });
         }
+
+        m_progressBar.setVisibility(View.GONE);
     }
 
 
@@ -188,7 +196,7 @@ public class DriverFragment extends Fragment {
                 }
                 Intent intent = new Intent(getContext(), LiftActivity.class);
                 intent.putExtra(LiftActivity.LIFT_DOCUMENT_KEY, liftId);
-                startActivityForResult(intent, CREATE_LIFT_RES_CODE);
+                startActivityForResult(intent, CREATE_LIFT_REQ_CODE);
             }
         });
     }
@@ -202,7 +210,8 @@ public class DriverFragment extends Fragment {
 
         switch (requestCode)
         {
-            case CREATE_LIFT_RES_CODE : dealWithCreateLiftResult(resultCode, data);
+            case CREATE_LIFT_REQ_CODE : dealWithCreateLiftResult(resultCode, data);
+            case EDIT_LIFT_REQ_CODE   : dealWithEditLiftResult(resultCode, data);
         }
     }
 
@@ -210,11 +219,26 @@ public class DriverFragment extends Fragment {
 
     private void dealWithCreateLiftResult(int resCode, Intent data)
     {
-        Lift lift = (Lift) data.getSerializableExtra(LiftActivity.RESULT_LIFT_KEY);
+        if (data == null)
+            throw new RuntimeException(NULL_INTENT_ERROR);
+
+        Lift lift = data.getParcelableExtra(LiftActivity.RESULT_LIFT_KEY);
         if (resCode == Activity.RESULT_CANCELED)
             deleteLift(lift.getId());
         else
             addLiftToRecyclerView(lift);
+    }
+
+
+
+    private void dealWithEditLiftResult(int resCode, Intent data)
+    {
+        if (data == null)
+            throw new RuntimeException(NULL_INTENT_ERROR);
+
+        Lift lift = data.getParcelableExtra(LiftActivity.RESULT_LIFT_KEY);
+        if (resCode == Activity.RESULT_CANCELED)
+            deleteLift(lift.getId());
     }
 
 
@@ -322,7 +346,7 @@ public class DriverFragment extends Fragment {
         {
             Lift lift = m_lifts.get(position);
             holder.bind(lift.getFrom(), lift.getTo(), lift.getDepDate(), lift.getArrDate(),
-                    lift.getPrice());
+                    lift.getPrice(), lift.getId());
 
             if (getActivity() == null)
                 return;
@@ -352,6 +376,8 @@ public class DriverFragment extends Fragment {
             private TextView m_depDate;
             private TextView m_arrDate;
             private TextView m_price;
+            private ImageButton m_deleteButton;
+            private ImageButton m_editButton;
 
             private MyViewHolder(CardView view)
             {
@@ -361,17 +387,99 @@ public class DriverFragment extends Fragment {
                 m_depDate = view.findViewById(R.id.card_view_route_stretch_tv_date_time_from);
                 m_arrDate = view.findViewById(R.id.card_view_route_stretch_tv_date_time_to);
                 m_price   = view.findViewById(R.id.card_view_route_stretch_tv_price);
+                m_deleteButton = view.findViewById(R.id.card_view_route_stretch_but_delete);
+                m_editButton   = view.findViewById(R.id.card_view_route_stretch_but_edit);
             }
 
 
 
-            void bind(String from, String to, String depDate, String arrDate, String price)
+            void bind(String from, String to, String depDate, String arrDate, String price,
+                      String liftId)
             {
                 m_from.setText(from);
                 m_to.setText(to);
                 m_depDate.setText(depDate);
                 m_arrDate.setText(arrDate);
                 m_price.setText(price);
+
+                setButtonsListener(liftId);
+            }
+
+
+
+            private void setButtonsListener(final String liftId)
+            {
+                setDeleteButtonListener(liftId);
+                setEditButtonListener();
+            }
+
+
+
+            private void setDeleteButtonListener(final String liftId)
+            {
+                m_deleteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        Context context = DriverFragment.this.getContext();
+                        if (context == null)
+                            return;
+
+                        if (InternetUtils.hasInternetConnection(context))
+                        {
+                            m_liftsCollection.document(liftId).delete();
+                            m_lifts.remove(getAdapterPosition());
+                            LiftsAdapter.this.notifyDataSetChanged();
+                            deleteStretches(liftId);
+                        }
+                        else
+                            Toasts.showNetworkErrorToast(DriverFragment.this.getContext());
+                    }
+                });
+            }
+
+
+
+            private void deleteStretches(String liftId)
+            {
+                m_stretchesCollection.whereEqualTo(Const.STRETCH_LIFT_ID, liftId).get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>()
+                        {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots)
+                            {
+                                List<DocumentSnapshot> snapshots = queryDocumentSnapshots
+                                        .getDocuments();
+
+                                WriteBatch batch = m_db.batch();
+
+                                for (DocumentSnapshot snapshot : snapshots)
+                                {
+                                    batch.delete(snapshot.getReference());
+                                }
+
+                                batch.commit();
+                            }
+                });
+            }
+
+
+
+            private void setEditButtonListener()
+            {
+                m_editButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        Intent intent = new Intent(DriverFragment.this.getContext(),
+                                LiftActivity.class);
+                        Lift lift = m_lifts.get(getAdapterPosition());
+                        intent.putExtra(LiftActivity.STRETCHES_ARRAY_KEY, lift.getStretches());
+                        intent.putExtra(LiftActivity.LIFT_DOCUMENT_KEY, lift.getId());
+
+                        startActivityForResult(intent, EDIT_LIFT_REQ_CODE);
+                    }
+                });
             }
         }
     }

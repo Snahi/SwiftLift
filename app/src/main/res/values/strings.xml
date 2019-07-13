@@ -99,4 +99,8 @@
     <string name="save_text">Save</string>
     <string name="auth_error">Authentication error occurred. Try to login again</string>
     <string name="too_big_price_error">Price is too big!</string>
+    <string name="internet_connection_error">Internet connection error!</string>
+    <string name="currency_text">currency</string>
+    <string name="i_e_eur_text">i.e. EUR</string>
+    <string name="done_text">done</string>
 </resources>

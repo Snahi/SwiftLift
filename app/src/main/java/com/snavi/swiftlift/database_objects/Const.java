@@ -12,6 +12,7 @@ public interface Const {
     // lifts ///////////////////////////////////////////////////////////////////////////////////////
     String LIFTS_COLLECTION     = "lifts";
     String LIFT_OWNER           = "owner";
+    String LIFT_CURRENCY        = "currency";
     String STRETCHES_COLLECTION = "stretches";
     String STRETCH_LIFT_ID      = "liftId";
     String STRETCH_FROM_LOC     = "coordFrom";

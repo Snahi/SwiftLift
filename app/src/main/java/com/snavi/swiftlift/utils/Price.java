@@ -2,11 +2,12 @@ package com.snavi.swiftlift.utils;
 
 import com.snavi.swiftlift.database_objects.Const;
 
+import java.io.Serializable;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class Price {
+public class Price implements Serializable {
     // TODO test too big fractional part
 
     // CONST //////////////////////////////////////////////////////////////////////////////////////

@@ -8,6 +8,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.snavi.swiftlift.database_objects.Const;
 import com.snavi.swiftlift.utils.Price;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,8 +26,8 @@ import androidx.annotation.NonNull;
 public class Stretch implements Serializable {
 
     private String m_liftId;
-    private LatLng m_coordFrom;
-    private LatLng m_coordTo;
+    private transient LatLng m_coordFrom;   // transient means skip it during defaultWriteObject()/defaultReadObject()
+    private transient LatLng m_coordTo;     // transient means skip it during defaultWriteObject()/defaultReadObject()
     private String m_addrFrom;
     private String m_addrTo;
     private Date m_depDate;
@@ -59,6 +63,34 @@ public class Stretch implements Serializable {
         this.m_arrDate   = arrDate;
         this.m_price     = price;
         this.m_liftId    = liftId;
+    }
+
+
+
+    // serialization //////////////////////////////////////////////////////////////////////////////
+
+
+
+    private void writeObject(ObjectOutputStream out) throws IOException
+    {
+        Log.d("MY", "in writeObject");
+        out.defaultWriteObject();
+        out.writeDouble(m_coordFrom.latitude);
+        out.writeDouble(m_coordFrom.longitude);
+        out.writeDouble(m_coordTo.latitude);
+        out.writeDouble(m_coordTo.longitude);
+        Log.d("MY", "end of write object");
+    }
+
+
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+        Log.d("MY", "in readObject");
+        in.defaultReadObject();
+        m_coordFrom = new LatLng(in.readDouble(), in.readDouble());
+        m_coordTo   = new LatLng(in.readDouble(), in.readDouble());
+        Log.d("MY", "end of readObject");
     }
 
 
