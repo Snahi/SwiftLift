@@ -15,8 +15,10 @@ public interface Const {
     String LIFT_CURRENCY        = "currency";
     String STRETCHES_COLLECTION = "stretches";
     String STRETCH_LIFT_ID      = "liftId";
-    String STRETCH_FROM_LOC     = "coordFrom";
-    String STRETCH_TO_LOC       = "coordTo";
+    String STRETCH_FROM_LAT     = "flat";
+    String STRETCH_FROM_LON     = "flon";
+    String STRETCH_TO_LAT       = "tlat";
+    String STRETCH_TO_LON       = "tlon";
     String STRETCH_FROM_ADDR    = "addrFrom";
     String STRETCH_TO_ADDR      = "addrTo";
     String STRETCH_DEP          = "depDate";

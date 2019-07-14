@@ -142,7 +142,7 @@ public class DriverFragment extends Fragment {
                             if (lift != null)
                             {
                                 lifts.add(lift);
-                                lift.loadStretchesFromDb();
+                                lift.loadStretchesFromDb(m_adapter, lifts.size() - 1);
                             }
                             else
                                 Toasts.showLiftLoadErrorToast(getContext());
@@ -175,6 +175,16 @@ public class DriverFragment extends Fragment {
         but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Context context = getContext();
+                if (context == null)
+                    return;
+
+                if (!InternetUtils.hasInternetConnection(context))
+                {
+                    Toasts.showNetworkErrorToast(context);
+                    return;
+                }
+
                 Lift lift = createNewLift();
                 if (lift == null)                   // because userId was not available
                 {

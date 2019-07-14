@@ -42,6 +42,7 @@ import com.snavi.swiftlift.database_objects.Const;
 import com.snavi.swiftlift.lift.AddStretchDialogFragment;
 import com.snavi.swiftlift.lift.Lift;
 import com.snavi.swiftlift.lift.Stretch;
+import com.snavi.swiftlift.utils.InternetUtils;
 import com.snavi.swiftlift.utils.KeyboardUtils;
 import com.snavi.swiftlift.utils.Price;
 import com.snavi.swiftlift.utils.Toasts;
@@ -523,11 +524,16 @@ public class LiftActivity extends AppCompatActivity implements
              */
             private void setupDeleteButtonListener()
             {
-                final int posToRemove = m_stretches.size() - 1;
-                Log.d("MY", "sadfsaf deleteineilge");
                 m_butDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        if (!InternetUtils.hasInternetConnection(LiftActivity.this))
+                        {
+                            Toasts.showNetworkErrorToast(LiftActivity.this);
+                            return;
+                        }
+
+                        final int posToRemove = m_stretches.size() - 1;
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                         db.collection(Const.STRETCHES_COLLECTION)
                                 .document(m_stretches.get(posToRemove).getId())

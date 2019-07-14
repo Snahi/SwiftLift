@@ -60,4 +60,28 @@ public class Toasts {
         Toast.makeText(context, context.getResources()
                 .getString(R.string.invalid_data), Toast.LENGTH_LONG).show();
     }
+
+
+
+    public static void showGeocoderNotPresentToast(Context context)
+    {
+        Toast.makeText(context, context.getResources()
+                .getString(R.string.geocoder_not_present), Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showGeocodeErrorToast(Context context)
+    {
+        Toast.makeText(context, context.getResources()
+                .getString(R.string.geocoding_exception), Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showCantResolveLocationToast(Context context)
+    {
+        Toast.makeText(context, context.getResources()
+                .getString(R.string.cant_resolve_location), Toast.LENGTH_LONG).show();
+    }
 }

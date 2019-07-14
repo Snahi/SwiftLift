@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.snavi.swiftlift.R;
 import com.snavi.swiftlift.activities.LiftPointsPickActivity;
+import com.snavi.swiftlift.utils.InternetUtils;
 import com.snavi.swiftlift.utils.Price;
 import com.snavi.swiftlift.utils.Toasts;
 import java.io.IOException;
@@ -40,6 +41,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+// TODO bug, when adding next stretch map is not moved
+// TODO can't click on edittext error because of focusable='false'
 // TODO (not very important) add previously selected points on map
 public class AddStretchDialogFragment extends DialogFragment {
 
@@ -566,6 +569,16 @@ public class AddStretchDialogFragment extends DialogFragment {
                 if (!validateInputs(view))
                 {
                     Toasts.showInvalidDataToast(getContext());
+                    return;
+                }
+
+                Context context = getContext();
+                if (context == null)
+                    return;
+
+                if (!InternetUtils.hasInternetConnection(context))
+                {
+                    Toasts.showNetworkErrorToast(context);
                     return;
                 }
 

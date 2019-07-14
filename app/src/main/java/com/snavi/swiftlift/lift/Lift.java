@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class Lift implements Parcelable {
 
@@ -37,7 +38,7 @@ public class Lift implements Parcelable {
 
 
     // fields /////////////////////////////////////////////////////////////////////////////////////
-    @NonNull  private ArrayList<Stretch> m_stretches;
+    @NonNull  protected ArrayList<Stretch> m_stretches;
     @NonNull  private Currency m_currency;
     @NonNull  private String m_id;
     @Nullable private String m_owner;
@@ -155,7 +156,7 @@ public class Lift implements Parcelable {
 
 
 
-    public void loadStretchesFromDb()
+    public void loadStretchesFromDb(final RecyclerView.Adapter adapter, final int liftPos)
     {
         FirebaseFirestore db         = FirebaseFirestore.getInstance();
         CollectionReference stretchesCol = db.collection(Const.STRETCHES_COLLECTION);
@@ -170,6 +171,8 @@ public class Lift implements Parcelable {
                         {
                             m_stretches.add(Stretch.loadFromDoc(doc, m_currency, doc.getId()));
                         }
+
+                        adapter.notifyItemChanged(liftPos);
                     }
                 });
     }
@@ -322,6 +325,20 @@ public class Lift implements Parcelable {
     public String getId()
     {
         return m_id;
+    }
+
+
+
+    public String getOwnerId()
+    {
+        return m_owner;
+    }
+
+
+
+    public void setOwnerId(String ownerId)
+    {
+        m_owner = ownerId;
     }
 
 

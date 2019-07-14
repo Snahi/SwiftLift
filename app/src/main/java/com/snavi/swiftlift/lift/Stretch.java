@@ -24,6 +24,10 @@ import androidx.annotation.NonNull;
 
 public class Stretch implements Serializable {
 
+    // CONST ///////////////////////////////////////////////////////////////////////////////////////
+    private static final String NULL_LATITUDE_OR_LONGITUDE = "Null latitude or longitude";
+
+    // fields //////////////////////////////////////////////////////////////////////////////////////
     private String m_id;
     private String m_liftId;
     private String m_addrFrom;
@@ -98,8 +102,8 @@ public class Stretch implements Serializable {
 
     static Stretch loadFromDoc(@NonNull DocumentSnapshot doc, Currency currency, String id)
     {
-        LatLng locFrom  = getLoc(doc, Const.STRETCH_FROM_LOC);
-        LatLng locTo    = getLoc(doc, Const.STRETCH_TO_LOC);
+        LatLng locFrom  = getLoc(doc, Const.STRETCH_FROM_LAT, Const.STRETCH_FROM_LON);
+        LatLng locTo    = getLoc(doc, Const.STRETCH_TO_LAT, Const.STRETCH_TO_LON);
         String addrFrom = getString(doc, Const.STRETCH_FROM_ADDR);
         String addrTo   = getString(doc, Const.STRETCH_TO_ADDR);
         Date depDate    = getDate(doc, Const.STRETCH_DEP);
@@ -125,25 +129,16 @@ public class Stretch implements Serializable {
 
 
 
-    private static LatLng getLoc(@NonNull DocumentSnapshot doc, @NonNull String key)
+    private static LatLng getLoc(@NonNull DocumentSnapshot doc, @NonNull String latKey,
+                                 @NonNull String lonKey)
     {
-        Object preMap = doc.get(key);
-        if (!(preMap instanceof Map))
-            return null;
+        Double latitude  = doc.getDouble(latKey);
+        Double longitude = doc.getDouble(lonKey);
 
-        Map map = (Map) preMap;
+        if (latitude == null || longitude == null)
+            throw new RuntimeException(NULL_LATITUDE_OR_LONGITUDE);
 
-        if (!map.containsKey(Const.COORDINATE_LATITUDE) ||
-                !map.containsKey(Const.COORDINATE_LONGITUDE))
-            return null;
-
-        Object latitude  = map.get(Const.COORDINATE_LATITUDE);
-        Object longitude = map.get(Const.COORDINATE_LONGITUDE);
-
-        if (latitude instanceof Double && longitude instanceof Double)
-            return new LatLng((double) latitude, (double) longitude);
-        else
-            return null;
+        return new LatLng(latitude, longitude);
     }
 
 
@@ -200,8 +195,10 @@ public class Stretch implements Serializable {
         res.put(Const.STRETCH_DEP, m_depDate);
         res.put(Const.STRETCH_FROM_ADDR, m_addrFrom);
         res.put(Const.STRETCH_TO_ADDR, m_addrTo);
-        res.put(Const.STRETCH_FROM_LOC, m_coordFrom);
-        res.put(Const.STRETCH_TO_LOC, m_coordTo);
+        res.put(Const.STRETCH_FROM_LAT, m_coordFrom.latitude);
+        res.put(Const.STRETCH_FROM_LON, m_coordFrom.longitude);
+        res.put(Const.STRETCH_TO_LAT, m_coordTo.latitude);
+        res.put(Const.STRETCH_TO_LON, m_coordTo.longitude);
         res.put(Const.STRETCH_PRICE_MAIN, m_price.getMainPart());
         res.put(Const.STRETCH_PRICE_FRAC, m_price.getFractionalPart());
         res.put(Const.STRETCH_LIFT_ID, m_liftId);

@@ -72,7 +72,7 @@
     <string name="color_text">:</string>
     <string name="datetime_text">DateTime</string>
     <string name="price_text">Price</string>
-    <string name="earliest_departure_date_time_text">Earliest departure date/time</string>
+    <string name="earliest_departure_date_text">Earliest departure date</string>
     <string name="max_distance_from_starting_point_in_km_text">max distance from starting point in km</string>
     <string name="max_distance_from_end_point_in_km_text">max distance from end point in km</string>
     <string name="find_lift_tab_title">Find lift</string>
@@ -107,4 +107,12 @@
     <string name="stretch_delete_failure">Error occurred during deleting stretch!</string>
     <string name="lifts_load_error">Error occurred during loading lifts. Check your internet connection and restart app</string>
     <string name="invalid_data">You\'ve provided wrong or incomplete data</string>
+    <string name="geocoder_not_present">Geocoder is not present. Check your internet connection and open app again!</string>
+    <string name="geocoding_exception">Error occurred. Check your internet connection and open app again!</string>
+    <string name="cant_resolve_location">Can\'t resolve location. Check your internet connection and open app again!</string>
+    <string name="from_street_city_country_etc">From (street, city, country, post code etc.)</string>
+    <string name="to_street_city_country_post_code_etc">To (street, city, country, post code, etc.)</string>
+    <string name="earliest_departure_time_text">Earliest departure time</string>
+    <string name="_20">20</string>
+    <string name="default_distance_range">20</string>
 </resources>

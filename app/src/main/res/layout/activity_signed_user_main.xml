@@ -23,6 +23,7 @@
 
     <!-- top menu -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/top_bar_color"
@@ -40,9 +41,9 @@
             android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
             android:drawableStart="@drawable/add_icon"
-            android:textColor="@color/darkWhite"
-            android:textAlignment="textEnd"
             android:text="@string/activity_signed_user_main_create_new_lift_text"
+            android:textAlignment="textEnd"
+            android:textColor="@color/darkWhite"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -57,13 +58,12 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
-            android:textColor="@color/darkWhite"
             android:text="@string/sign_out_text"
+            android:textColor="@color/darkWhite"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/activity_signed_user_main_but_settings"
             app:layout_constraintStart_toEndOf="@+id/activity_signed_user_main_but_create_lift"
             app:layout_constraintTop_toTopOf="parent" />
-
 
 
         <ImageButton
