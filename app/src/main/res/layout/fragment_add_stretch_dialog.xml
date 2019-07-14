@@ -36,6 +36,7 @@
             android:ems="10"
             android:hint="@string/dd_mm_yyyy"
             android:inputType="none"
+            android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -65,6 +66,7 @@
             android:ems="10"
             android:hint="@string/hh_mm"
             android:inputType="none"
+            android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_dep_time" />
@@ -89,9 +91,8 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@android:color/transparent"
+            android:background="@drawable/location_button_states"
             android:scaleType="fitXY"
-            android:src="@drawable/new_location_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_dep_place" />
@@ -133,6 +134,7 @@
             android:ems="10"
             android:hint="@string/dd_mm_yyyy"
             android:inputType="none"
+            android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_arr_date" />
@@ -161,6 +163,7 @@
             android:ems="10"
             android:hint="@string/hh_mm"
             android:inputType="none"
+            android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_arr_time" />
@@ -185,9 +188,8 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@android:color/transparent"
+            android:background="@drawable/location_button_states"
             android:scaleType="fitXY"
-            android:src="@drawable/new_location_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_arr_place" />
@@ -242,17 +244,6 @@
             app:layout_constraintBottom_toBottomOf="@id/fragment_add_stretch_dialog_et_price"
             app:layout_constraintStart_toEndOf="@id/fragment_add_stretch_dialog_et_price"
             app:layout_constraintTop_toTopOf="@id/fragment_add_stretch_dialog_et_price" />
-    <!--<AutoCompleteTextView-->
-            <!--android:id="@+id/fragment_add_stretch_dialog_acet_currency"-->
-            <!--android:layout_width="70dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginStart="8dp"-->
-            <!--android:layout_marginTop="8dp"-->
-            <!--android:layout_marginBottom="8dp"-->
-            <!--android:hint="@string/eur"-->
-            <!--app:layout_constraintBottom_toBottomOf="@id/fragment_add_stretch_dialog_et_price"-->
-            <!--app:layout_constraintStart_toEndOf="@id/fragment_add_stretch_dialog_et_price"-->
-            <!--app:layout_constraintTop_toTopOf="@id/fragment_add_stretch_dialog_et_price" />-->
 
 
         <!-- add button /////////////////////////////////////////////////////////////////////////-->

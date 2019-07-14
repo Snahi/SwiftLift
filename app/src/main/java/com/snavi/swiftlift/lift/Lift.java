@@ -4,19 +4,17 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.snavi.swiftlift.database_objects.Const;
 import com.snavi.swiftlift.utils.Price;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -24,8 +22,6 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-// TODO add owner to fields and contructors, load from database method
-// TODO remove currency from strtches
 public class Lift implements Parcelable {
 
 
@@ -41,12 +37,17 @@ public class Lift implements Parcelable {
 
 
     // fields /////////////////////////////////////////////////////////////////////////////////////
-    @NonNull private ArrayList<Stretch> m_stretches;
-    @NonNull private Currency m_currency;
-    @NonNull private String m_id;
+    @NonNull  private ArrayList<Stretch> m_stretches;
+    @NonNull  private Currency m_currency;
+    @NonNull  private String m_id;
     @Nullable private String m_owner;
 
-    // parcelable
+
+
+    // parcelable //////////////////////////////////////////////////////////////////////////////////
+
+
+
     public static final Parcelable.Creator<Lift> CREATOR = new Parcelable.Creator<Lift>()
     {
         @Override
@@ -107,6 +108,10 @@ public class Lift implements Parcelable {
 
 
 
+    // init ////////////////////////////////////////////////////////////////////////////////////////
+
+
+
     public Lift(@NonNull ArrayList<Stretch> stretches, @NonNull Currency currency,
                 @NonNull String id, @Nullable String ownerId)
     {
@@ -163,7 +168,7 @@ public class Lift implements Parcelable {
                         List<DocumentSnapshot> stretchesDocs = queryDocumentSnapshots.getDocuments();
                         for (DocumentSnapshot doc : stretchesDocs)
                         {
-                            m_stretches.add(Stretch.loadFromDoc(doc, m_currency));
+                            m_stretches.add(Stretch.loadFromDoc(doc, m_currency, doc.getId()));
                         }
                     }
                 });
@@ -175,6 +180,43 @@ public class Lift implements Parcelable {
     {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(Const.LIFTS_COLLECTION).document(m_id).set(getFirestoreObject());
+    }
+
+
+
+    // getters && setters /////////////////////////////////////////////////////////////////////////
+
+
+
+    @Nullable
+    public LatLng getLastStretchArrCoords()
+    {
+        if (m_stretches.isEmpty())
+            return null;
+
+        return m_stretches.get(m_stretches.size() - 1).getCoordTo();
+    }
+
+
+
+    @Nullable
+    public String getLastStretchArrAddr()
+    {
+        if (m_stretches.isEmpty())
+            return null;
+
+        return m_stretches.get(m_stretches.size() - 1).getAddrTo();
+    }
+
+
+
+    @Nullable
+    public Date getLastStretchArrDate()
+    {
+        if (m_stretches.isEmpty())
+            return null;
+
+        return m_stretches.get(m_stretches.size() - 1).getArrDate();
     }
 
 

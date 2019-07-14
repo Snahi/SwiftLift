@@ -104,4 +104,7 @@
     <string name="i_e_eur_text">i.e. EUR</string>
     <string name="done_text">done</string>
     <string name="error_during_loading_lift">Error occurred during loading lift!</string>
+    <string name="stretch_delete_failure">Error occurred during deleting stretch!</string>
+    <string name="lifts_load_error">Error occurred during loading lifts. Check your internet connection and restart app</string>
+    <string name="invalid_data">You\'ve provided wrong or incomplete data</string>
 </resources>

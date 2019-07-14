@@ -11,11 +11,9 @@ import java.util.Currency;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,12 +28,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.snavi.swiftlift.R;
 import com.snavi.swiftlift.activities.LiftPointsPickActivity;
 import com.snavi.swiftlift.utils.Price;
-
+import com.snavi.swiftlift.utils.Toasts;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -43,55 +40,53 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+// TODO (not very important) add previously selected points on map
 public class AddStretchDialogFragment extends DialogFragment {
 
-    // TODO pass proper location
-    // TODO make the date and time pickers more user frinedly (no double click)
-    // TODO select location button change when user clicked
-    // TODO error toast if data is invalid
-
     // CONST ///////////////////////////////////////////////////////////////////////////////////////
-    private static final int FROM_COORDS_REQ_CODE = 7771;
-    private static final int TO_COORDS_REQ_CODE   = 7772;
+    // keys
     public static final String INIT_COORDINATES_KEY = "initial_coordinates";
     public static final String CURRENCY_KEY = "currency";
     public static final String DEP_COORDS_KEY = "depCoords";
     public static final String DEP_ADDR_KEY = "depAddr";
     public static final String DEP_DATE_KEY = "depDate";
-    private static final String TAG = AddStretchDialogFragment.class.getName();
+    public static final String LIFT_ID_KEY = "l_id";
+    // request codes
+    private static final int FROM_COORDS_REQ_CODE = 7771;
+    private static final int TO_COORDS_REQ_CODE   = 7772;
+    // errors
     private static final String IOEXCEPTION_GEOCODING = "io exception occured during geocoding";
     private static final String NULL_CONTEXT_ERROR = "null context error";
-    public static final String LIFT_ID_KEY = "l_id";
     private static final String LIFT_BUNDLE_EXCEPTION = "You must pass bundle with lift id!";
     private static final String NO_CURRENCY_PASSED_EXCEPTION = "Currency wasn't passed in arguments. It's obligatory";
-    public static final String DATE_FORMAT = "dd/MM/YYYY";
+    // formats
+    private static final String DATE_FORMAT = "dd/MM/YYYY";
     private static final String TIME_FORMAT = "HH:mm";
+    //other
+    private static final String TAG = AddStretchDialogFragment.class.getName();
 
 
     // fields //////////////////////////////////////////////////////////////////////////////////////
     private OnFragmentInteractionListener m_listener;
-    private LatLng m_initCoords;
-    private String m_liftId;
-    /**
-     * currency in which all prices in current lift are
-     */
     private Currency m_currency;
-    private Bundle m_arguments;
+    private LatLng   m_initCoords;
+    private String   m_liftId;
+    private Bundle   m_arguments;
 
     // views
-    private TextView m_depAddrTV;
     private ImageButton m_fromCoordsBut;
-    private EditText m_depDateET;
-    private EditText m_depTimeET;
+    private TextView    m_depAddrTV;
+    private EditText    m_depDateET;
+    private EditText    m_depTimeET;
 
     // result
     private Calendar m_depDate;
     private Calendar m_arrDate;
-    private LatLng m_depCoords;
-    private LatLng m_arrCoords;
-    private String m_depAddr;
-    private String m_arrAddr;
-    private Price m_price;
+    private LatLng   m_depCoords;
+    private LatLng   m_arrCoords;
+    private String   m_depAddr;
+    private String   m_arrAddr;
+    private Price    m_price;
 
 
 
@@ -105,9 +100,11 @@ public class AddStretchDialogFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        m_depDate = Calendar.getInstance();
-        m_arrDate = Calendar.getInstance();
+
+        m_depDate   = Calendar.getInstance();
+        m_arrDate   = Calendar.getInstance();
         m_arguments = getNonNullArguments();
+
         setupLiftId();
         setupCurrency();
     }
@@ -115,7 +112,7 @@ public class AddStretchDialogFragment extends DialogFragment {
 
 
     /**
-     * can throw runtime exception if programmer didn't passed bundle with id
+     * @exception RuntimeException if programmer didn't passed arguments
      */
     private Bundle getNonNullArguments()
     {
@@ -127,7 +124,9 @@ public class AddStretchDialogFragment extends DialogFragment {
     }
 
 
-
+    /**
+     * @exception RuntimeException when lift id is not in arguments
+     */
     private void setupLiftId()
     {
         m_liftId = m_arguments.getString(LIFT_ID_KEY);
@@ -137,7 +136,9 @@ public class AddStretchDialogFragment extends DialogFragment {
     }
 
 
-
+    /**
+     * @exception RuntimeException when currency isn't in arguments
+     */
     private void setupCurrency()
     {
         m_currency = (Currency) m_arguments.getSerializable(CURRENCY_KEY);
@@ -146,7 +147,11 @@ public class AddStretchDialogFragment extends DialogFragment {
     }
 
 
-
+    /**
+     * method that sets up departure location and date if at least one Stretch was added previously.
+     * Also blocks the data, so that user can't change it, because it could cause discontinuity in
+     * stretches.
+     */
     private void setupDerivedFromPreviousStretch()
     {
         setupDepLoc();
@@ -177,11 +182,21 @@ public class AddStretchDialogFragment extends DialogFragment {
         if (date == null)
             return;
 
+        m_depDate.setTime(date);
+
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
         m_depDateET.setText(sdf.format(date.getTime()));
 
         SimpleDateFormat sdfTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
         m_depTimeET.setText(sdfTime.format(date.getTime()));
+
+        View.OnClickListener emptyOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {}
+        };
+
+        m_depDateET.setOnClickListener(emptyOnClickListener);
+        m_depTimeET.setOnClickListener(emptyOnClickListener);
     }
 
 
@@ -193,15 +208,11 @@ public class AddStretchDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_add_stretch_dialog, container,
                 false);
 
-        Bundle args = getArguments();
-        if (args != null)
-            m_initCoords = getArguments().getParcelable(INIT_COORDINATES_KEY);
-
         initViews(view);
         lockEditTexts(view);
         setButtonsListeners(view);
-        setDepDateEtListener(view);
-        setDepTimeEtListener(view);
+        setDepDateEtListener();
+        setDepTimeEtListener();
         setArrDateEtListener(view);
         setArrTimeEtListener(view);
         setupCurrency(view);
@@ -214,7 +225,7 @@ public class AddStretchDialogFragment extends DialogFragment {
 
     private void initViews(View view)
     {
-        m_depAddrTV     = view.findViewById(R.id.fragment_add_stretch_dialog_tv_dep_place);
+        m_depAddrTV     = view.findViewById(R.id.fragment_add_stretch_dialog_tv_from_addr);
         m_fromCoordsBut = view.findViewById(R.id.fragment_add_stretch_dialog_but_choose_dep_loc);
         m_depDateET     = view.findViewById(R.id.fragment_add_stretch_dialog_et_dep_date);
         m_depTimeET     = view.findViewById(R.id.fragment_add_stretch_dialog_et_dep_time);
@@ -235,8 +246,11 @@ public class AddStretchDialogFragment extends DialogFragment {
 
 
     @Override
-    public void onResume() {
+    public void onResume()
+    {
         super.onResume();
+
+        // change width and height of this dialog
         Dialog dialog = getDialog();
         if (dialog == null)
             return;
@@ -329,18 +343,23 @@ public class AddStretchDialogFragment extends DialogFragment {
         m_arrCoords = data.getParcelableExtra(LiftPointsPickActivity.RESULT_COORDINATES_KEY);
         Address addr = getReverseGeocode(m_arrCoords);
         writeAddressToToAddrTvAndSaveToField(addr);
-        m_initCoords = m_arrCoords;
     }
 
 
-
+    /**
+     *
+     * @param coords coordinates to reverse geocode
+     * @return reverse geocoded address of null if Geocoder wasn't present or couldn't resolve
+     * address
+     */
     private Address getReverseGeocode(LatLng coords)
     {
         if (Geocoder.isPresent())
         {
             Geocoder geocoder      = new Geocoder(getContext());
             List<Address> addrList;
-            try {
+            try
+            {
                 addrList = geocoder.getFromLocation(coords.latitude, coords.longitude, 1);
                 if (addrList != null && !addrList.isEmpty())
                     return addrList.get(0);
@@ -393,7 +412,7 @@ public class AddStretchDialogFragment extends DialogFragment {
 
 
 
-    private void setDepDateEtListener(View view)
+    private void setDepDateEtListener()
     {
         m_depDateET.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -414,10 +433,9 @@ public class AddStretchDialogFragment extends DialogFragment {
 
 
 
-    private void setDepTimeEtListener(View view)
+    private void setDepTimeEtListener()
     {
-        EditText et = view.findViewById(R.id.fragment_add_stretch_dialog_et_dep_time);
-        et.setOnClickListener(new View.OnClickListener() {
+        m_depTimeET.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
@@ -535,19 +553,6 @@ public class AddStretchDialogFragment extends DialogFragment {
     {
         TextView curr = view.findViewById(R.id.fragment_add_stretch_dialog_tv_currency);
         curr.setText(m_currency.getCurrencyCode());
-//        if (getContext() == null)
-//        {
-//            Log.e(TAG, NULL_CONTEXT_ERROR);
-//            return;
-//        }
-//
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
-//                android.R.layout.simple_list_item_1, Price.CURRENCIES);
-//
-//        AutoCompleteTextView currency = view.findViewById(
-//                R.id.fragment_add_stretch_dialog_acet_currency);
-//        currency.setAdapter(adapter);
-//        currency.setThreshold(1);
     }
 
 
@@ -559,7 +564,10 @@ public class AddStretchDialogFragment extends DialogFragment {
             @Override
             public void onClick(View but) {
                 if (!validateInputs(view))
+                {
+                    Toasts.showInvalidDataToast(getContext());
                     return;
+                }
 
                 m_price = getPrice(view);
                 Stretch res = new Stretch(m_depCoords, m_arrCoords, m_depAddr, m_arrAddr, m_depDate,
@@ -584,9 +592,6 @@ public class AddStretchDialogFragment extends DialogFragment {
         int fracPart = fracString.length() == 1 ? Integer.parseInt(fracString) * 10 :
                 Integer.parseInt(fracString);
 
-//        AutoCompleteTextView currencyEt = view.findViewById(
-//                R.id.fragment_add_stretch_dialog_acet_currency);
-//        Currency currency = Currency.getInstance(currencyEt.getText().toString());
         return new Price(mainPart, fracPart, m_currency);
     }
 
@@ -751,9 +756,6 @@ public class AddStretchDialogFragment extends DialogFragment {
         if (isValid)
             price.setError(null);
 
-//        if (!validateCurrency(resources, view))
-//            isValid = false;
-
         return isValid;
     }
 
@@ -771,31 +773,6 @@ public class AddStretchDialogFragment extends DialogFragment {
             return false;
         }
     }
-
-
-
-//    private boolean validateCurrency(Resources resources, View view)
-//    {
-//        EditText currency = view.findViewById(R.id.fragment_add_stretch_dialog_acet_currency);
-//        String currStr = currency.getText().toString();
-//        if (currStr.isEmpty())
-//        {
-//            currency.setError(resources.getString(R.string.empty_field_error));
-//            return false;
-//        }
-//
-//        try
-//        {
-//            Currency.getInstance(currStr);
-//        }
-//        catch (IllegalArgumentException e)
-//        {
-//            currency.setError(resources.getString(R.string.invalid_currency_error));
-//            return false;
-//        }
-//
-//        return true;
-//    }
 
 
 

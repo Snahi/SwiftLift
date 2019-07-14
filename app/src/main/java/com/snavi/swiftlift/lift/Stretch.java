@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.snavi.swiftlift.database_objects.Const;
 import com.snavi.swiftlift.utils.Price;
@@ -25,14 +24,15 @@ import androidx.annotation.NonNull;
 
 public class Stretch implements Serializable {
 
+    private String m_id;
     private String m_liftId;
-    private transient LatLng m_coordFrom;   // transient means skip it during defaultWriteObject()/defaultReadObject()
-    private transient LatLng m_coordTo;     // transient means skip it during defaultWriteObject()/defaultReadObject()
     private String m_addrFrom;
     private String m_addrTo;
-    private Date m_depDate;
-    private Date m_arrDate;
-    private Price m_price;
+    private Price  m_price;
+    private Date   m_depDate;
+    private Date   m_arrDate;
+    private transient LatLng m_coordFrom;   // transient means skip it during defaultWriteObject()/defaultReadObject()
+    private transient LatLng m_coordTo;     // transient means skip it during defaultWriteObject()/defaultReadObject()
 
 
     Stretch(LatLng coordFrom, LatLng coordTo, String addrFrom, String addrTo,
@@ -52,9 +52,10 @@ public class Stretch implements Serializable {
 
 
 
-    Stretch(LatLng coordFrom, LatLng coordTo, String addrFrom, String addrTo,
-            Date depDate, Date arrDate, Price price, String liftId)
+    private Stretch(LatLng coordFrom, LatLng coordTo, String addrFrom, String addrTo,
+            Date depDate, Date arrDate, Price price, String liftId, String id)
     {
+        this.m_id        = id;
         this.m_coordFrom = coordFrom;
         this.m_coordTo   = coordTo;
         this.m_addrFrom  = addrFrom;
@@ -91,7 +92,11 @@ public class Stretch implements Serializable {
 
 
 
-    public static Stretch loadFromDoc(@NonNull DocumentSnapshot doc, Currency currency)
+    // end of serialization ///////////////////////////////////////////////////////////////////////
+
+
+
+    static Stretch loadFromDoc(@NonNull DocumentSnapshot doc, Currency currency, String id)
     {
         LatLng locFrom  = getLoc(doc, Const.STRETCH_FROM_LOC);
         LatLng locTo    = getLoc(doc, Const.STRETCH_TO_LOC);
@@ -111,10 +116,11 @@ public class Stretch implements Serializable {
                 "\nprice: " + price +
                 "\nliftId: " + liftId);
         if (locFrom == null || locTo == null || addrFrom == null || addrTo == null ||
-                depDate == null || arrDate == null || price == null || liftId == null)
+                depDate == null || arrDate == null || liftId == null)
             return null;
         else
-            return new Stretch(locFrom, locTo, addrFrom, addrTo, depDate, arrDate, price, liftId);
+            return new Stretch(locFrom, locTo, addrFrom, addrTo, depDate, arrDate, price, liftId,
+                    id);
     }
 
 
@@ -229,18 +235,6 @@ public class Stretch implements Serializable {
 
     // getters & setters ///////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////////////////
-    //    Very Important!     Very Important!     Very Important!     Very Important! //
-    //    Very Important!     Very Important!     Very Important!     Very Important! //
-    ////////////////////////////////////////////////////////////////////////////////////
-    //////////// Under no circumstances change getters & setters name //////////////////
-    ////////////////////////////////////////////////////////////////////////////////////
-    // reason: the methods are providing name for fields in database, but they are    //
-    // also available via Cont interface constants and those constants won't change   //
-    // when one changes getters && setters names.                                     //
-    ////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////
-
     public LatLng getCoordFrom() {
         return m_coordFrom;
     }
@@ -302,6 +296,16 @@ public class Stretch implements Serializable {
     public String getLiftId()
     {
         return m_liftId;
+    }
+
+    public void setId(String id)
+    {
+        m_id = id;
+    }
+
+    public String getId()
+    {
+        return m_id;
     }
 
 }

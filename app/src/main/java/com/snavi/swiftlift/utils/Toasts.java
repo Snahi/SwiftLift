@@ -36,4 +36,28 @@ public class Toasts {
         Toast.makeText(context, context.getResources()
                 .getString(R.string.error_during_loading_lift), Toast.LENGTH_LONG).show();
     }
+
+
+
+    public static void showStretchDeleteErrorToast(Context context)
+    {
+        Toast.makeText(context, context.getResources()
+                .getString(R.string.stretch_delete_failure), Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showLiftsLoadErrorToast(Context context)
+    {
+        Toast.makeText(context, context.getResources()
+                .getString(R.string.lifts_load_error), Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showInvalidDataToast(Context context)
+    {
+        Toast.makeText(context, context.getResources()
+                .getString(R.string.invalid_data), Toast.LENGTH_LONG).show();
+    }
 }

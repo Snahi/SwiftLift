@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,9 +49,14 @@ public class DriverFragment extends Fragment {
 
 
     // CONST //////////////////////////////////////////////////////////////////////////////////////
+    // request codes
     private static final int CREATE_LIFT_REQ_CODE = 7831;
     private static final int EDIT_LIFT_REQ_CODE   = 7832;
+    // errors
     private static final String NULL_INTENT_ERROR = "Null data intent in onActivityResult. LiftActivity must return intent";
+    // other
+    private static final int INIT_LIFTS_LOAD_TRIAL_LEFT = 7;
+    private static final String TAG                     = DriverFragment.class.getName();
 
 
     // fields /////////////////////////////////////////////////////////////////////////////////////
@@ -59,6 +65,11 @@ public class DriverFragment extends Fragment {
     private CollectionReference m_liftsCollection;
     private CollectionReference m_stretchesCollection;
     private ProgressBar m_progressBar;
+    /**
+     * when loading lifts failed it will be repeated if m_liftsLoadTrialsLeft is greater than 0.
+     * It will decrease by one during each trial.
+     */
+    private int m_liftsLoadTrialsLeft;
 
 
     public DriverFragment() {
@@ -70,9 +81,10 @@ public class DriverFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        m_db = FirebaseFirestore.getInstance();
-        m_liftsCollection = m_db.collection(Const.LIFTS_COLLECTION);
+        m_db                  = FirebaseFirestore.getInstance();
+        m_liftsCollection     = m_db.collection(Const.LIFTS_COLLECTION);
         m_stretchesCollection = m_db.collection(Const.STRETCHES_COLLECTION);
+        m_liftsLoadTrialsLeft = INIT_LIFTS_LOAD_TRIAL_LEFT;
     }
 
 
@@ -137,7 +149,21 @@ public class DriverFragment extends Fragment {
                         }
                         m_progressBar.setVisibility(View.GONE);
                     }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e)
+                    {
+                        Log.e(TAG, e.getMessage());
+                        if (m_liftsLoadTrialsLeft > 0)
+                        {
+                            m_liftsLoadTrialsLeft--;
+                            loadLifts(lifts);
+                        }
+                        else
+                            Toasts.showLiftsLoadErrorToast(getContext());
+                    }
+                });
 
     }
 
@@ -209,6 +235,17 @@ public class DriverFragment extends Fragment {
     private void deleteLift(String liftId)
     {
         m_liftsCollection.document(liftId).delete();
+
+        ArrayList<Lift> lifts = m_adapter.m_lifts;
+        for (int i = 0; i < lifts.size(); ++i)
+        {
+            if (lifts.get(i).getId().equals(liftId))
+            {
+                lifts.remove(i);
+                m_adapter.notifyItemChanged(i);
+                return;
+            }
+        }
     }
 
 
