@@ -1,6 +1,7 @@
 package com.snavi.swiftlift.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -15,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -30,6 +32,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.snavi.swiftlift.R;
@@ -37,11 +40,14 @@ import com.snavi.swiftlift.database_objects.Const;
 import com.snavi.swiftlift.lift.AddStretchDialogFragment;
 import com.snavi.swiftlift.lift.Lift;
 import com.snavi.swiftlift.lift.Stretch;
+import com.snavi.swiftlift.utils.KeyboardUtils;
 import com.snavi.swiftlift.utils.Price;
+import com.snavi.swiftlift.utils.Toasts;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -50,26 +56,24 @@ import java.util.Locale;
 public class LiftActivity extends AppCompatActivity implements
         AddStretchDialogFragment.OnFragmentInteractionListener {
 
-    // TODO cancel button -> now save buttons works as cancel as well, but it shoud be changed, so that user knows that his empty lift wasn't saved
     // TODO force stretches to be continuous
-    // TODO remove you have no lifts text
-    // TODO rename save button to done
     // TODO previous points on map during new point choosing
     // TODO delete and edit buttons
+    // TODO sometimes lifts are not loaded
 
     // CONST //////////////////////////////////////////////////////////////////////////////////////
     public static final String TAG = LiftActivity.class.getName();
     public static final String NULL_INTENT_ERROR = "null intent error, can't get stretches";
     private static final String ADD_STRETCH_DIALOD_TAG = "add stretch";
     public static final String STRETCHES_ARRAY_KEY = "stretches";
-    public static final String LIFT_DOCUMENT_KEY = "lift_id";
+    public static final String LIFT_KEY = "lift";
     public static final String STRETCHES_TYPE_EXCEPTION = "Stretches passed to this activity should be in ArrayList<Stretch>, not ";
     public static final String RESULT_LIFT_KEY = "success";
     private static final int LOCATION_PERMISION_REQ_CODE = 1;
 
 
     // fields /////////////////////////////////////////////////////////////////////////////////////
-    private String m_liftId;
+    private Lift m_lift;
     private CollectionReference m_stretchesCollection;
     private StretchesAdapter m_adapter;
     /**
@@ -80,9 +84,24 @@ public class LiftActivity extends AppCompatActivity implements
      * end.
      */
     private LatLng m_mostConvenientLocation;
+    /**
+     * because stretches must be continuous when user adds first stretch the following ones will
+     * have set coordFrom as the m_lastStretchLoc (coordTo of previous stretch). Null if it is the
+     * first stretch
+     */
+    @Nullable private LatLng m_lastStretchLoc;
+    @Nullable private String m_lastStretchAddr;
+    /**
+     * when user adds first stretch the next ones will have default departure date set to
+     * m_lastStretchDate (arrDate of previous stretch). Null if it is the first stretch
+     */
+    @Nullable private Date m_lastStretchDate;
+
 
     // views
     private AutoCompleteTextView m_currency;
+    private TextView m_noLiftsText;
+
 
 
     @Override
@@ -90,11 +109,20 @@ public class LiftActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lift);
 
-        initActivityDetails();
+        initViews();
         initMostConvenientLocation();
         initRecyclerView();
         initFirebase();
+        initActivityDetails();
         setButtonsListeners();
+    }
+
+
+
+    private void initViews()
+    {
+        m_noLiftsText = findViewById(R.id.activity_lift_tv_empty_stretches);
+        m_currency    = findViewById(R.id.activity_lift_actv_currency);
     }
 
 
@@ -104,9 +132,42 @@ public class LiftActivity extends AppCompatActivity implements
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, Price.CURRENCIES);
 
-        m_currency = findViewById(R.id.activity_lift_actv_currency);
         m_currency.setAdapter(adapter);
         m_currency.setThreshold(1);
+        m_currency.setText(m_lift.getCurrencyCode());
+        setCurrencyListener();
+    }
+
+
+
+    private void setCurrencyListener()
+    {
+        m_currency.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (validateCurrency())
+                {
+                    m_lift.setCurrency(Currency.getInstance(m_currency.getText().toString()));
+                    updateStretchesCurrency();
+                    KeyboardUtils.hideSoftKeyboard(LiftActivity.this);
+                }
+                return true;
+            }
+        });
+    }
+
+
+
+    private void updateStretchesCurrency()
+    {
+        Price price;
+        for (Stretch stretch : m_adapter.m_stretches)
+        {
+            price = stretch.getPrice();
+            price.setCurrency(m_lift.getCurrency());
+        }
+
+        m_adapter.notifyDataSetChanged();
     }
 
 
@@ -162,9 +223,10 @@ public class LiftActivity extends AppCompatActivity implements
         if (intent == null)
             throw new LiftIdNotSpecifiedException();
 
-        m_liftId = intent.getStringExtra(LIFT_DOCUMENT_KEY);
-        if (m_liftId == null)
+        m_lift = intent.getParcelableExtra(LIFT_KEY);
+        if (m_lift == null)
             throw new LiftIdNotSpecifiedException();
+        m_lift.setStretches(m_adapter.m_stretches);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         m_stretchesCollection = db.collection(Const.STRETCHES_COLLECTION);
@@ -190,11 +252,16 @@ public class LiftActivity extends AppCompatActivity implements
                 {
                     AddStretchDialogFragment addStretchDial = new AddStretchDialogFragment();
                     Bundle bun = new Bundle();
-                    bun.putString(AddStretchDialogFragment.LIFT_ID_KEY, m_liftId);
-                    bun.putParcelable(AddStretchDialogFragment.INIT_COORDINATES_KEY,
+
+                    bun.putString(AddStretchDialogFragment.LIFT_ID_KEY, m_lift.getId());            // Lift id
+                    bun.putParcelable(AddStretchDialogFragment.INIT_COORDINATES_KEY,                // Init coordinates
                             m_mostConvenientLocation);
-                    bun.putSerializable(AddStretchDialogFragment.CURRECY_KEY,
+                    bun.putSerializable(AddStretchDialogFragment.CURRENCY_KEY,                      // currency
                             Currency.getInstance(m_currency.getText().toString()));
+                    bun.putParcelable(AddStretchDialogFragment.DEP_COORDS_KEY, m_lastStretchLoc);       // departure coordinates
+                    bun.putString(AddStretchDialogFragment.DEP_ADDR_KEY, m_lastStretchAddr);            // departure address
+                    bun.putSerializable(AddStretchDialogFragment.DEP_DATE_KEY, m_lastStretchDate);      // departure date
+
                     addStretchDial.setArguments(bun);
                     addStretchDial.show(getSupportFragmentManager(), ADD_STRETCH_DIALOD_TAG);
                 }
@@ -235,34 +302,46 @@ public class LiftActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view)
             {
-                prepareActivityToFinish();
-                finish();
+                if(prepareActivityToFinish())
+                    finish();
             }
         });
     }
 
 
 
-    private void prepareActivityToFinish()
+    private boolean prepareActivityToFinish()
     {
         ArrayList<Stretch> stretches = m_adapter.m_stretches;
 
         Intent data = new Intent();
 
+        String userId = FirebaseAuth.getInstance().getUid();
+        if (userId == null)
+        {
+            Toasts.showUserSignedOutToast(this);
+            return false;
+        }
+
+        if (!validateCurrency())
+            return false;
+
+        m_lift.setCurrency(Currency.getInstance(m_currency.getText().toString()));
+        m_lift.updateInDb();
+        updateStretchesCurrency();
+
         if (stretches.isEmpty())
         {
-            Lift lift = new Lift(stretches, Currency.getInstance(Locale.getDefault()),      // even though the result will be canceled I return
-                    m_liftId);                                                              // empty lift, because it holds id. That is
-            data.putExtra(RESULT_LIFT_KEY, lift);                                           // important, because document for the lift has
-            setResult(Activity.RESULT_CANCELED, data);                                      // already been created, so it must be deleted
+            data.putExtra(RESULT_LIFT_KEY, m_lift);
+            setResult(Activity.RESULT_CANCELED, data);
         }
         else
         {
-            Lift lift = new Lift(stretches, stretches.get(0).getPrice().getCurrency(),
-                    m_liftId);
-            data.putExtra(RESULT_LIFT_KEY, lift);
+            data.putExtra(RESULT_LIFT_KEY, m_lift);
             setResult(Activity.RESULT_OK, data);
         }
+
+        return true;
     }
 
 
@@ -270,8 +349,8 @@ public class LiftActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed()
     {
-        prepareActivityToFinish();
-        super.onBackPressed();
+        if (prepareActivityToFinish())
+            super.onBackPressed();
     }
 
 
@@ -325,9 +404,12 @@ public class LiftActivity extends AppCompatActivity implements
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful())
                 {
-                    m_adapter.m_stretches.add(stretch);
+                    m_lift.addStretch(stretch);
                     m_adapter.notifyDataSetChanged();
                     m_mostConvenientLocation = stretch.getCoordTo();
+                    m_lastStretchAddr = stretch.getAddrTo();
+                    m_lastStretchLoc  = stretch.getCoordTo();
+                    m_lastStretchDate = stretch.getArrDate();
                 }
                 else
                     showStretchAddErrorSnackbar();
@@ -386,6 +468,9 @@ public class LiftActivity extends AppCompatActivity implements
                                      int position)
         {
             holder.bind(m_stretches.get(position));
+
+            if (!m_stretches.isEmpty())
+                m_noLiftsText.setVisibility(View.GONE);
         }
 
 

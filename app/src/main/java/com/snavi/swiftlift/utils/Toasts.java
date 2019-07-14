@@ -20,4 +20,20 @@ public class Toasts {
         Toast.makeText(context, context.getResources()
                 .getString(R.string.unknown_error), Toast.LENGTH_LONG).show();
     }
+
+
+
+    public static void showUserSignedOutToast(Context context)
+    {
+        Toast.makeText(context, context.getResources()
+                .getString(R.string.auth_error), Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showLiftLoadErrorToast(Context context)
+    {
+        Toast.makeText(context, context.getResources()
+                .getString(R.string.error_during_loading_lift), Toast.LENGTH_LONG).show();
+    }
 }

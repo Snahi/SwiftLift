@@ -2,9 +2,15 @@ package com.snavi.swiftlift.lift;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.snavi.swiftlift.database_objects.Const;
 import com.snavi.swiftlift.utils.Price;
 
@@ -12,10 +18,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 // TODO add owner to fields and contructors, load from database method
+// TODO remove currency from strtches
 public class Lift implements Parcelable {
 
 
@@ -26,13 +36,15 @@ public class Lift implements Parcelable {
             "Currency was not passed";
     private static final String NULL_ID_ERROR = "Error during loading from parcelable. Id was not" +
             "passed";
+    private static final String NULL_OWNER_ID = "Error during loading from parcelable. Owner id " +
+            "was not passed";
 
 
     // fields /////////////////////////////////////////////////////////////////////////////////////
     @NonNull private ArrayList<Stretch> m_stretches;
     @NonNull private Currency m_currency;
     @NonNull private String m_id;
-    @NonNull private String m_owner;
+    @Nullable private String m_owner;
 
     // parcelable
     public static final Parcelable.Creator<Lift> CREATOR = new Parcelable.Creator<Lift>()
@@ -67,6 +79,11 @@ public class Lift implements Parcelable {
         String id = inParcel.readString();
         if (id == null) throw new RuntimeException(NULL_ID_ERROR);
         m_id = id;
+
+        // owner
+        String ownerId = inParcel.readString();
+        if (ownerId == null) throw new RuntimeException(NULL_OWNER_ID);
+        m_owner = ownerId;
     }
 
 
@@ -85,16 +102,18 @@ public class Lift implements Parcelable {
         outParcel.writeSerializable(m_stretches);
         outParcel.writeSerializable(m_currency);
         outParcel.writeString(m_id);
+        outParcel.writeString(m_owner);
     }
 
 
 
     public Lift(@NonNull ArrayList<Stretch> stretches, @NonNull Currency currency,
-                @NonNull String id)
+                @NonNull String id, @Nullable String ownerId)
     {
         m_stretches = stretches;
         m_currency = currency;
         m_id = id;
+        m_owner = ownerId;
     }
 
 
@@ -110,6 +129,7 @@ public class Lift implements Parcelable {
 
 
 
+    @Nullable
     public static Lift loadFromDoc(DocumentSnapshot doc)
     {
         String id = doc.getId();
@@ -125,7 +145,50 @@ public class Lift implements Parcelable {
 
         Currency currency = Currency.getInstance((String) pre);
 
-        return new Lift(new ArrayList<Stretch>(), currency, id);
+        return new Lift(new ArrayList<Stretch>(), currency, id, owner);
+    }
+
+
+
+    public void loadStretchesFromDb()
+    {
+        FirebaseFirestore db         = FirebaseFirestore.getInstance();
+        CollectionReference stretchesCol = db.collection(Const.STRETCHES_COLLECTION);
+
+        stretchesCol.whereEqualTo(Const.STRETCH_LIFT_ID, m_id).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots)
+                    {
+                        List<DocumentSnapshot> stretchesDocs = queryDocumentSnapshots.getDocuments();
+                        for (DocumentSnapshot doc : stretchesDocs)
+                        {
+                            m_stretches.add(Stretch.loadFromDoc(doc, m_currency));
+                        }
+                    }
+                });
+    }
+
+
+
+    public void updateInDb()
+    {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(Const.LIFTS_COLLECTION).document(m_id).set(getFirestoreObject());
+    }
+
+
+
+    public void addStretch(Stretch stretch)
+    {
+        m_stretches.add(stretch);
+    }
+
+
+
+    public void setStretches(@NonNull ArrayList<Stretch> stretches)
+    {
+        m_stretches = stretches;
     }
 
 
@@ -179,13 +242,37 @@ public class Lift implements Parcelable {
 
     public String getPrice()
     {
+        Log.d("MY", "currency: " + m_currency.getCurrencyCode());
         Price res = new Price(0, 0, m_currency);
         for (Stretch s : m_stretches)
         {
-            res.add(s.getPrice());
+            Log.d("MY", "stretch currency: " + s.getPrice().getCurrency().getCurrencyCode());
+            Log.d("MY", "" + res.add(s.getPrice()));
         }
 
         return res.toString();
+    }
+
+
+
+    @NonNull
+    public Currency getCurrency()
+    {
+        return m_currency;
+    }
+
+
+
+    public void setCurrency(@NonNull Currency currency)
+    {
+        m_currency = currency;
+    }
+
+
+
+    public String getCurrencyCode()
+    {
+        return m_currency.getCurrencyCode();
     }
 
 
@@ -194,4 +281,6 @@ public class Lift implements Parcelable {
     {
         return m_id;
     }
+
+
 }

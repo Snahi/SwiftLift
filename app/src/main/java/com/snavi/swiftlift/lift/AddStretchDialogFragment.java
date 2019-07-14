@@ -23,8 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -41,6 +39,7 @@ import com.snavi.swiftlift.utils.Price;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,13 +54,18 @@ public class AddStretchDialogFragment extends DialogFragment {
     private static final int FROM_COORDS_REQ_CODE = 7771;
     private static final int TO_COORDS_REQ_CODE   = 7772;
     public static final String INIT_COORDINATES_KEY = "initial_coordinates";
-    public static final String CURRECY_KEY = "currency";
+    public static final String CURRENCY_KEY = "currency";
+    public static final String DEP_COORDS_KEY = "depCoords";
+    public static final String DEP_ADDR_KEY = "depAddr";
+    public static final String DEP_DATE_KEY = "depDate";
     private static final String TAG = AddStretchDialogFragment.class.getName();
     private static final String IOEXCEPTION_GEOCODING = "io exception occured during geocoding";
     private static final String NULL_CONTEXT_ERROR = "null context error";
     public static final String LIFT_ID_KEY = "l_id";
     private static final String LIFT_BUNDLE_EXCEPTION = "You must pass bundle with lift id!";
     private static final String NO_CURRENCY_PASSED_EXCEPTION = "Currency wasn't passed in arguments. It's obligatory";
+    public static final String DATE_FORMAT = "dd/MM/YYYY";
+    private static final String TIME_FORMAT = "HH:mm";
 
 
     // fields //////////////////////////////////////////////////////////////////////////////////////
@@ -72,6 +76,13 @@ public class AddStretchDialogFragment extends DialogFragment {
      * currency in which all prices in current lift are
      */
     private Currency m_currency;
+    private Bundle m_arguments;
+
+    // views
+    private TextView m_depAddrTV;
+    private ImageButton m_fromCoordsBut;
+    private EditText m_depDateET;
+    private EditText m_depTimeET;
 
     // result
     private Calendar m_depDate;
@@ -96,9 +107,9 @@ public class AddStretchDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         m_depDate = Calendar.getInstance();
         m_arrDate = Calendar.getInstance();
-        Bundle bun = getNonNullArguments();
-        setupLiftId(bun);
-        setupCurrency(bun);
+        m_arguments = getNonNullArguments();
+        setupLiftId();
+        setupCurrency();
     }
 
 
@@ -117,9 +128,9 @@ public class AddStretchDialogFragment extends DialogFragment {
 
 
 
-    private void setupLiftId(Bundle bun)
+    private void setupLiftId()
     {
-        m_liftId = bun.getString(LIFT_ID_KEY);
+        m_liftId = m_arguments.getString(LIFT_ID_KEY);
 
         if (m_liftId == null)
             throw new RuntimeException(LIFT_BUNDLE_EXCEPTION);
@@ -127,11 +138,50 @@ public class AddStretchDialogFragment extends DialogFragment {
 
 
 
-    private void setupCurrency(Bundle bun)
+    private void setupCurrency()
     {
-        m_currency = (Currency) bun.getSerializable(CURRECY_KEY);
+        m_currency = (Currency) m_arguments.getSerializable(CURRENCY_KEY);
         if (m_currency == null)
             throw new RuntimeException(NO_CURRENCY_PASSED_EXCEPTION);
+    }
+
+
+
+    private void setupDerivedFromPreviousStretch()
+    {
+        setupDepLoc();
+        setupDepDate();
+    }
+
+
+
+    private void setupDepLoc()
+    {
+        m_depCoords = m_arguments.getParcelable(DEP_COORDS_KEY);
+        if (m_depCoords == null)
+            return;
+
+        m_depAddr = m_arguments.getString(DEP_ADDR_KEY);
+        if (m_depAddr == null)
+            return;
+
+        m_depAddrTV.setText(m_depAddr);
+        m_fromCoordsBut.setEnabled(false);
+    }
+
+
+
+    private void setupDepDate()
+    {
+        Date date = (Date) m_arguments.getSerializable(DEP_DATE_KEY);
+        if (date == null)
+            return;
+
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+        m_depDateET.setText(sdf.format(date.getTime()));
+
+        SimpleDateFormat sdfTime = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
+        m_depTimeET.setText(sdfTime.format(date.getTime()));
     }
 
 
@@ -147,6 +197,7 @@ public class AddStretchDialogFragment extends DialogFragment {
         if (args != null)
             m_initCoords = getArguments().getParcelable(INIT_COORDINATES_KEY);
 
+        initViews(view);
         lockEditTexts(view);
         setButtonsListeners(view);
         setDepDateEtListener(view);
@@ -154,18 +205,27 @@ public class AddStretchDialogFragment extends DialogFragment {
         setArrDateEtListener(view);
         setArrTimeEtListener(view);
         setupCurrency(view);
+        setupDerivedFromPreviousStretch();
 
         return view;
     }
 
 
 
+    private void initViews(View view)
+    {
+        m_depAddrTV     = view.findViewById(R.id.fragment_add_stretch_dialog_tv_dep_place);
+        m_fromCoordsBut = view.findViewById(R.id.fragment_add_stretch_dialog_but_choose_dep_loc);
+        m_depDateET     = view.findViewById(R.id.fragment_add_stretch_dialog_et_dep_date);
+        m_depTimeET     = view.findViewById(R.id.fragment_add_stretch_dialog_et_dep_time);
+    }
+
+
+
     private void lockEditTexts(View view)
     {
-        EditText depDate = view.findViewById(R.id.fragment_add_stretch_dialog_et_dep_date);
-        depDate.setInputType(InputType.TYPE_NULL);
-        EditText depTime = view.findViewById(R.id.fragment_add_stretch_dialog_et_dep_time);
-        depTime.setInputType(InputType.TYPE_NULL);
+        m_depDateET.setInputType(InputType.TYPE_NULL);
+        m_depTimeET.setInputType(InputType.TYPE_NULL);
         EditText arrDate = view.findViewById(R.id.fragment_add_stretch_dialog_et_arr_date);
         arrDate.setInputType(InputType.TYPE_NULL);
         EditText arrTime = view.findViewById(R.id.fragment_add_stretch_dialog_et_arr_time);
@@ -335,8 +395,7 @@ public class AddStretchDialogFragment extends DialogFragment {
 
     private void setDepDateEtListener(View view)
     {
-        EditText et = view.findViewById(R.id.fragment_add_stretch_dialog_et_dep_date);
-        et.setOnClickListener(new View.OnClickListener() {
+        m_depDateET.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
@@ -440,8 +499,7 @@ public class AddStretchDialogFragment extends DialogFragment {
 
     private void updateDateEt(Calendar calendar, EditText et)
     {
-        String format = "dd/MM/YYYY";
-        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
 
         et.setText(sdf.format(calendar.getTime()));
     }
@@ -466,8 +524,7 @@ public class AddStretchDialogFragment extends DialogFragment {
 
     private void updateTimeEt(Calendar calendar, EditText et)
     {
-        String format = "HH:mm";
-        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
 
         et.setText(sdf.format(calendar.getTime()));
     }

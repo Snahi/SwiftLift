@@ -73,29 +73,25 @@ public class Stretch implements Serializable {
 
     private void writeObject(ObjectOutputStream out) throws IOException
     {
-        Log.d("MY", "in writeObject");
         out.defaultWriteObject();
         out.writeDouble(m_coordFrom.latitude);
         out.writeDouble(m_coordFrom.longitude);
         out.writeDouble(m_coordTo.latitude);
         out.writeDouble(m_coordTo.longitude);
-        Log.d("MY", "end of write object");
     }
 
 
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
     {
-        Log.d("MY", "in readObject");
         in.defaultReadObject();
         m_coordFrom = new LatLng(in.readDouble(), in.readDouble());
         m_coordTo   = new LatLng(in.readDouble(), in.readDouble());
-        Log.d("MY", "end of readObject");
     }
 
 
 
-    public static Stretch loadFromDoc(@NonNull DocumentSnapshot doc)
+    public static Stretch loadFromDoc(@NonNull DocumentSnapshot doc, Currency currency)
     {
         LatLng locFrom  = getLoc(doc, Const.STRETCH_FROM_LOC);
         LatLng locTo    = getLoc(doc, Const.STRETCH_TO_LOC);
@@ -103,7 +99,7 @@ public class Stretch implements Serializable {
         String addrTo   = getString(doc, Const.STRETCH_TO_ADDR);
         Date depDate    = getDate(doc, Const.STRETCH_DEP);
         Date arrDate    = getDate(doc, Const.STRETCH_ARR);
-        Price price     = getPrice(doc, Const.STRETCH_PRICE);
+        Price price     = getPrice(doc, currency);
         String liftId   = getString(doc, Const.STRETCH_LIFT_ID);
 
         Log.d("MY", "locFrom: " + locFrom +
@@ -168,35 +164,25 @@ public class Stretch implements Serializable {
 
 
 
-    private static Price getPrice(DocumentSnapshot doc, String key)
+    private static Price getPrice(DocumentSnapshot doc, Currency currency)
     {
-        Object res = doc.get(key);
-        if (!(res instanceof Map))
-            return null;
-        Log.d("MY", "is map");
-        // check if all fields are present
-        Map resMap = (Map) res;
-        if (!(
-                resMap.containsKey(Const.PRICE_MAIN_PART) &&
-                resMap.containsKey(Const.PRICE_FRAC_PART) &&
-                resMap.containsKey(Const.PRICE_CURRENCY_CODE)
-        ))
-            return null;
-        Log.d("MY", "keys exists");
-        Object mainPart = resMap.get(Const.PRICE_MAIN_PART);
-        Object fracPart = resMap.get(Const.PRICE_FRAC_PART);
-        Object currency = resMap.get(Const.PRICE_CURRENCY_CODE);
+        Object mainPartObj = doc.get(Const.STRETCH_PRICE_MAIN);
+        Object fracPartObj = doc.get(Const.STRETCH_PRICE_FRAC);
 
-        // check if all fields has proper type
-        if (!(
-                mainPart instanceof Long &&
-                fracPart instanceof Long &&
-                currency instanceof String
-                ))
-            return null;
-        Log.d("MY", "all ok");
+        int mainPart;
+        int fracPart;
+        try
+        {
+            mainPart = mainPartObj == null ? 0 : ((Long) mainPartObj).intValue();
+            fracPart = fracPartObj == null ? 0 : ((Long) fracPartObj).intValue();
+        }
+        catch (NumberFormatException e)
+        {
+            mainPart = 0;
+            fracPart = 0;
+        }
 
-        return new Price(((Long) mainPart).intValue(), ((Long) fracPart).intValue(), Currency.getInstance((String) currency));
+        return new Price(mainPart, fracPart, currency);
     }
 
 
@@ -210,7 +196,8 @@ public class Stretch implements Serializable {
         res.put(Const.STRETCH_TO_ADDR, m_addrTo);
         res.put(Const.STRETCH_FROM_LOC, m_coordFrom);
         res.put(Const.STRETCH_TO_LOC, m_coordTo);
-        res.put(Const.STRETCH_PRICE, m_price.getFirestoreObject());
+        res.put(Const.STRETCH_PRICE_MAIN, m_price.getMainPart());
+        res.put(Const.STRETCH_PRICE_FRAC, m_price.getFractionalPart());
         res.put(Const.STRETCH_LIFT_ID, m_liftId);
 
         return res;

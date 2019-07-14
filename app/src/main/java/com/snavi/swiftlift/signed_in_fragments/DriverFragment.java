@@ -41,11 +41,8 @@ import com.snavi.swiftlift.utils.Toasts;
 
 import java.util.ArrayList;
 import java.util.Currency;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
 
 public class DriverFragment extends Fragment {
 
@@ -126,58 +123,22 @@ public class DriverFragment extends Fragment {
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots)
                     {
                         List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
-                        ArrayList<String> ids = new ArrayList<>(docs.size());
+                        Lift lift;
                         for (DocumentSnapshot doc : docs)
-                            ids.add(doc.getId());
-                        createLifts(lifts, ids);
+                        {
+                            lift = Lift.loadFromDoc(doc);
+                            if (lift != null)
+                            {
+                                lifts.add(lift);
+                                lift.loadStretchesFromDb();
+                            }
+                            else
+                                Toasts.showLiftLoadErrorToast(getContext());
+                        }
+                        m_progressBar.setVisibility(View.GONE);
                     }
         });
 
-    }
-
-
-
-    private void createLifts(final ArrayList<Lift> lifts, ArrayList<String> ids)
-    {
-        for (final String id : ids)
-        {
-            m_stretchesCollection.whereEqualTo(Const.STRETCH_LIFT_ID, id).get()
-                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots)
-                        {
-                            List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
-
-                            ArrayList<Stretch> stretches = getStretches(docs);
-                            Currency currency = stretches.isEmpty() ?
-                                    Currency.getInstance(Locale.getDefault())
-                                    :
-                                    stretches.get(0).getPrice().getCurrency();
-                            lifts.add(new Lift(stretches, currency, id));
-                            m_adapter.notifyItemChanged(lifts.size() - 1);
-                        }
-            });
-        }
-
-        m_progressBar.setVisibility(View.GONE);
-    }
-
-
-
-    private ArrayList<Stretch> getStretches(List<DocumentSnapshot> docs)
-    {
-        ArrayList<Stretch> stretches = new ArrayList<>();
-        Stretch stretch;
-        for (DocumentSnapshot doc : docs)
-        {
-            Log.d("MY", "in getStretches for loop");
-            stretch = Stretch.loadFromDoc(doc);
-            Log.d("MY", "stretch = " + stretch);
-            if (stretch != null)
-                stretches.add(stretch);
-        }
-
-        return stretches;
     }
 
 
@@ -188,14 +149,14 @@ public class DriverFragment extends Fragment {
         but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String liftId = createNewLift();
-                if (liftId == null)
+                Lift lift = createNewLift();
+                if (lift == null)                   // because userId was not available
                 {
                     showAuthErrorSnackbar();
                     return;
                 }
                 Intent intent = new Intent(getContext(), LiftActivity.class);
-                intent.putExtra(LiftActivity.LIFT_DOCUMENT_KEY, liftId);
+                intent.putExtra(LiftActivity.LIFT_KEY, lift);
                 startActivityForResult(intent, CREATE_LIFT_REQ_CODE);
             }
         });
@@ -239,6 +200,8 @@ public class DriverFragment extends Fragment {
         Lift lift = data.getParcelableExtra(LiftActivity.RESULT_LIFT_KEY);
         if (resCode == Activity.RESULT_CANCELED)
             deleteLift(lift.getId());
+        else
+            m_adapter.replace(lift);
     }
 
 
@@ -262,7 +225,7 @@ public class DriverFragment extends Fragment {
      *
      * @return lift id
      */
-    private String createNewLift()
+    private Lift createNewLift()
     {
         DocumentReference liftDoc = m_liftsCollection.document();
 
@@ -270,10 +233,11 @@ public class DriverFragment extends Fragment {
         if (userId == null)
             return null;
 
-        Map<String, Object> lift = new HashMap<>();
-        lift.put(Const.LIFT_OWNER, userId);
-        liftDoc.set(lift);
-        return liftDoc.getId();
+        Lift lift = new Lift(new ArrayList<Stretch>(), Currency.getInstance(Locale.getDefault()),
+                liftDoc.getId(), userId);
+        liftDoc.set(lift.getFirestoreObject());
+
+        return lift;
     }
 
 
@@ -352,9 +316,7 @@ public class DriverFragment extends Fragment {
                 return;
 
             TextView tvNoLifts = getActivity().findViewById(R.id.fragment_driver_tv_no_lifts);
-            if (m_lifts.isEmpty())
-                tvNoLifts.setVisibility(View.VISIBLE);
-            else
+            if (!m_lifts.isEmpty())
                 tvNoLifts.setVisibility(View.GONE);
         }
 
@@ -363,6 +325,21 @@ public class DriverFragment extends Fragment {
         @Override
         public int getItemCount() {
             return m_lifts.size();
+        }
+
+
+
+        private void replace(Lift lift)
+        {
+            for (int i = 0; i < m_lifts.size(); i++)
+            {
+                if (m_lifts.get(i).getId().equals(lift.getId()))
+                {
+                    m_lifts.set(i, lift);
+                    notifyItemChanged(i);
+                    return;
+                }
+            }
         }
 
 
@@ -475,7 +452,7 @@ public class DriverFragment extends Fragment {
                                 LiftActivity.class);
                         Lift lift = m_lifts.get(getAdapterPosition());
                         intent.putExtra(LiftActivity.STRETCHES_ARRAY_KEY, lift.getStretches());
-                        intent.putExtra(LiftActivity.LIFT_DOCUMENT_KEY, lift.getId());
+                        intent.putExtra(LiftActivity.LIFT_KEY, lift);
 
                         startActivityForResult(intent, EDIT_LIFT_REQ_CODE);
                     }

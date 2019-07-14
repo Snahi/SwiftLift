@@ -103,4 +103,5 @@
     <string name="currency_text">currency</string>
     <string name="i_e_eur_text">i.e. EUR</string>
     <string name="done_text">done</string>
+    <string name="error_during_loading_lift">Error occurred during loading lift!</string>
 </resources>

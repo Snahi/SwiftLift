@@ -21,7 +21,8 @@ public interface Const {
     String STRETCH_TO_ADDR      = "addrTo";
     String STRETCH_DEP          = "depDate";
     String STRETCH_ARR          = "arrDate";
-    String STRETCH_PRICE        = "price";
+    String STRETCH_PRICE_MAIN   = "price_main";
+    String STRETCH_PRICE_FRAC   = "price_frac";
 
     // coordinates /////////////////////////////////////////////////////////////////////////////////
     String COORDINATE_LATITUDE  = "latitude";
