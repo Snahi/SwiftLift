@@ -41,7 +41,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-// TODO bug, when adding next stretch map is not moved
 // TODO can't click on edittext error because of focusable='false'
 // TODO (not very important) add previously selected points on map
 public class AddStretchDialogFragment extends DialogFragment {
@@ -159,6 +158,7 @@ public class AddStretchDialogFragment extends DialogFragment {
     {
         setupDepLoc();
         setupDepDate();
+        m_initCoords = m_depCoords;
     }
 
 

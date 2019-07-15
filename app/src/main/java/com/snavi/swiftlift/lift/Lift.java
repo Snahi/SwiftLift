@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+// TODO when stretches are added/loaded change their currency to lift's currency
 public class Lift implements Parcelable {
 
 
@@ -237,7 +238,7 @@ public class Lift implements Parcelable {
     }
 
 
-
+    @NonNull
     public ArrayList<Stretch> getStretches()
     {
         return m_stretches;
@@ -245,6 +246,7 @@ public class Lift implements Parcelable {
 
 
 
+    @NonNull
     public String getFrom()
     {
         if (m_stretches.isEmpty())
@@ -255,6 +257,7 @@ public class Lift implements Parcelable {
 
 
 
+    @NonNull
     public String getTo()
     {
         if (m_stretches.isEmpty())
@@ -265,6 +268,7 @@ public class Lift implements Parcelable {
 
 
 
+    @NonNull
     public String getDepDate()
     {
         if (m_stretches.isEmpty())
@@ -275,6 +279,7 @@ public class Lift implements Parcelable {
 
 
 
+    @NonNull
     public String getArrDate()
     {
         if (m_stretches.isEmpty())
@@ -285,6 +290,7 @@ public class Lift implements Parcelable {
 
 
 
+    @NonNull
     public String getPrice()
     {
         Log.d("MY", "currency: " + m_currency.getCurrencyCode());

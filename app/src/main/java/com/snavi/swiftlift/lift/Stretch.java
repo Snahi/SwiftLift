@@ -100,7 +100,7 @@ public class Stretch implements Serializable {
 
 
 
-    static Stretch loadFromDoc(@NonNull DocumentSnapshot doc, Currency currency, String id)
+    public static Stretch loadFromDoc(@NonNull DocumentSnapshot doc, Currency currency, String id)
     {
         LatLng locFrom  = getLoc(doc, Const.STRETCH_FROM_LAT, Const.STRETCH_FROM_LON);
         LatLng locTo    = getLoc(doc, Const.STRETCH_TO_LAT, Const.STRETCH_TO_LON);

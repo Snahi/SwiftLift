@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.users_data.FoundLiftsActivity"></activity>
+        <activity android:name=".activities.FoundLiftsActivity"></activity>
         <activity android:name=".activities.LiftActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

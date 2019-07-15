@@ -115,4 +115,5 @@
     <string name="earliest_departure_time_text">Earliest departure time</string>
     <string name="_20">20</string>
     <string name="default_distance_range">20</string>
+    <string name="unsupported_localization">Sorry, we don\'t support localizations close to 180th meridian or North Pole or South Pole. Try decreasing searching range</string>
 </resources>

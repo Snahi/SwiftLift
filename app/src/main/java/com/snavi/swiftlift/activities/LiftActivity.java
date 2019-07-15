@@ -511,10 +511,15 @@ public class LiftActivity extends AppCompatActivity implements
                 m_tvDateTo.setText(stretch.arrDateDisplay(Locale.getDefault()));
                 m_tvPrice.setText(stretch.getPrice().toString());
 
+                Log.d("MY", "adapter position: " + getAdapterPosition());
+                Log.d("MY", "stretches size: " + m_stretches.size());
                 if (getAdapterPosition() != m_stretches.size() - 1)                                 // user can delete only the last stretch
                     m_butDelete.setVisibility(View.INVISIBLE);
                 else
+                {
+                    m_butDelete.setVisibility(View.VISIBLE);
                     setupDeleteButtonListener();
+                }
             }
 
 
@@ -544,7 +549,9 @@ public class LiftActivity extends AppCompatActivity implements
                                         m_stretches.remove(posToRemove);
                                         m_adapter.notifyItemChanged(posToRemove);
                                         if (posToRemove > 0)
-                                            m_adapter.notifyItemChanged(posToRemove - 1);   // so that delete button is added to new last
+                                            m_adapter.notifyItemChanged(posToRemove - 1);
+                                        else
+                                            m_adapter.notifyItemChanged(0);
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {

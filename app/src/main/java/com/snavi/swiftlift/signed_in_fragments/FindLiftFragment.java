@@ -22,7 +22,7 @@ import android.widget.TimePicker;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.snavi.swiftlift.R;
-import com.snavi.swiftlift.activities.users_data.FoundLiftsActivity;
+import com.snavi.swiftlift.activities.FoundLiftsActivity;
 import com.snavi.swiftlift.utils.InternetUtils;
 import com.snavi.swiftlift.utils.Toasts;
 
