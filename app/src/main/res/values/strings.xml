@@ -119,4 +119,20 @@
     <string name="search_error">Some error occurred during searching</string>
     <string name="search_completed">Search completed. Number of results: </string>
     <string name="no_results">Sorry, there aren\'t any results for this search</string>
+    <string name="km">Km</string>
+    <string name="max_departure_distance">Max. departure distance</string>
+    <string name="max_arrival_distance">Max. arrival distance</string>
+    <string name="e_g_3">e.g. 3</string>
+    <string name="amount_of_passengers">amount of passengers</string>
+    <string name="default_num_of_passengers">3</string>
+    <string name="too_small_num_of_passengers">Minimum number of passengers is</string>
+    <string name="too_big_num_of_passengers">You jester! Maximium number of passengers is</string>
+    <string name="lift_owner_photo">Lift owner photo</string>
+    <string name="owner_name">Owner name</string>
+    <string name="address">address</string>
+    <string name="sample_date">21.07.2019 23:32</string>
+    <string name="sample_address">sample address</string>
+    <string name="sample_price">15.50 EUR</string>
+    <string name="enroll">Enroll</string>
+    <string name="contact">Contact</string>
 </resources>

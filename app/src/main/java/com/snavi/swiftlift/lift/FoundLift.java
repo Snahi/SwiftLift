@@ -4,6 +4,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.snavi.swiftlift.lift.Lift;
 import com.snavi.swiftlift.lift.Stretch;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
@@ -20,10 +21,73 @@ public class FoundLift extends Lift {
     // CONST ///////////////////////////////////////////////////////////////////////////////////////
     // errors
     private static final String BAD_STRETCH_IDX_ERROR = "Fatal error. startStretchIdx or endStretchIdx is not valid (smaller than 0 or out of bounds of m_stretches.size()";
+    private static final String PARCLABLE_START_STRETCH_LOAD_ERROR  = "Error occurred during reading from parcelable. You must provide start stretch as Serializable";
+    private static final String PARCLEABLE_END_STRETCH_LOAD_ERROR   = "Error occurred during reading from parcelable. You must provide end stretch as Serializable";
+
 
     // fields //////////////////////////////////////////////////////////////////////////////////////
     private Stretch m_startStretch;
     private Stretch m_endStretch;
+
+
+
+    // Parcelable //////////////////////////////////////////////////////////////////////////////////
+
+
+
+    public static final Parcelable.Creator<Lift> CREATOR = new Parcelable.Creator<Lift>()
+    {
+        @Override
+        public FoundLift createFromParcel(Parcel in) {
+            return new FoundLift(in);
+        }
+
+        @Override
+        public FoundLift[] newArray(int size) {
+            return new FoundLift[size];
+        }
+    };
+
+
+
+    private FoundLift(Parcel in)
+    {
+        super(in);
+
+        // m_startStretch
+        Serializable pre = in.readSerializable();
+        if (pre == null) throw new RuntimeException(PARCLABLE_START_STRETCH_LOAD_ERROR);
+        m_startStretch = (Stretch) pre;
+
+        // m_endStretch
+        pre = in.readSerializable();
+        if (pre == null)
+            throw new RuntimeException(PARCLEABLE_END_STRETCH_LOAD_ERROR);
+        m_endStretch = (Stretch) pre;
+    }
+
+
+
+    @Override
+    public int describeContents()
+    {
+        return 0;
+    }
+
+
+
+    @Override
+    public void writeToParcel(Parcel outParcel, int flags)
+    {
+        super.writeToParcel(outParcel, flags);
+
+        outParcel.writeSerializable(m_startStretch);
+        outParcel.writeSerializable(m_endStretch);
+    }
+
+
+
+    // init ////////////////////////////////////////////////////////////////////////////////////////
 
 
     public FoundLift(@NonNull ArrayList<Stretch> stretches, @NonNull Currency currency,

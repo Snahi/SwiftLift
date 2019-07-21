@@ -68,7 +68,7 @@ public class Lift implements Parcelable {
 
 
     @SuppressWarnings("unchecked")
-    private Lift(Parcel inParcel)
+    protected Lift(Parcel inParcel)
     {
         // stretches
         ArrayList<Stretch> stretches = (ArrayList<Stretch>) inParcel.readSerializable();
