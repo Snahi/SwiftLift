@@ -17,6 +17,7 @@ import androidx.fragment.app.DialogFragment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -41,8 +42,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-// TODO can't click on edittext error because of focusable='false'
 // TODO (not very important) add previously selected points on map
+// TODO set default date different than today for arrival if departure is already selected
 public class AddStretchDialogFragment extends DialogFragment {
 
     // CONST ///////////////////////////////////////////////////////////////////////////////////////
@@ -80,6 +81,7 @@ public class AddStretchDialogFragment extends DialogFragment {
     private TextView    m_depAddrTV;
     private EditText    m_depDateET;
     private EditText    m_depTimeET;
+    private EditText    m_arrDateET;
 
     // result
     private Calendar m_depDate;
@@ -175,6 +177,9 @@ public class AddStretchDialogFragment extends DialogFragment {
 
         m_depAddrTV.setText(m_depAddr);
         m_fromCoordsBut.setEnabled(false);
+        if (getContext() != null)
+            m_fromCoordsBut.setImageDrawable(getContext()
+                    .getDrawable(R.drawable.disabled_location_icon));
     }
 
 
@@ -198,8 +203,9 @@ public class AddStretchDialogFragment extends DialogFragment {
             public void onClick(View view) {}
         };
 
-        m_depDateET.setOnClickListener(emptyOnClickListener);
-        m_depTimeET.setOnClickListener(emptyOnClickListener);
+        updateDateEt(m_depDate, m_arrDateET);
+        m_depDateET.setEnabled(false);
+        m_depTimeET.setEnabled(false);
     }
 
 
@@ -232,6 +238,7 @@ public class AddStretchDialogFragment extends DialogFragment {
         m_fromCoordsBut = view.findViewById(R.id.fragment_add_stretch_dialog_but_choose_dep_loc);
         m_depDateET     = view.findViewById(R.id.fragment_add_stretch_dialog_et_dep_date);
         m_depTimeET     = view.findViewById(R.id.fragment_add_stretch_dialog_et_dep_time);
+        m_arrDateET     = view.findViewById(R.id.fragment_add_stretch_dialog_et_arr_date);
     }
 
 
@@ -428,6 +435,7 @@ public class AddStretchDialogFragment extends DialogFragment {
                         (EditText) view);
 
                 Calendar currCal = Calendar.getInstance();
+
                 new DatePickerDialog(getContext(), dateSetListener, currCal.get(Calendar.YEAR),
                         currCal.get(Calendar.MONTH), currCal.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -470,9 +478,8 @@ public class AddStretchDialogFragment extends DialogFragment {
                 DatePickerDialog.OnDateSetListener dateSetListener = getOnDateSetListener(m_arrDate,
                         (EditText) view);
 
-                Calendar currCal = Calendar.getInstance();
-                new DatePickerDialog(getContext(), dateSetListener, currCal.get(Calendar.YEAR),
-                        currCal.get(Calendar.MONTH), currCal.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(getContext(), dateSetListener, m_depDate.get(Calendar.YEAR),
+                        m_depDate.get(Calendar.MONTH), m_depDate.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
     }
@@ -533,7 +540,7 @@ public class AddStretchDialogFragment extends DialogFragment {
         return new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                calendar.set(Calendar.HOUR, hour);
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
                 calendar.set(Calendar.MINUTE, minute);
 
                 updateTimeEt(calendar, timeEt);
@@ -757,13 +764,13 @@ public class AddStretchDialogFragment extends DialogFragment {
         if (priceText.isEmpty())
         {
             price.setError(resources.getString(R.string.empty_field_error));
-            isValid = false;
+            return false;
         }
 
         if (!isInIntRange(priceText))
         {
             price.setError(resources.getString(R.string.too_big_price_error));
-            isValid = false;
+            return false;
         }
 
         if (isValid)

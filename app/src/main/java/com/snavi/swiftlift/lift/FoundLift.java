@@ -6,6 +6,7 @@ import com.snavi.swiftlift.lift.Stretch;
 
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -113,5 +114,21 @@ public class FoundLift extends Lift {
     public String getTo()
     {
         return m_endStretch.getAddrTo();
+    }
+
+
+
+    @NonNull
+    public Date getDepDate()
+    {
+        return m_startStretch.getDepDate();
+    }
+
+
+
+    @NonNull
+    public Date getArrDate()
+    {
+        return m_endStretch.getArrDate();
     }
 }

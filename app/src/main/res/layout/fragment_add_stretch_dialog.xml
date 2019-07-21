@@ -36,7 +36,6 @@
             android:ems="10"
             android:hint="@string/dd_mm_yyyy"
             android:inputType="none"
-            android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"

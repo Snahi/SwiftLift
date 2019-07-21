@@ -11,6 +11,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +46,7 @@ public class FindLiftFragment extends Fragment implements TimePickerDialog.OnTim
     private static final String DATE_FORMAT = "dd/MM/YYYY";
     private static final String TIME_FORMAT = "HH:mm";
     // other
-    private static final String TAG = FindLiftFragment.class.getName();
+    private static final String   TAG = FindLiftFragment.class.getName();
 
 
     // fields //////////////////////////////////////////////////////////////////////////////////////
@@ -133,11 +135,17 @@ public class FindLiftFragment extends Fragment implements TimePickerDialog.OnTim
 
                 LatLng from       = getCoordinates(m_etFrom.getText().toString());
                 if (from == null)
+                {
+                    Toasts.showCantResolveLocationToast(getContext());
                     return;                                                                         // message already shown in getCoordinates
+                }
                 int fromDistRange = Integer.parseInt(m_etFromDistRange.getText().toString());
                 LatLng to         = getCoordinates(m_etTo.getText().toString());
                 if (to == null)
+                {
+                    Toasts.showCantResolveLocationToast(getContext());
                     return;                                                                         // message already shown in getCoordinates
+                }
                 int toDistRange   = Integer.parseInt(m_etToDistRange.getText().toString());
 
                 goToFoundLiftsActivity(from, fromDistRange, to, toDistRange);
@@ -330,7 +338,8 @@ public class FindLiftFragment extends Fragment implements TimePickerDialog.OnTim
     @Override
     public void onTimeSet(TimePicker timePicker, int hour, int minute)
     {
-        m_departure.set(Calendar.HOUR, hour);
+
+        m_departure.set(Calendar.HOUR_OF_DAY, hour);
         m_departure.set(Calendar.MINUTE, minute);
 
         SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());

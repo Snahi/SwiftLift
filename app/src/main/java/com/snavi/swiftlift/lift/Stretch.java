@@ -3,9 +3,11 @@ package com.snavi.swiftlift.lift;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.common.collect.Table;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.snavi.swiftlift.database_objects.Const;
+import com.snavi.swiftlift.searching.CellCreator;
 import com.snavi.swiftlift.utils.Price;
 
 import java.io.IOException;
@@ -37,15 +39,14 @@ public class Stretch implements Serializable {
     private Date   m_arrDate;
     private transient LatLng m_coordFrom;   // transient means skip it during defaultWriteObject()/defaultReadObject()
     private transient LatLng m_coordTo;     // transient means skip it during defaultWriteObject()/defaultReadObject()
+    private long m_fromCell;
+    private long m_toCell;
 
 
     Stretch(LatLng coordFrom, LatLng coordTo, String addrFrom, String addrTo,
                    Calendar depDate, Calendar arrDate, Price price, String liftId)
     {
-        this.m_coordFrom = coordFrom;
-        this.m_coordTo   = coordTo;
-        this.m_addrFrom  = addrFrom;
-        this.m_addrTo    = addrTo;
+        commonInit(coordFrom, coordTo, addrFrom, addrTo);
         this.m_depDate   = new Date();
         this.m_depDate.setTime(depDate.getTimeInMillis());
         this.m_arrDate   = new Date();
@@ -59,15 +60,24 @@ public class Stretch implements Serializable {
     private Stretch(LatLng coordFrom, LatLng coordTo, String addrFrom, String addrTo,
             Date depDate, Date arrDate, Price price, String liftId, String id)
     {
+        commonInit(coordFrom, coordTo, addrFrom, addrTo);
         this.m_id        = id;
-        this.m_coordFrom = coordFrom;
-        this.m_coordTo   = coordTo;
-        this.m_addrFrom  = addrFrom;
-        this.m_addrTo    = addrTo;
         this.m_depDate   = depDate;
         this.m_arrDate   = arrDate;
         this.m_price     = price;
         this.m_liftId    = liftId;
+    }
+
+
+
+    private void commonInit(LatLng coordFrom, LatLng coordTo, String addrFrom, String addrTo)
+    {
+        this.m_coordFrom = coordFrom;
+        this.m_fromCell  = CellCreator.assignCell(coordFrom.latitude, coordFrom.longitude);
+        this.m_coordTo   = coordTo;
+        this.m_toCell    = CellCreator.assignCell(coordTo.latitude, coordTo.longitude);
+        this.m_addrFrom  = addrFrom;
+        this.m_addrTo    = addrTo;
     }
 
 
@@ -111,15 +121,7 @@ public class Stretch implements Serializable {
         Price price     = getPrice(doc, currency);
         String liftId   = getString(doc, Const.STRETCH_LIFT_ID);
 
-        Log.d("MY", "locFrom: " + locFrom +
-                "\nlocTo: " + locTo +
-                "\naddrFrom: " + addrFrom +
-                "\naddrTo: " + addrTo +
-                "\ndepDate: " + depDate +
-                "\narrDate: " + arrDate +
-                "\nprice: " + price +
-                "\nliftId: " + liftId);
-        if (locFrom == null || locTo == null || addrFrom == null || addrTo == null ||
+        if (addrFrom == null || addrTo == null ||
                 depDate == null || arrDate == null || liftId == null)
             return null;
         else
@@ -195,6 +197,8 @@ public class Stretch implements Serializable {
         res.put(Const.STRETCH_DEP, m_depDate);
         res.put(Const.STRETCH_FROM_ADDR, m_addrFrom);
         res.put(Const.STRETCH_TO_ADDR, m_addrTo);
+        res.put(Const.STRETCH_FROM_CELL, m_fromCell);
+        res.put(Const.STRETCH_TO_CELL, m_toCell);
         res.put(Const.STRETCH_FROM_LAT, m_coordFrom.latitude);
         res.put(Const.STRETCH_FROM_LON, m_coordFrom.longitude);
         res.put(Const.STRETCH_TO_LAT, m_coordTo.latitude);

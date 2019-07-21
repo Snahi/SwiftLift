@@ -11,8 +11,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.snavi.swiftlift.database_objects.Const;
+import com.snavi.swiftlift.signed_in_fragments.DriverFragment;
 import com.snavi.swiftlift.utils.Price;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
@@ -159,8 +161,8 @@ public class Lift implements Parcelable {
 
     public void loadStretchesFromDb(final RecyclerView.Adapter adapter, final int liftPos)
     {
-        FirebaseFirestore db         = FirebaseFirestore.getInstance();
-        CollectionReference stretchesCol = db.collection(Const.STRETCHES_COLLECTION);
+        FirebaseFirestore db                = FirebaseFirestore.getInstance();
+        final CollectionReference stretchesCol    = db.collection(Const.STRETCHES_COLLECTION);
 
         stretchesCol.whereEqualTo(Const.STRETCH_LIFT_ID, m_id).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -168,14 +170,50 @@ public class Lift implements Parcelable {
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots)
                     {
                         List<DocumentSnapshot> stretchesDocs = queryDocumentSnapshots.getDocuments();
+                        ArrayList<Stretch> loadedStretches = new ArrayList<>(stretchesDocs.size());
                         for (DocumentSnapshot doc : stretchesDocs)
                         {
-                            m_stretches.add(Stretch.loadFromDoc(doc, m_currency, doc.getId()));
+                            loadedStretches.add(Stretch.loadFromDoc(doc, m_currency, doc.getId()));
                         }
+                        addStretchesChronologically(loadedStretches);
 
-                        adapter.notifyItemChanged(liftPos);
+                        if (adapter instanceof DriverFragment.LiftsAdapter)
+                            ((DriverFragment.LiftsAdapter) adapter).sort();     // adapter notifies about changes itself
+                        else
+                            adapter.notifyItemChanged(liftPos);
                     }
                 });
+    }
+
+
+
+    private void addStretchesChronologically(ArrayList<Stretch> stretches)
+    {
+        if (stretches.isEmpty())
+            return;
+
+        m_stretches.add(stretches.get(0));
+        Stretch foundStretch;
+        boolean isLast;
+
+        for (int foundStretchIdx = 1; foundStretchIdx < stretches.size(); foundStretchIdx++)
+        {
+            foundStretch = stretches.get(foundStretchIdx);
+            isLast = true;
+
+            for (int i = 0; i < m_stretches.size(); i++)
+            {
+                if (foundStretch.getDepDate().before(m_stretches.get(i).getDepDate()))
+                {
+                    m_stretches.add(i, foundStretch);
+                    isLast = false;
+                    break;
+                }
+            }
+
+            if (isLast)
+                m_stretches.add(foundStretch);
+        }
     }
 
 
@@ -269,7 +307,7 @@ public class Lift implements Parcelable {
 
 
     @NonNull
-    public String getDepDate()
+    public String getDepDateString()
     {
         if (m_stretches.isEmpty())
             return "";
@@ -280,7 +318,7 @@ public class Lift implements Parcelable {
 
 
     @NonNull
-    public String getArrDate()
+    public String getArrDateString()
     {
         if (m_stretches.isEmpty())
             return "";
@@ -290,16 +328,34 @@ public class Lift implements Parcelable {
 
 
 
+    @Nullable
+    public Date getDepDate()
+    {
+        if (m_stretches.isEmpty())
+            return null;
+
+        return m_stretches.get(0).getDepDate();
+    }
+
+
+
+    @Nullable
+    public Date getArrDate()
+    {
+        if (m_stretches.isEmpty())
+            return null;
+
+        return m_stretches.get(m_stretches.size() - 1).getArrDate();
+    }
+
+
+
     @NonNull
     public String getPrice()
     {
-        Log.d("MY", "currency: " + m_currency.getCurrencyCode());
         Price res = new Price(0, 0, m_currency);
         for (Stretch s : m_stretches)
-        {
-            Log.d("MY", "stretch currency: " + s.getPrice().getCurrency().getCurrencyCode());
-            Log.d("MY", "" + res.add(s.getPrice()));
-        }
+            res.add(s.getPrice());
 
         return res.toString();
     }
@@ -348,4 +404,28 @@ public class Lift implements Parcelable {
     }
 
 
+
+
+    // comparators /////////////////////////////////////////////////////////////////////////////////
+
+
+
+    public static class DepDateAscending implements Comparator<Lift>
+    {
+        // CONST
+        private static final int NULL_DATE = 100;
+
+        @Override
+        public int compare(Lift lift1, Lift lift2)
+        {
+            if (lift1.getDepDate() == null || lift2.getDepDate() == null)
+                return NULL_DATE;
+            else if (lift1.getDepDate().before(lift2.getDepDate()))
+                return -1;
+            else if (lift1.getDepDate().after(lift2.getDepDate()))
+                return 1;
+            else
+                return 0;
+        }
+    }
 }

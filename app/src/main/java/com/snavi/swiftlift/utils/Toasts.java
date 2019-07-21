@@ -84,4 +84,21 @@ public class Toasts {
         Toast.makeText(context, context.getResources()
                 .getString(R.string.cant_resolve_location), Toast.LENGTH_LONG).show();
     }
+
+
+
+    public static void showSearchErrorToast(Context context)
+    {
+        Toast.makeText(context, context.getResources()
+                .getString(R.string.search_error), Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showSearchCompletedToast(Context context, int numOfFoundLifts)
+    {
+        String text = context.getString(R.string.search_completed) + " " + numOfFoundLifts;
+
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+    }
 }

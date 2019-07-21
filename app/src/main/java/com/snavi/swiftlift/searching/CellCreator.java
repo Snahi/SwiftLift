@@ -304,4 +304,15 @@ public class CellCreator {
 
         return res;
     }
+
+
+    /**
+     * creates approximated range for range in km
+     * @param distKm max distance in km
+     * @return approximated range applicable to getSearchedCells(long cell, int range)
+     */
+    public static int getRange(int distKm)
+    {
+        return (int) (distKm / 6.7);
+    }
 }

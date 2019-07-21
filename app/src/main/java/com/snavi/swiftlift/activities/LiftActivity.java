@@ -511,8 +511,6 @@ public class LiftActivity extends AppCompatActivity implements
                 m_tvDateTo.setText(stretch.arrDateDisplay(Locale.getDefault()));
                 m_tvPrice.setText(stretch.getPrice().toString());
 
-                Log.d("MY", "adapter position: " + getAdapterPosition());
-                Log.d("MY", "stretches size: " + m_stretches.size());
                 if (getAdapterPosition() != m_stretches.size() - 1)                                 // user can delete only the last stretch
                     m_butDelete.setVisibility(View.INVISIBLE);
                 else

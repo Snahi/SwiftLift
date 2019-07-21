@@ -1,7 +1,6 @@
 package com.snavi.swiftlift.activities;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,12 +10,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -24,21 +26,22 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.snavi.swiftlift.R;
 import com.snavi.swiftlift.database_objects.Const;
 import com.snavi.swiftlift.lift.FoundLift;
-import com.snavi.swiftlift.lift.Lift;
 import com.snavi.swiftlift.lift.Stretch;
-import com.snavi.swiftlift.utils.Snackbars;
+import com.snavi.swiftlift.searching.CellCreator;
 import com.snavi.swiftlift.utils.Toasts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Currency;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
+// TODO sort lifts
 public class FoundLiftsActivity extends AppCompatActivity {
 
     // CONST ///////////////////////////////////////////////////////////////////////////////////////
@@ -53,16 +56,11 @@ public class FoundLiftsActivity extends AppCompatActivity {
     private static final String NO_FROM_ERROR       = "Intent doesn't contain 'from' coordinates!";
     private static final String NO_TO_ERROR         = "Intent doesn't contain 'to' coordinates!";
     private static final String NO_FROM_RANGE_ERROR = "Intent doesn't contain 'from range'!";
-    private static final String NO_TO_RANGE_ERROR   = "Intent doesn't contain 'to range'!";
-    private static final String NO_PRICE_ERROR      = "Intent doesn't contain 'price'!";
     private static final String NO_DEPARTURE_ERROR  = "Intent doesn't contain 'departure'";
-    // format
-    private static final String DATE_TIME_FORMAT = "dd/MM/YYYY HH:mm";
     // default
-    private static final int DEF_SEARCH_PERIOD_IN_DAYS = 1;
+    private static final int DEF_SEARCH_PERIOD_IN_DAYS = 3;
     // other
     private static final String TAG = FoundLiftsActivity.class.getName();
-    private static final double EARTH_CIRCUMFERENCE_KM = 40075;
 
 
     // fields //////////////////////////////////////////////////////////////////////////////////////
@@ -70,30 +68,40 @@ public class FoundLiftsActivity extends AppCompatActivity {
      * lifts found during search. Will be added asynchronously. RecyclerView's adapter also uses
      * this ArrayList. ITEMS SHOULD BE ALWAYS INSERTED VIA addFoundLift(FoundLift foundLift).
      */
-    private ArrayList<FoundLift> m_foundLifts;
+    private List<FoundLift> m_foundLifts;
     private FoundLiftsAdapter m_adapter;
-    private FirebaseFirestore m_db;
     private CollectionReference m_liftsCollection;
+    private CollectionReference m_stretchesCollection;
     // search parameters
     private LatLng  m_from;
     private LatLng  m_to;
-    private Date    m_departure;    // date and time of departure
     private Date    m_maxDate;
-    // ranges for from and to
-    private double m_fromWest;      // max coordinates to west from 'from'
-    private double m_fromNorth;     // max coordinates to north from 'from'
-    private double m_fromEast;      // max coordinates to east from 'from'
-    private double m_fromSouth;     // max coordinates to south from 'from'
-    private double m_toWest;        // max coordinates to west from 'to'
-    private double m_toNorth;       // max coordinates to north from 'to'
-    private double m_toEast;        // max coordinates to east from 'to'
-    private double m_toSouth;       // max coordinates to south from 'to'
+    private Date    m_departure;
+    private long[]  m_fromCellSurroundings;
+    private long[]  m_toCellSurroundings;
+    private int     m_fromRangeKm;
+    private int     m_toRangeKm;
     // query synchronization
     /**
-     * flag that is accessed by queries via synchronized method didOtherQueryFinish(). When one of
-     * queries(from or to) finishes it sets this flag as true, so that the second knows.
+     * because stretches are searched only in one cell per query some synchronization was
+     * necessary. Whenever some 'from query' for one cell finishes this field is incremented by 1.
+     * When this field is equal to m_fromCellSurroundings.length then all queries for 'from
+     * stretches' are ready.
      */
-    private boolean m_isReady;
+    private int m_fromQueryCounter;
+    /**
+     * because stretches are searched only in one cell per query some synchronization was
+     * necessary. Whenever some 'to query' for one cell finishes this field is incremented by 1.
+     * When this field is equal to m_toCellSurroundings.length then all queries for 'from
+     * stretches' are ready.
+     */
+    private int m_toQueryCounter;
+    /**
+     * when 'from query' or 'to query' finishes, then this flag is set to true, so that when the
+     * other query finishes it knows that it must start further processing (connecting from
+     * stretches with to stretches)
+     */
+    private boolean m_didOtherQueryFinish;
     /**
      * when query that is looking for 'from stretches' finishes it puts the result here
      */
@@ -102,6 +110,13 @@ public class FoundLiftsActivity extends AppCompatActivity {
      * when query that is looking for 'to stretches' finishes it puts the result here
      */
     private ArrayList<Stretch> m_toStretches;
+    /**
+     * once stretches are found lifts needs to be loaded. It's initial size is the number of lifts
+     * found. When all lifts are loaded the progress bar should disappear, it will do so, when this
+     * variable is equal to 0
+     */
+    private int m_leftLiftsToLoad;
+    private int m_numOfFoundLifts;
 
 
 
@@ -110,14 +125,20 @@ public class FoundLiftsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_found_lifts);
 
-        m_foundLifts    = new ArrayList<>();
-        m_fromStretches = new ArrayList<>();
-        m_toStretches   = new ArrayList<>();
-        m_db              = FirebaseFirestore.getInstance();
-        m_liftsCollection = m_db.collection(Const.LIFTS_COLLECTION);
+        m_foundLifts            = new LinkedList<>();
+        m_fromStretches         = new ArrayList<>();
+        m_toStretches           = new ArrayList<>();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        m_liftsCollection       = db.collection(Const.LIFTS_COLLECTION);
+        m_stretchesCollection   = db.collection(Const.STRETCHES_COLLECTION);
+        m_fromQueryCounter      = 0;
+        m_toQueryCounter        = 0;
+        m_leftLiftsToLoad       = 0;
+        m_numOfFoundLifts       = 0;
         initSearchParameters();
-        search();
+        initCells();
         initRecyclerView();
+        search();
     }
 
 
@@ -136,6 +157,7 @@ public class FoundLiftsActivity extends AppCompatActivity {
 
         initRanges(intent);
 
+        // date and time of departure
         m_departure = (Date) intent.getSerializableExtra(DEPARTURE_KEY);
         if (m_departure == null)
             throw new RuntimeException(NO_DEPARTURE_ERROR);
@@ -153,47 +175,42 @@ public class FoundLiftsActivity extends AppCompatActivity {
 
     private void initRanges(Intent intent)
     {
-        double fromRange = (double) intent.getIntExtra(FROM_RANGE_KEY, -1);
-        if (fromRange < 0)
+        m_fromRangeKm = intent.getIntExtra(FROM_RANGE_KEY, -1);
+        if (m_fromRangeKm < 0)
             throw new RuntimeException(NO_FROM_RANGE_ERROR);
 
-        Double fromWest  = addLongitudeToCoordinates(m_from, -fromRange);
-        Double fromNorth = addLatitudeToCoordinates(m_from, fromRange);
-        Double fromEast  = addLongitudeToCoordinates(m_from, fromRange);
-        Double fromSouth = addLatitudeToCoordinates(m_from, -fromRange);
-
-        if (fromWest == null || fromNorth == null || fromEast == null || fromSouth == null)
-        {
-            Snackbars.showUnsupportedLocSnackbar(this,
-                    findViewById(R.id.activity_found_lifts_cv));
-            return;
-        }
-
-        m_fromWest  = fromWest;
-        m_fromNorth = fromNorth;
-        m_fromEast  = fromEast;
-        m_fromSouth = fromSouth;
-
-        double toRange = (double) intent.getIntExtra(TO_RANGE_KEY, -1);
-        if (toRange < 0)
+        m_toRangeKm = intent.getIntExtra(TO_RANGE_KEY, -1);
+        if (m_toRangeKm < 0)
             throw new RuntimeException(TO_RANGE_KEY);
+    }
 
-        Double toWest  = addLongitudeToCoordinates(m_to, -fromRange);
-        Double toNorth = addLatitudeToCoordinates(m_to, fromRange);
-        Double toEast  = addLongitudeToCoordinates(m_to, fromRange);
-        Double toSouth = addLatitudeToCoordinates(m_to, -fromRange);
 
-        if (toWest == null || toNorth == null || toEast == null || toSouth == null)
-        {
-            Snackbars.showUnsupportedLocSnackbar(this,
-                    findViewById(R.id.activity_found_lifts_cv));
-            return;
-        }
 
-        m_toWest  = toWest;
-        m_toNorth = toNorth;
-        m_toEast  = toEast;
-        m_toSouth = toSouth;
+    private void initCells()
+    {
+        long fromCell = CellCreator.assignCell(m_from.latitude, m_from.longitude);
+        m_fromCellSurroundings  = CellCreator.getSearchedCells(
+                fromCell,
+                CellCreator.getRange(m_fromRangeKm)
+        );
+
+        long toCell = CellCreator.assignCell(m_to.latitude, m_to.longitude);
+        m_toCellSurroundings    = CellCreator.getSearchedCells(
+                toCell,
+                CellCreator.getRange(m_toRangeKm));
+    }
+
+
+
+    private void initRecyclerView()
+    {
+        m_adapter = new FoundLiftsAdapter();
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        RecyclerView rv = findViewById(R.id.activity_found_lifts_rv);
+
+        rv.setAdapter(m_adapter);
+        rv.setLayoutManager(layoutManager);
+        rv.setHasFixedSize(false);
     }
 
 
@@ -215,31 +232,46 @@ public class FoundLiftsActivity extends AppCompatActivity {
      */
     private void selectFromStretches()
     {
-        m_db.collection(Const.STRETCHES_COLLECTION)
-                .whereGreaterThanOrEqualTo(Const.STRETCH_DEP, m_departure)
-                .whereLessThanOrEqualTo(Const.STRETCH_DEP, m_maxDate)
-                .whereGreaterThanOrEqualTo(Const.STRETCH_FROM_LON, m_fromWest)
-                .whereLessThanOrEqualTo(Const.STRETCH_FROM_LAT, m_fromNorth)
-                .whereLessThanOrEqualTo(Const.STRETCH_FROM_LON, m_fromEast)
-                .whereGreaterThanOrEqualTo(Const.STRETCH_FROM_LAT, m_fromSouth)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots)
-                    {
-                        loadFromStretches(queryDocumentSnapshots.getDocuments());
-                        if (didOtherQueryFinish())
-                            combineResults();
+        for (long cell : m_fromCellSurroundings)
+        {
+            m_stretchesCollection
+                    .whereEqualTo(Const.STRETCH_FROM_CELL, cell)
+                    .whereGreaterThan(Const.STRETCH_DEP, m_departure)
+                    .whereLessThan(Const.STRETCH_DEP, m_maxDate)
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots)
+                        {
+                            List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+                            loadFromStretches(docs);
+                            if (isFromQueryReady())
+                            {
+                                if (didOtherQueryFinish())
+                                {
+                                    combineResults();
+                                }
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e)
+                        {
+                            Log.e(TAG, e.getMessage());
+                            Toasts.showSearchErrorToast(FoundLiftsActivity.this);
+                        }
+                    });
+        }
+    }
 
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG, e.getMessage());
-                        Toasts.showUnknownErrorToast(FoundLiftsActivity.this);
-                    }
-                });
+
+
+    synchronized private boolean isFromQueryReady()
+    {
+        m_fromQueryCounter++;
+
+        return m_fromQueryCounter == m_fromCellSurroundings.length;
     }
 
 
@@ -253,35 +285,49 @@ public class FoundLiftsActivity extends AppCompatActivity {
      */
     private void selectToStretches()
     {
-        m_db.collection(Const.STRETCHES_COLLECTION)
-                .whereGreaterThanOrEqualTo(Const.STRETCH_DEP, m_departure)
-                .whereGreaterThanOrEqualTo(Const.STRETCH_TO_LON, m_toWest)
-                .whereLessThanOrEqualTo(Const.STRETCH_TO_LAT, m_toNorth)
-                .whereLessThanOrEqualTo(Const.STRETCH_TO_LON, m_toEast)
-                .whereGreaterThanOrEqualTo(Const.STRETCH_TO_LON, m_toSouth)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots)
-                    {
-                        loadToStretches(queryDocumentSnapshots.getDocuments());
-                        if (didOtherQueryFinish())
-                            combineResults();
-
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG, e.getMessage());
-                        Toasts.showUnknownErrorToast(FoundLiftsActivity.this);
-                    }
-                });
+        for (long cell : m_toCellSurroundings)
+        {
+            m_stretchesCollection.whereEqualTo(Const.STRETCH_TO_CELL, cell)
+                    .whereGreaterThan(Const.STRETCH_DEP, m_departure)
+                    .whereLessThan(Const.STRETCH_DEP, m_maxDate).get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots)
+                        {
+                            List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+                            loadToStretches(docs);
+                            if (isToQueryReady())
+                            {
+                                if (didOtherQueryFinish())
+                                {
+                                    combineResults();
+                                }
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e)
+                        {
+                            Log.e(TAG, e.getMessage());
+                            Toasts.showSearchErrorToast(FoundLiftsActivity.this);
+                        }
+                    });
+        }
     }
 
 
 
-    private void loadFromStretches(List<DocumentSnapshot> docs)
+    synchronized private boolean isToQueryReady()
+    {
+        m_toQueryCounter++;
+
+        return m_toQueryCounter == m_toCellSurroundings.length;
+    }
+
+
+
+    synchronized private void loadFromStretches(List<DocumentSnapshot> docs)
     {
         Currency defaultCurrency = Currency.getInstance(Locale.getDefault());                       // for now default currency, most of the stretches
         for (DocumentSnapshot doc : docs)                                                           // will be dismissed anyway
@@ -290,7 +336,7 @@ public class FoundLiftsActivity extends AppCompatActivity {
 
 
 
-    private void loadToStretches(List<DocumentSnapshot> docs)
+    synchronized private void loadToStretches(List<DocumentSnapshot> docs)
     {
         Currency defaultCurrency = Currency.getInstance(Locale.getDefault());                       // for now default currency, most of the stretches
         for (DocumentSnapshot doc : docs)                                                           // will be dismissed anyway
@@ -301,11 +347,11 @@ public class FoundLiftsActivity extends AppCompatActivity {
 
     synchronized private boolean didOtherQueryFinish()
     {
-        if (m_isReady)          // the previous query has already finished
+        if (m_didOtherQueryFinish)  // the previous query has already finished
             return true;
-        else                    // the previous query is not yet finished. Set flag to true, so that the other query knows that this one is ready
+        else                        // the previous query is not yet finished. Set flag to true, so that the other query knows that this one is ready
         {
-            m_isReady = true;
+            m_didOtherQueryFinish = true;
             return false;
         }
     }
@@ -335,12 +381,50 @@ public class FoundLiftsActivity extends AppCompatActivity {
 
     private void createFoundLifts(ArrayList<Stretch> toStretches)
     {
+        ArrayList<Stretch> fromStretchesOk    = new ArrayList<>();
+        ArrayList<Stretch> toStretchesOk      = new ArrayList<>();
+
         for (Stretch toStretch : toStretches)
         {
             for (Stretch fromStretch : m_fromStretches)
             {
-                if (fromStretch.getLiftId().equals(toStretch.getLiftId()))
-                    createFoundLift(fromStretch, toStretch);
+                if (fromStretch.getLiftId().equals(toStretch.getLiftId())
+                        && !fromStretch.getDepDate().after(toStretch.getDepDate()))                 // fromStretch must be before toStretch
+                {
+                    m_leftLiftsToLoad++;
+                    fromStretchesOk.add(fromStretch);
+                    toStretchesOk.add(toStretch);
+                }
+            }
+        }
+
+        if (m_leftLiftsToLoad == 0)
+            finishSearching();
+
+        for (int i = 0; i < fromStretchesOk.size(); i++)
+        {
+            createFoundLift(fromStretchesOk.get(i), toStretchesOk.get(i));
+        }
+    }
+
+
+
+    private void finishSearching()
+    {
+        View progressBar = findViewById(R.id.activity_found_lifts_progress_bar);
+        if (m_leftLiftsToLoad == 0)
+        {
+            progressBar.setVisibility(View.GONE);
+
+            if (m_numOfFoundLifts > 0)
+            {
+                Toasts.showSearchCompletedToast(FoundLiftsActivity.this,
+                        m_numOfFoundLifts);
+            }
+            else
+            {
+                findViewById(R.id.activity_found_lifts_tv_no_lifts_found)
+                        .setVisibility(View.VISIBLE);
             }
         }
     }
@@ -349,9 +433,6 @@ public class FoundLiftsActivity extends AppCompatActivity {
 
     private void createFoundLift(final Stretch fromStretch, final Stretch toStretch)
     {
-        if (fromStretch.getArrDate().after(toStretch.getDepDate()))    // if fromStretch was after toStretch skip this pair
-            return;
-
         m_liftsCollection.document(fromStretch.getLiftId()).get().addOnSuccessListener(
                 new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -361,82 +442,58 @@ public class FoundLiftsActivity extends AppCompatActivity {
                         FoundLift foundLift = FoundLift.loadFromDoc(documentSnapshot, m_adapter,
                                 m_foundLifts.size(), fromStretch, toStretch);
                         if (foundLift != null)
+                        {
                             addFoundLift(foundLift);
+                            m_numOfFoundLifts++;
+                        }
                     }
-                }
-        ).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e(TAG, e.getMessage());
-                Toasts.showUnknownErrorToast(FoundLiftsActivity.this);
-            }
-        });
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, e.getMessage());
+                        Toasts.showUnknownErrorToast(FoundLiftsActivity.this);
+                    }
+                })
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task)
+                    {
+                        decrementLiftsLeft();
+                        if (m_leftLiftsToLoad == 0)
+                            finishSearching();
+                    }
+                });
+    }
+
+
+
+    synchronized void decrementLiftsLeft()
+    {
+        m_leftLiftsToLoad--;
     }
 
 
 
     private void addFoundLift(@NonNull FoundLift foundLift)
     {
+        ListIterator<FoundLift> it = m_foundLifts.listIterator();
+        FoundLift curr;
+        while(it.hasNext())
+        {
+            curr = it.next();
+
+            if (foundLift.getArrDate().before(curr.getArrDate()))
+            {
+                it.previous();
+                it.add(foundLift);
+                m_adapter.notifyDataSetChanged();
+                return;
+            }
+        }
+
+        // if foundLift has the latest arrival date
         m_foundLifts.add(foundLift);
-        m_adapter.notifyItemChanged(m_foundLifts.size() - 1);
-    }
-
-
-
-    private void initRecyclerView()
-    {
-        m_adapter = new FoundLiftsAdapter();
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        RecyclerView rv = findViewById(R.id.activity_found_lifts_rv);
-
-        rv.setAdapter(m_adapter);
-        rv.setLayoutManager(layoutManager);
-        rv.setHasFixedSize(true);
-    }
-
-
-
-    // coordinates calculations ////////////////////////////////////////////////////////////////////
-
-
-    /**
-     *
-     * @param loc LatLng to which distance will be added
-     * @param distKm how much distance to add to loc
-     * @return latitude increased or decreased by distKm OR NULL when after adding the coordinates
-     * crossed North Pole or South Pole. Why null? Because I can't effectively search
-     * in firebase database for these results.
-     */
-    @Nullable
-    private Double addLatitudeToCoordinates(LatLng loc, Double distKm)
-    {
-        double degrees = distKm / EARTH_CIRCUMFERENCE_KM * 360;
-        double res = loc.latitude + degrees;
-        if (res >= -90 && res <= 90)
-            return res;
-        else
-            return null;
-    }
-
-
-
-    /**
-     *
-     * @param loc LatLng to which distance will be added
-     * @param distKm how much distance to add to loc
-     * @return latitude increased or decreased by distKm OR NULL when after adding the coordinates
-     * 180 meridian. Why null? Because I can't effectively search
-     * in firebase database for these results.
-     */
-    @Nullable
-    private Double addLongitudeToCoordinates(LatLng loc, Double distKm)
-    {
-        double degrees = distKm / EARTH_CIRCUMFERENCE_KM * 360;
-        double res = loc.longitude + degrees;
-        if (res >= -180 && res <= 180)
-            return res;
-        else
-            return null;
+        m_adapter.notifyDataSetChanged();
     }
 
 
@@ -453,7 +510,8 @@ public class FoundLiftsActivity extends AppCompatActivity {
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
         {
             LayoutInflater inflater = LayoutInflater.from(FoundLiftsActivity.this);
-            CardView card = (CardView) inflater.inflate(R.layout.card_view_found_lift, parent);
+            CardView card = (CardView) inflater.inflate(R.layout.card_view_found_lift, parent,
+                    false);
             return new ViewHolder(card);
         }
 
@@ -464,7 +522,7 @@ public class FoundLiftsActivity extends AppCompatActivity {
         {
             FoundLift fLift = m_foundLifts.get(position);
 
-            holder.bind(fLift.getFrom(), fLift.getDepDate(), fLift.getTo(), fLift.getArrDate(),
+            holder.bind(fLift.getFrom(), fLift.getDepDateString(), fLift.getTo(), fLift.getArrDateString(),
                     fLift.getPrice());
         }
 

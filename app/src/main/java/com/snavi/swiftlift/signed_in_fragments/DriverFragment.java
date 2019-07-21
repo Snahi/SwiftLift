@@ -41,7 +41,9 @@ import com.snavi.swiftlift.utils.InternetUtils;
 import com.snavi.swiftlift.utils.Toasts;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -101,7 +103,7 @@ public class DriverFragment extends Fragment {
         m_progressBar = view.findViewById(R.id.fragment_driver_progress_bar);
 
         setAddLiftButtonListener(view);
-        loadLifts(m_adapter.m_lifts);
+        loadLifts();
 
         return view;
     }
@@ -119,7 +121,7 @@ public class DriverFragment extends Fragment {
 
 
 
-    private void loadLifts(@NonNull final ArrayList<Lift> lifts)
+    private void loadLifts()
     {
         String userId = getUserId();
         if (userId == null)
@@ -140,10 +142,7 @@ public class DriverFragment extends Fragment {
                         {
                             lift = Lift.loadFromDoc(doc);
                             if (lift != null)
-                            {
-                                lifts.add(lift);
-                                lift.loadStretchesFromDb(m_adapter, lifts.size() - 1);
-                            }
+                                addLift(lift);
                             else
                                 Toasts.showLiftLoadErrorToast(getContext());
                         }
@@ -158,13 +157,22 @@ public class DriverFragment extends Fragment {
                         if (m_liftsLoadTrialsLeft > 0)
                         {
                             m_liftsLoadTrialsLeft--;
-                            loadLifts(lifts);
+                            loadLifts();
                         }
                         else
                             Toasts.showLiftsLoadErrorToast(getContext());
                     }
                 });
 
+    }
+
+
+
+    private void addLift(Lift lift)
+    {
+        m_adapter.m_lifts.add(lift);
+        lift.loadStretchesFromDb(m_adapter, m_adapter.m_lifts.size() - 1);
+        m_adapter.notifyItemChanged(m_adapter.m_lifts.size() - 1);
     }
 
 
@@ -327,7 +335,7 @@ public class DriverFragment extends Fragment {
 
 
 
-    private class LiftsAdapter extends RecyclerView.Adapter<LiftsAdapter.MyViewHolder> {
+    public class LiftsAdapter extends RecyclerView.Adapter<LiftsAdapter.MyViewHolder> {
 
 
         @NonNull private ArrayList<Lift> m_lifts;
@@ -356,7 +364,7 @@ public class DriverFragment extends Fragment {
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position)
         {
             Lift lift = m_lifts.get(position);
-            holder.bind(lift.getFrom(), lift.getTo(), lift.getDepDate(), lift.getArrDate(),
+            holder.bind(lift.getFrom(), lift.getTo(), lift.getDepDateString(), lift.getArrDateString(),
                     lift.getPrice(), lift.getId());
 
             if (getActivity() == null)
@@ -387,6 +395,14 @@ public class DriverFragment extends Fragment {
                     return;
                 }
             }
+        }
+
+
+
+        public void sort()
+        {
+            Collections.sort(m_lifts, new Lift.DepDateAscending());
+            notifyDataSetChanged();
         }
 
 
