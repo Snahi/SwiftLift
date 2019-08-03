@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name">SwiftLift</string>
     <string name="log_in_text">log in</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="email_text">email</string>
     <string name="sign_up_text">Sign up</string>
@@ -135,4 +133,19 @@
     <string name="sample_price">15.50 EUR</string>
     <string name="enroll">Enroll</string>
     <string name="contact">Contact</string>
+    <string name="lift_req_send_error">Error occurred during sending request. Check your internet connection, restart app, and try again</string>
+    <string name="cant_find_owner_name">Cannot find driver name</string>
+    <string name="cant_find_owner_surname">Cannot find driver surname</string>
+    <string name="cant_find_owner_data">Cannot find driver</string>
+    <string name="choose_profile_photo">choose profile photo</string>
+    <string name="photo_update_failure">Error occurred during updating photo</string>
+    <string name="request_lift_email_subject">SwiftLift - I would like to go with you</string>
+    <string name="email_updated_only_in_auth">Error occurred during updating your email. Your email for login has been updated, although other users still can contact with you via old email. try again</string>
+    <string name="email_update_failure">Error occurred during updating your email. Check your internet connection and try again</string>
+    <string name="edit_description">edit description</string>
+    <string name="lift_description_hint">Some additional info, like additional contact, requirements, limitations etc.</string>
+    <string name="too_long_description">Max. number of letters is</string>
+    <string name="latest_departure_date">Latest departure date</string>
+    <string name="latest_departure_time">latest departure time</string>
+    <string name="you_must_be_signed_in">You must be signed in to perform this action!</string>
 </resources>

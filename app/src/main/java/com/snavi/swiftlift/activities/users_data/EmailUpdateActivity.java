@@ -14,13 +14,21 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.snavi.swiftlift.R;
+import com.snavi.swiftlift.database_objects.Const;
 import com.snavi.swiftlift.utils.CredentialFragment;
 import com.snavi.swiftlift.utils.InputValidator;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EmailUpdateActivity extends AppCompatActivity implements
         CredentialFragment.OnFragmentInteractionListener {
@@ -149,8 +157,21 @@ public class EmailUpdateActivity extends AppCompatActivity implements
 
     private void showFailureUpdateSnackbar()
     {
-        Snackbar.make(findViewById(R.id.activity_email_update_cl), R.string.successful_update,
+        Snackbar.make(findViewById(R.id.activity_email_update_cl), R.string.email_update_failure,
                 Snackbar.LENGTH_INDEFINITE).setAction(R.string.snackbar_ok, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {}
+        });
+    }
+
+
+
+    private void showFailureUpdateForContactSnackbar()
+    {
+        Snackbar.make(findViewById(R.id.activity_email_update_cl),
+                R.string.email_updated_only_in_auth,
+                Snackbar.LENGTH_INDEFINITE).setAction(R.string.snackbar_ok,
+                new View.OnClickListener() {
             @Override
             public void onClick(View view) {}
         });
@@ -190,7 +211,6 @@ public class EmailUpdateActivity extends AppCompatActivity implements
         if (success)
         {
             updateEmailInFirebase();
-
         }
         else
         {
@@ -211,7 +231,34 @@ public class EmailUpdateActivity extends AppCompatActivity implements
                 public void onComplete(@NonNull Task<Void> task) {
 
                     if (task.isSuccessful())
-                        verificateEmail();
+                    {
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        Map<String, Object> userMap = new HashMap<>();
+                        userMap.put(Const.USER_EMAIL, m_email);
+                        db.collection(Const.USERS_COLLECTION)
+                                .document(m_currUser.getUid())
+                                .set(userMap, SetOptions.merge())
+                                .addOnSuccessListener(
+                                        new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid)
+                                            {
+                                                verificateEmail();
+                                            }
+                                        }
+                                )
+                                .addOnFailureListener(
+                                        new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e)
+                                            {
+                                                Log.e(TAG, UNKNOWN_ERROR);
+                                                showFailureUpdateForContactSnackbar();
+                                                m_butSave.setEnabled(true);
+                                            }
+                                        }
+                                );
+                    }
                     else
                     {
                         Log.e(TAG, UNKNOWN_ERROR);

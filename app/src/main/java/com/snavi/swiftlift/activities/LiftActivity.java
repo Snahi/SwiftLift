@@ -64,7 +64,8 @@ public class LiftActivity extends AppCompatActivity implements
     public static final String RESULT_LIFT_KEY     = "success";
     public static final String LIFT_KEY            = "lift";
     // request codes
-    private static final int LOCATION_PERMISION_REQ_CODE = 1;
+    private static final int REQ_LOCATION_PERMISION = 1;
+    private static final int REQ_DESCRIPTION        = 1321;
     // errors
     public static final String NULL_INTENT_ERROR = "null intent error, can't get stretches";
     // other
@@ -76,7 +77,7 @@ public class LiftActivity extends AppCompatActivity implements
 
 
     // fields /////////////////////////////////////////////////////////////////////////////////////
-    private Lift m_lift;
+    private Lift                m_lift;
     private StretchesAdapter    m_adapter;
     private CollectionReference m_stretchesCollection;
     /**
@@ -111,8 +112,9 @@ public class LiftActivity extends AppCompatActivity implements
 
     private void initViews()
     {
-        m_noLiftsText = findViewById(R.id.activity_lift_tv_empty_stretches);
-        m_currency    = findViewById(R.id.activity_lift_actv_currency);
+        m_tvNoLiftsText     = findViewById(R.id.activity_lift_tv_empty_stretches);
+        m_actvCurrency      = findViewById(R.id.activity_lift_actv_currency);
+        m_butDescription    = findViewById(R.id.activity_lift_but_description);
     }
 
 
@@ -122,9 +124,9 @@ public class LiftActivity extends AppCompatActivity implements
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, Price.CURRENCIES);
 
-        m_currency.setAdapter(adapter);
-        m_currency.setThreshold(1);
-        m_currency.setText(m_lift.getCurrencyCode());
+        m_actvCurrency.setAdapter(adapter);
+        m_actvCurrency.setThreshold(1);
+        m_actvCurrency.setText(m_lift.getCurrencyCode());
         setCurrencyListener();
     }
 
@@ -132,12 +134,12 @@ public class LiftActivity extends AppCompatActivity implements
 
     private void setCurrencyListener()
     {
-        m_currency.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        m_actvCurrency.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (validateCurrency())
                 {
-                    m_lift.setCurrency(Currency.getInstance(m_currency.getText().toString()));
+                    m_lift.setCurrency(Currency.getInstance(m_actvCurrency.getText().toString()));
                     updateStretchesCurrency();
                     KeyboardUtils.hideSoftKeyboard(LiftActivity.this);
                 }
@@ -167,13 +169,13 @@ public class LiftActivity extends AppCompatActivity implements
         FusedLocationProviderClient fusedLocProvider =
                 LocationServices.getFusedLocationProviderClient(this);
 
-        if ( ContextCompat.checkSelfPermission( this,
+        if (ContextCompat.checkSelfPermission( this,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION ) !=
                 PackageManager.PERMISSION_GRANTED )
         {
             ActivityCompat.requestPermissions(this,
                     new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},
-                    LOCATION_PERMISION_REQ_CODE);
+                    REQ_LOCATION_PERMISION);
         }
 
         fusedLocProvider.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
@@ -228,6 +230,23 @@ public class LiftActivity extends AppCompatActivity implements
     {
         setAddStretchButtonListener();
         setDoneButtonListener();
+        setDescriptionButtonListener();
+    }
+
+
+
+    private void setDescriptionButtonListener()
+    {
+        m_butDescription.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                Intent intent = new Intent(
+                        LiftActivity.this, LiftDescriptionActivity.class);
+                intent.putExtra(LiftDescriptionActivity.DESCRIPTION_KEY, m_lift.getDescription());
+                startActivityForResult(intent, REQ_DESCRIPTION);
+            }
+        });
     }
 
 
@@ -248,7 +267,7 @@ public class LiftActivity extends AppCompatActivity implements
                             m_lift.getStretches().isEmpty() ? m_userLastLocation :
                                     m_lift.getLastStretchArrCoords());
                     bun.putSerializable(AddStretchDialogFragment.CURRENCY_KEY,                      // currency
-                            Currency.getInstance(m_currency.getText().toString()));
+                            Currency.getInstance(m_actvCurrency.getText().toString()));
                     bun.putParcelable(AddStretchDialogFragment.DEP_COORDS_KEY,                      // departure coordinates
                             m_lift.getLastStretchArrCoords());
                     bun.putString(AddStretchDialogFragment.DEP_ADDR_KEY,                            // departure address
@@ -267,10 +286,10 @@ public class LiftActivity extends AppCompatActivity implements
 
     private boolean validateCurrency()
     {
-        String currStr = m_currency.getText().toString();
+        String currStr = m_actvCurrency.getText().toString();
         if (currStr.isEmpty())
         {
-            m_currency.setError(this.getString(R.string.empty_field_error));
+            m_actvCurrency.setError(this.getString(R.string.empty_field_error));
             return false;
         }
 
@@ -280,7 +299,7 @@ public class LiftActivity extends AppCompatActivity implements
         }
         catch (IllegalArgumentException e)
         {
-            m_currency.setError(this.getString(R.string.invalid_currency_error));
+            m_actvCurrency.setError(this.getString(R.string.invalid_currency_error));
             return false;
         }
 
@@ -382,7 +401,24 @@ public class LiftActivity extends AppCompatActivity implements
 
 
 
-    // AddStretchDialogFragment ///////////////////////////////////////////////////////////////////
+    // activity result /////////////////////////////////////////////////////////////////////////////
+
+
+
+    @Override
+    public void onActivityResult(int reqCode, int resCode, Intent data)
+    {
+        super.onActivityResult(reqCode, resCode, data);
+
+        if (reqCode == REQ_DESCRIPTION && resCode == Activity.RESULT_OK)
+        {
+            m_lift.setDescription(data.getStringExtra(LiftDescriptionActivity.DESCRIPTION_KEY));
+        }
+    }
+
+
+
+    // AddStretchDialogFragment ////////////////////////////////////////////////////////////////////
 
 
 
@@ -463,7 +499,7 @@ public class LiftActivity extends AppCompatActivity implements
             holder.bind(m_stretches.get(position));
 
             if (!m_stretches.isEmpty())
-                m_noLiftsText.setVisibility(View.GONE);
+                m_tvNoLiftsText.setVisibility(View.GONE);
         }
 
 
