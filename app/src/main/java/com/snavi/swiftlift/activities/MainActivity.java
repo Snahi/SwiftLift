@@ -2,6 +2,7 @@ package com.snavi.swiftlift.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class MainActivity extends AppCompatActivity implements LogInFragment.OnFragmentInteractionListener {
+public class MainActivity extends FragmentActivity implements LogInFragment.OnFragmentInteractionListener {
 
     // CONST ///////////////////////////////////////////////////////////////////////////////////////
     public  static final String LOGIN_POPUP_TAG                       = "log in";
