@@ -4,16 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,7 +28,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.snavi.swiftlift.R;
 import com.snavi.swiftlift.database_objects.Const;
+import com.snavi.swiftlift.utils.FirebaseUtils;
 import com.snavi.swiftlift.utils.InputValidator;
+import com.snavi.swiftlift.utils.Toasts;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,22 +40,28 @@ public class PersonalDataUpdateActivity extends AppCompatActivity {
 
 
     // CONST //////////////////////////////////////////////////////////////////////////////////////
-    public static final String TAG = PersonalDataUpdateActivity.class.getName();
+    // request codes
+    public static final int REQ_PROFILE_PHOTO = 17731;
+    // errors
     public static final String NULL_FIREBASE_AUTH_ERROR = "null FirebaseAuth error";
     public static final String NULL_USER_ERROR = "null user error";
     public static final String LOAD_DATA_ERROR = "load data error";
     public static final String LOAD_DATA_ERROR_NULL_DOC_SNAP = "load data error - null DocumentSnapshot";
+    // other
+    public static final String  TAG = PersonalDataUpdateActivity.class.getName();
+
 
 
     // fields /////////////////////////////////////////////////////////////////////////////////////
-    private FirebaseFirestore m_db;
-    private FirebaseUser m_currUser;
+    private FirebaseFirestore   m_db;
+    private FirebaseUser        m_currUser;
 
     // views
-    private EditText m_etName;
-    private EditText m_etSurname;
-    private EditText m_etPhone;
-    private Button m_butSave;
+    private EditText    m_etName;
+    private EditText    m_etSurname;
+    private EditText    m_etPhone;
+    private ImageView   m_imgUserPhoto;
+    private Button      m_butSave;
     private ProgressBar m_progressBar;
 
 
@@ -66,7 +80,8 @@ public class PersonalDataUpdateActivity extends AppCompatActivity {
 
         initViews();
         loadData();
-        setSaveButtonListener();
+        initButtons();
+        setProfilePhotoOnClickListener();
     }
 
 
@@ -98,17 +113,20 @@ public class PersonalDataUpdateActivity extends AppCompatActivity {
 
     private void initViews()
     {
-        m_etName    = findViewById(R.id.activity_personal_data_update_et_name);
-        m_etSurname = findViewById(R.id.activity_personal_data_update_et_surname);
-        m_etPhone   = findViewById(R.id.activity_personal_data_update_et_phone);
-        m_butSave   = findViewById(R.id.activity_personal_data_update_but_save);
-        m_progressBar = findViewById(R.id.activity_personal_data_progress_bar);
+        m_etName            = findViewById(R.id.activity_personal_data_update_et_name);
+        m_etSurname         = findViewById(R.id.activity_personal_data_update_et_surname);
+        m_etPhone           = findViewById(R.id.activity_personal_data_update_et_phone);
+        m_butSave           = findViewById(R.id.activity_personal_data_update_but_save);
+        m_progressBar       = findViewById(R.id.activity_personal_data_progress_bar);
+        m_imgUserPhoto      = findViewById(R.id.activity_personal_data_img_profile_photo);
     }
 
 
 
     private void loadData()
     {
+        loadUserImage(m_currUser);
+
         DocumentReference docRef = m_db.collection(Const.USERS_COLLECTION)
                 .document(m_currUser.getUid());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -123,6 +141,7 @@ public class PersonalDataUpdateActivity extends AppCompatActivity {
                         showLoadDataFailureToast();
                         setResult(Activity.RESULT_CANCELED);
                         finish();
+                        return;
                     }
                     loadDataIntoEditTexts(task.getResult());
                     m_progressBar.setVisibility(View.GONE);
@@ -150,7 +169,40 @@ public class PersonalDataUpdateActivity extends AppCompatActivity {
 
 
 
-    private void setSaveButtonListener()
+    private void loadUserImage(FirebaseUser user)
+    {
+        Uri photoUrl = user.getPhotoUrl();
+        if (photoUrl == null)
+            return;
+
+        Picasso.get().load(user.getPhotoUrl()).into(m_imgUserPhoto);
+    }
+
+
+
+    private void initButtons()
+    {
+        setSaveButListener();
+    }
+
+
+
+    private void setProfilePhotoOnClickListener()
+    {
+        m_imgUserPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, REQ_PROFILE_PHOTO);
+            }
+        });
+    }
+
+
+
+    private void setSaveButListener()
     {
         m_butSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -265,6 +317,48 @@ public class PersonalDataUpdateActivity extends AppCompatActivity {
                 m_progressBar.setVisibility(View.GONE);
             }
         });
+    }
+
+
+
+    // activity results ////////////////////////////////////////////////////////////////////////////
+
+
+
+    @Override
+    public void onActivityResult(int reqCode, int resCode, Intent data)
+    {
+        super.onActivityResult(reqCode, resCode, data);
+
+        switch (reqCode)
+        {
+            case REQ_PROFILE_PHOTO : setUserPhoto(resCode, data); break;
+        }
+    }
+
+
+
+    private void setUserPhoto(int resCode, Intent data)
+    {
+        if (resCode == Activity.RESULT_CANCELED)
+            return;
+
+        if (data == null)
+        {
+            Toasts.showPhotoUploadError(this);
+            return;
+        }
+
+        Uri photoUri = data.getData();
+
+        if (photoUri == null)
+        {
+            Toasts.showPhotoUploadError(this);
+            return;
+        }
+
+        FirebaseUtils.setUserPhoto(m_currUser, photoUri, this, m_imgUserPhoto,
+                m_progressBar);
     }
 
 

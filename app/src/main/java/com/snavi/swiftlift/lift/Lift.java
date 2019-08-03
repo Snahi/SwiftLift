@@ -132,6 +132,7 @@ public class Lift implements Parcelable {
         HashMap<String, Object> res = new HashMap<>();
         res.put(Const.LIFT_OWNER, m_owner);
         res.put(Const.LIFT_CURRENCY, m_currency.getCurrencyCode());
+        res.put(Const.LIFT_DESCRIPTION, m_description);
 
         return res;
     }

@@ -5,11 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,7 +27,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.snavi.swiftlift.R;
 import com.snavi.swiftlift.database_objects.Const;
+import com.snavi.swiftlift.utils.FirebaseUtils;
 import com.snavi.swiftlift.utils.InputValidator;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,19 +48,25 @@ public class RegisterActivity extends AppCompatActivity {
     public static final int MIN_PHONE_LEN    = 5;
     public static final int MAX_PHONE_LEN    = 20;
     public static final int ACTIVITY_RESULT_ADDITIONAL_DATA_NOT_LOADED = 12712;
+    // request codes
+    private static final int REQ_PROFILE_PHOTO = 1232;
 
 
     // fields /////////////////////////////////////////////////////////////////////////////////////
     private FirebaseAuth m_firebaseAuth;
 
     // user data
-    private String m_name;
-    private String m_surname;
-    private String m_email;
-    private String m_password;
-    private String m_phone;
-    private ProgressBar m_progressBar;
-    private FirebaseFirestore m_db;
+    private String              m_name;
+    private String              m_surname;
+    private String              m_email;
+    private String              m_password;
+    private String              m_phone;
+    private ProgressBar         m_progressBar;
+    private FirebaseFirestore   m_db;
+    private Uri                 m_profilePhotoUri;
+
+    // views
+    private ImageView   m_imgProfilePhoto;
 
 
 
@@ -68,7 +79,16 @@ public class RegisterActivity extends AppCompatActivity {
         m_firebaseAuth = FirebaseAuth.getInstance();
         m_db = FirebaseFirestore.getInstance();
 
+        initViews();
         setSignUpButtonListener();
+        setProfilePhotoOnClickListener();
+    }
+
+
+
+    private void initViews()
+    {
+        m_imgProfilePhoto = findViewById(R.id.activity_register_img_profile_photo);
     }
 
 
@@ -90,6 +110,23 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+
+
+    private void setProfilePhotoOnClickListener()
+    {
+        m_imgProfilePhoto.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setType("image/*");
+                        startActivityForResult(intent, REQ_PROFILE_PHOTO);
+                    }
+                }
+        );
     }
 
 
@@ -117,6 +154,28 @@ public class RegisterActivity extends AppCompatActivity {
         m_email    = ((EditText) findViewById(R.id.activity_register_et_email)).getText().toString();
         m_password = ((EditText) findViewById(R.id.activity_register_et_password)).getText().toString();
         m_phone    = ((EditText) findViewById(R.id.activity_register_et_phone)).getText().toString();
+    }
+
+
+
+    // activity result /////////////////////////////////////////////////////////////////////////////
+
+
+
+    @Override
+    public void onActivityResult(int reqCode, int resCode, Intent data)
+    {
+        super.onActivityResult(reqCode, resCode, data);
+
+        if (reqCode == REQ_PROFILE_PHOTO)
+        {
+            if (data != null)
+            {
+                Uri uri             = data.getData();
+                m_profilePhotoUri   = uri;
+                Picasso.get().load(uri).into(m_imgProfilePhoto);
+            }
+        }
     }
 
 
@@ -226,6 +285,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void dealWithSuccessfulAdditionalUserDataWrite()
     {
+        FirebaseUser user = m_firebaseAuth.getCurrentUser();
+        if (user != null && m_profilePhotoUri != null)
+            FirebaseUtils.setUserPhoto(user, m_profilePhotoUri, this);
+
         Toast.makeText(RegisterActivity.this,
                 getResources().getText(R.string.registration_successful),
                 Toast.LENGTH_LONG)
@@ -254,6 +317,7 @@ public class RegisterActivity extends AppCompatActivity {
         user.put(Const.USER_SURNAME, m_surname);
         user.put(Const.USER_PHONE, m_phone);
         user.put(Const.USER_PHONE_VERIFIED, false);
+        user.put(Const.USER_EMAIL, m_email);
 
         return user;
     }

@@ -8,6 +8,7 @@ public interface Const {
     String USER_SURNAME         = "surname";
     String USER_PHONE           = "phone";
     String USER_PHONE_VERIFIED  = "is_phone_verified";
+    String USER_EMAIL           = "email";
 
     // lifts ///////////////////////////////////////////////////////////////////////////////////////
     String LIFTS_COLLECTION     = "lifts";
@@ -36,4 +37,17 @@ public interface Const {
     String PRICE_MAIN_PART     = "mainPart";
     String PRICE_FRAC_PART     = "fractionalPart";
     String PRICE_CURRENCY_CODE = "currency";
+
+    // firebase cloud messaging ////////////////////////////////////////////////////////////////////
+    String FCM_TOKENS_COLLECTION = "tokens_collection";
+    String FCM_TOKEN_OWNER       = "owner";
+    String FCM_TOKEN             = "token";
+
+    // lift requests ///////////////////////////////////////////////////////////////////////////////
+    String REQ_COLLECTION       = "req_collection";
+    String REQ_SENDER           = "sender";
+    String REQ_LIFT             = "lift";
+    String REQ_LIFT_OWNER_TOKEN = "lift_owner_token";
+    String REQ_FROM_STRETCH     = "from";
+    String REQ_TO_STRETCH       = "to";
 }

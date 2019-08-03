@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1079032668233-hnq79iaovek4c45e5jscmuha5sg60eii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.snavi.swiftlift",
+            "certificate_hash": "7884d986cf90ec5801e0685adaf51cced68d0803"
+          }
+        },
+        {
           "client_id": "1079032668233-6p1pt2q2np1ti2c1gqdnb8rph5fsk53o.apps.googleusercontent.com",
           "client_type": 3
         }

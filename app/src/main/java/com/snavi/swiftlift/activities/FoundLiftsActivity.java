@@ -166,6 +166,7 @@ public class FoundLiftsActivity extends AppCompatActivity {
         if (m_maxDate == null)
         {
             Calendar c = Calendar.getInstance();
+            c.setTime(m_departure);
             c.add(Calendar.DATE, DEF_SEARCH_PERIOD_IN_DAYS);
             m_maxDate = c.getTime();
         }
@@ -222,7 +223,6 @@ public class FoundLiftsActivity extends AppCompatActivity {
     }
 
 
-    // TODO firebase do not allow whereLess/more on more than one field
     /**
      * method performs query that is choosing stretches which have properties appropriate for
      * departure. When query is done it calls synchronized didOtherQueryFinish(), which returns true
@@ -541,6 +541,7 @@ public class FoundLiftsActivity extends AppCompatActivity {
 
         private class ViewHolder extends RecyclerView.ViewHolder {
 
+            @NonNull private CardView m_card;
             @NonNull private TextView m_tvFrom;
             @NonNull private TextView m_tvDeparture;
             @NonNull private TextView m_tvTo;
@@ -551,11 +552,12 @@ public class FoundLiftsActivity extends AppCompatActivity {
             {
                 super(card);
 
-                m_tvFrom = card.findViewById(R.id.card_view_found_lift_tv_from);
-                m_tvDeparture = card.findViewById(R.id.card_view_found_lift_tv_dep);
-                m_tvTo = card.findViewById(R.id.card_view_found_lift_tv_to);
-                m_tvArrival = card.findViewById(R.id.card_view_found_lift_tv_arr);
-                m_tvPrice = card.findViewById(R.id.card_view_found_lift_tv_price);
+                m_card          = card;
+                m_tvFrom        = card.findViewById(R.id.card_view_found_lift_tv_from);
+                m_tvDeparture   = card.findViewById(R.id.card_view_found_lift_tv_dep);
+                m_tvTo          = card.findViewById(R.id.card_view_found_lift_tv_to);
+                m_tvArrival     = card.findViewById(R.id.card_view_found_lift_tv_arr);
+                m_tvPrice       = card.findViewById(R.id.card_view_found_lift_tv_price);
             }
 
 
@@ -570,6 +572,26 @@ public class FoundLiftsActivity extends AppCompatActivity {
                 m_tvArrival.setText(arrivalDate);
                 m_tvPrice.setText(price);
 
+                setOnClickListener();
+            }
+
+
+
+            private void setOnClickListener()
+            {
+                m_card.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        Intent intent = new Intent(FoundLiftsActivity.this,
+                                FoundLiftDetailsActivity.class);
+
+                        intent.putExtra(FoundLiftDetailsActivity.LIFT_KEY,
+                                m_foundLifts.get(getAdapterPosition()));
+
+                        startActivity(intent);
+                    }
+                });
             }
         }
     }

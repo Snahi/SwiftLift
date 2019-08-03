@@ -51,13 +51,16 @@ public class FindLiftFragment extends Fragment implements TimePickerDialog.OnTim
 
     // fields //////////////////////////////////////////////////////////////////////////////////////
     private Calendar m_departure;
+    private Calendar m_latestDeparture;
     // view
-    private EditText m_etFrom;
-    private EditText m_etFromDistRange;
-    private EditText m_etTo;
-    private EditText m_etToDistRange;
-    private EditText m_etDepartureDate;
-    private EditText m_etDepartureTime;
+    private EditText    m_etFrom;
+    private EditText    m_etFromDistRange;
+    private EditText    m_etTo;
+    private EditText    m_etToDistRange;
+    private EditText    m_etDepartureDate;
+    private EditText    m_etDepartureTime;
+    private EditText    m_etLatestDepDate;
+    private EditText    m_etLatestDepTime;
     private ImageButton m_butSearch;
 
 
@@ -73,7 +76,8 @@ public class FindLiftFragment extends Fragment implements TimePickerDialog.OnTim
     {
         super.onCreate(savedInstanceState);
 
-        m_departure = Calendar.getInstance();
+        m_departure         = Calendar.getInstance();
+        m_latestDeparture   = Calendar.getInstance();
     }
 
 
@@ -86,6 +90,8 @@ public class FindLiftFragment extends Fragment implements TimePickerDialog.OnTim
         initViews(view);
         setDepDateEtListener();
         setDepTimeEtListener();
+        setLatestDepDateEtListener();
+        setLatestDepTimeEtListener();
         setSearchButtonListener();
 
         return view;
@@ -101,6 +107,8 @@ public class FindLiftFragment extends Fragment implements TimePickerDialog.OnTim
         m_etToDistRange   = view.findViewById(R.id.fragment_find_lift_et_dist_to);
         m_etDepartureDate = view.findViewById(R.id.fragment_find_lift_et_earliest_dep_date);
         m_etDepartureTime = view.findViewById(R.id.fragment_find_lift_et_earliest_dep_time);
+        m_etLatestDepDate = view.findViewById(R.id.fragment_find_lift_et_latest_dep_date);
+        m_etLatestDepTime = view.findViewById(R.id.fragment_find_lift_et_latest_dep_time);
         m_butSearch       = view.findViewById(R.id.fragment_find_lift_but_search);
     }
 
@@ -167,7 +175,7 @@ public class FindLiftFragment extends Fragment implements TimePickerDialog.OnTim
                 Calendar currCal = Calendar.getInstance();
                 new DatePickerDialog(
                         getContext(),
-                        FindLiftFragment.this,
+                        getDatePickerDialogListener(m_departure, m_etDepartureDate),
                         currCal.get(Calendar.YEAR), currCal.get(Calendar.MONTH),
                         currCal.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -185,13 +193,91 @@ public class FindLiftFragment extends Fragment implements TimePickerDialog.OnTim
                 if (getContext() == null)
                     Log.e(TAG, NULL_CONTEXT_ERROR);
 
-                new TimePickerDialog(getContext(),
-                        FindLiftFragment.this,
+                new TimePickerDialog(
+                        getContext(),
+                        getTimePickerDialogListener(m_departure, m_etDepartureTime),
                         m_departure.get(Calendar.HOUR),
                         m_departure.get(Calendar.MINUTE),
                         true).show();
             }
         });
+    }
+
+
+
+    private void setLatestDepDateEtListener()
+    {
+        m_etLatestDepDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                if (getContext() == null)
+                    Log.e(TAG, NULL_CONTEXT_ERROR);
+
+                new DatePickerDialog(
+                        getContext(),
+                        getDatePickerDialogListener(m_latestDeparture, m_etLatestDepDate),
+                        m_departure.get(Calendar.YEAR), m_departure.get(Calendar.MONTH),
+                        m_departure.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+    }
+
+
+
+    private void setLatestDepTimeEtListener()
+    {
+        m_etLatestDepTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                if (getContext() == null)
+                    Log.e(TAG, NULL_CONTEXT_ERROR);
+
+                new TimePickerDialog(getContext(),
+                        getTimePickerDialogListener(m_latestDeparture, m_etLatestDepTime),
+                        m_departure.get(Calendar.HOUR),
+                        m_departure.get(Calendar.MINUTE),
+                        true).show();
+            }
+        });
+    }
+
+
+
+    private DatePickerDialog.OnDateSetListener getDatePickerDialogListener(final Calendar calendar,
+                                                                           final EditText et)
+    {
+        return new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day)
+            {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.DAY_OF_MONTH, day);
+
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+                et.setText(sdf.format(calendar.getTime()));
+            }
+        };
+    }
+
+
+
+    private TimePickerDialog.OnTimeSetListener getTimePickerDialogListener(final Calendar calendar,
+                                                                           final EditText et)
+    {
+        return new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hour, int minute)
+            {
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                calendar.set(Calendar.MINUTE, minute);
+
+                SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
+                et.setText(sdf.format(calendar.getTime()));
+            }
+        };
     }
 
 
@@ -309,6 +395,12 @@ public class FindLiftFragment extends Fragment implements TimePickerDialog.OnTim
         intent.putExtra(FoundLiftsActivity.TO_KEY, to);
         intent.putExtra(FoundLiftsActivity.TO_RANGE_KEY, toRange);
         intent.putExtra(FoundLiftsActivity.DEPARTURE_KEY, m_departure.getTime());
+
+        if (!m_etLatestDepTime.getText().toString().isEmpty()
+        && !m_etLatestDepDate.getText().toString().isEmpty())
+        {
+            intent.putExtra(FoundLiftsActivity.MAX_DATE_KEY, m_latestDeparture.getTime());
+        }
 
         startActivity(intent);
     }

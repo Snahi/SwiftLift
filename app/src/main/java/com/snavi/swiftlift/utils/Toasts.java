@@ -101,4 +101,53 @@ public class Toasts {
 
         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
     }
+
+
+
+    public static void showAuthErrorToast(Context context)
+    {
+        Toast.makeText(context, R.string.auth_error, Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showReqSendErrorToast(Context context)
+    {
+        Toast.makeText(context, R.string.lift_req_send_error, Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showCantFindOwnerNameToast(Context context)
+    {
+        Toast.makeText(context, R.string.cant_find_owner_name, Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showCantFindOwnerSurnameToast(Context context)
+    {
+        Toast.makeText(context, R.string.cant_find_owner_surname, Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showCantFindOwnerData(Context context)
+    {
+        Toast.makeText(context, R.string.cant_find_owner_data, Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showPhotoUploadError(Context context)
+    {
+        Toast.makeText(context, R.string.photo_update_failure, Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showYouMustBeSignedIdToast(Context context)
+    {
+        Toast.makeText(context, R.string.you_must_be_signed_in, Toast.LENGTH_LONG).show();
+    }
 }

@@ -17,14 +17,15 @@
 
         <ImageView
             android:id="@+id/activity_found_lift_details_img_owner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:contentDescription="@string/lift_owner_photo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/sym_def_app_icon" />
+            app:srcCompat="@drawable/default_user_img" />
 
         <TextView
             android:id="@+id/activity_found_lift_details_tv_owner_name"
@@ -127,30 +128,53 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_found_lift_details_tv_to_date" />
 
-    <!-- buttons ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||-->
-    <Button
-        android:id="@+id/activity_found_lift_details_but_enroll"
+    <ImageButton
+        android:id="@+id/activity_found_lift_details_imgBut_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_found_lift_details_tv_description"
+        app:srcCompat="@drawable/call_icon" />
+
+    <ImageButton
+        android:id="@+id/activity_found_lift_details_imgBut_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="@string/enroll"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_found_lift_details_imgBut_call"
+        app:srcCompat="@drawable/message_icon" />
+
+    <ImageButton
+        android:id="@+id/activity_found_lift_details_imgBut_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_found_lift_details_imgBut_message"
+        app:srcCompat="@drawable/email_icon" />
+
+    <TextView
+        android:id="@+id/activity_found_lift_details_tv_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_found_lift_details_tv_price" />
 
-    <Button
-        android:id="@+id/activity_found_lift_details_but_contact"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/contact"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_found_lift_details_but_enroll" />
+    <!-- buttons ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
