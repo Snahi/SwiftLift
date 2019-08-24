@@ -1,8 +1,8 @@
 package com.snavi.swiftlift.lift;
 
+import android.location.Address;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -243,12 +243,12 @@ public class Lift implements Parcelable {
 
 
     @Nullable
-    public String getLastStretchArrAddr()
+    public Address getLastStretchArrAddr()
     {
         if (m_stretches.isEmpty())
             return null;
 
-        return m_stretches.get(m_stretches.size() - 1).getAddrTo();
+        return m_stretches.get(m_stretches.size() - 1).getArrAddr();
     }
 
 
@@ -291,7 +291,7 @@ public class Lift implements Parcelable {
         if (m_stretches.isEmpty())
             return "";
         else
-            return m_stretches.get(0).getAddrFrom();
+            return m_stretches.get(0).getDepAddrLine();
     }
 
 
@@ -302,7 +302,7 @@ public class Lift implements Parcelable {
         if (m_stretches.isEmpty())
             return "";
         else
-            return m_stretches.get(m_stretches.size() - 1).getAddrTo();
+            return m_stretches.get(m_stretches.size() - 1).getArrAddrLine();
     }
 
 

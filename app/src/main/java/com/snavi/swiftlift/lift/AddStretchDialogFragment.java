@@ -17,7 +17,6 @@ import androidx.fragment.app.DialogFragment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -67,6 +66,7 @@ public class AddStretchDialogFragment extends DialogFragment {
     private static final String TIME_FORMAT = "HH:mm";
     //other
     private static final String TAG = AddStretchDialogFragment.class.getName();
+    private static final int CITY_IDX_IN_ADDR_LINE = 0;
 
 
     // fields //////////////////////////////////////////////////////////////////////////////////////
@@ -88,8 +88,8 @@ public class AddStretchDialogFragment extends DialogFragment {
     private Calendar m_arrDate;
     private LatLng   m_depCoords;
     private LatLng   m_arrCoords;
-    private String   m_depAddr;
-    private String   m_arrAddr;
+    private Address  m_depAddr;
+    private Address  m_arrAddr;
     private Price    m_price;
 
 
@@ -171,11 +171,11 @@ public class AddStretchDialogFragment extends DialogFragment {
         if (m_depCoords == null)
             return;
 
-        m_depAddr = m_arguments.getString(DEP_ADDR_KEY);
+        m_depAddr = m_arguments.getParcelable(DEP_ADDR_KEY);
         if (m_depAddr == null)
             return;
 
-        m_depAddrTV.setText(m_depAddr);
+        m_depAddrTV.setText(m_depAddr.getAddressLine(0));
         m_fromCoordsBut.setEnabled(false);
         if (getContext() != null)
             m_fromCoordsBut.setImageDrawable(getContext()
@@ -338,8 +338,12 @@ public class AddStretchDialogFragment extends DialogFragment {
             return;
 
         m_depCoords = data.getParcelableExtra(LiftPointsPickActivity.RESULT_COORDINATES_KEY);
-        Address addr = getReverseGeocode(m_depCoords);
-        writeAddressToFromAddrTvAndToField(addr);
+        m_depAddr   = getReverseGeocode(m_depCoords);
+        if (m_depAddr != null)
+            writeAddressToFromAddrTv(m_depAddr);
+        else
+            Toasts.showBadAddressToast(getContext());
+
         m_initCoords = m_depCoords;
     }
 
@@ -351,8 +355,11 @@ public class AddStretchDialogFragment extends DialogFragment {
             return;
 
         m_arrCoords = data.getParcelableExtra(LiftPointsPickActivity.RESULT_COORDINATES_KEY);
-        Address addr = getReverseGeocode(m_arrCoords);
-        writeAddressToToAddrTvAndSaveToField(addr);
+        m_arrAddr   = getReverseGeocode(m_arrCoords);
+        if (m_arrAddr != null)
+            writeAddressToToAddrTv(m_arrAddr);
+        else
+            Toasts.showBadAddressToast(getContext());
     }
 
 
@@ -362,6 +369,7 @@ public class AddStretchDialogFragment extends DialogFragment {
      * @return reverse geocoded address of null if Geocoder wasn't present or couldn't resolve
      * address
      */
+    @Nullable
     private Address getReverseGeocode(LatLng coords)
     {
         if (Geocoder.isPresent())
@@ -388,11 +396,8 @@ public class AddStretchDialogFragment extends DialogFragment {
 
 
 
-    private void writeAddressToFromAddrTvAndToField(Address addr)
+    private void writeAddressToFromAddrTv(@NonNull Address addr)
     {
-        if (addr == null)
-            return;
-
         View view = getView();
         if (view == null)
             return;
@@ -400,16 +405,12 @@ public class AddStretchDialogFragment extends DialogFragment {
         TextView tv = view.findViewById(R.id.fragment_add_stretch_dialog_tv_from_addr);
         String addrStr = addr.getAddressLine(0);
         tv.setText(addrStr);
-        m_depAddr = addrStr;
     }
 
 
 
-    private void writeAddressToToAddrTvAndSaveToField(Address addr)
+    private void writeAddressToToAddrTv(@NonNull Address addr)
     {
-        if (addr == null)
-            return;
-
         View view = getView();
         if (view == null)
             return;
@@ -417,7 +418,6 @@ public class AddStretchDialogFragment extends DialogFragment {
         TextView tv = view.findViewById(R.id.fragment_add_stretch_dialog_tv_to_addr);
         String addrStr = addr.getAddressLine(0);
         tv.setText(addrStr);
-        m_arrAddr = addrStr;
     }
 
 
@@ -590,8 +590,8 @@ public class AddStretchDialogFragment extends DialogFragment {
                 }
 
                 m_price = getPrice(view);
-                Stretch res = new Stretch(m_depCoords, m_arrCoords, m_depAddr, m_arrAddr, m_depDate,
-                        m_arrDate, m_price, m_liftId);
+                Stretch res = new Stretch(m_depAddr, m_arrAddr,  m_depDate, m_arrDate, m_price,
+                        m_liftId);
 
                 m_listener.onFragmentInteraction(res);
                 dismiss();
@@ -757,8 +757,6 @@ public class AddStretchDialogFragment extends DialogFragment {
 
     private boolean validatePrice(Resources resources, View view)
     {
-        boolean isValid = true;
-
         EditText price = view.findViewById(R.id.fragment_add_stretch_dialog_et_price);
         String priceText = price.getText().toString();
         if (priceText.isEmpty())
@@ -773,10 +771,10 @@ public class AddStretchDialogFragment extends DialogFragment {
             return false;
         }
 
-        if (isValid)
-            price.setError(null);
 
-        return isValid;
+        price.setError(null);
+
+        return true;
     }
 
 

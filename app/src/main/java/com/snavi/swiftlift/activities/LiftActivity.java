@@ -270,7 +270,7 @@ public class LiftActivity extends AppCompatActivity implements
                             Currency.getInstance(m_actvCurrency.getText().toString()));
                     bun.putParcelable(AddStretchDialogFragment.DEP_COORDS_KEY,                      // departure coordinates
                             m_lift.getLastStretchArrCoords());
-                    bun.putString(AddStretchDialogFragment.DEP_ADDR_KEY,                            // departure address
+                    bun.putParcelable(AddStretchDialogFragment.DEP_ADDR_KEY,                        // departure address
                             m_lift.getLastStretchArrAddr());
                     bun.putSerializable(AddStretchDialogFragment.DEP_DATE_KEY,                      // departure date
                             m_lift.getLastStretchArrDate());
@@ -541,8 +541,8 @@ public class LiftActivity extends AppCompatActivity implements
 
             private void bind(Stretch stretch)
             {
-                m_tvFrom.setText(stretch.getAddrFrom());
-                m_tvTo.setText(stretch.getAddrTo());
+                m_tvFrom.setText(stretch.getDepAddrLine());
+                m_tvTo.setText(stretch.getArrAddrLine());
                 m_tvDateFrom.setText(stretch.depDateDisplay(Locale.getDefault()));
                 m_tvDateTo.setText(stretch.arrDateDisplay(Locale.getDefault()));
                 m_tvPrice.setText(stretch.getPrice().toString());

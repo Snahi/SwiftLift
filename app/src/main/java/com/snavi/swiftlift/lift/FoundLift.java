@@ -1,8 +1,10 @@
 package com.snavi.swiftlift.lift;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.snavi.swiftlift.lift.Lift;
-import com.snavi.swiftlift.lift.Stretch;
+import com.snavi.swiftlift.utils.Price;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -168,7 +170,7 @@ public class FoundLift extends Lift {
     @NonNull
     public String getFrom()
     {
-        return m_startStretch.getAddrFrom();
+        return m_startStretch.getDepAddrLine();
     }
 
 
@@ -177,7 +179,7 @@ public class FoundLift extends Lift {
     @NonNull
     public String getTo()
     {
-        return m_endStretch.getAddrTo();
+        return m_endStretch.getArrAddrLine();
     }
 
 

@@ -2,4 +2,6 @@
 <resources>
     <dimen name="activity_settings_but_width">300dp</dimen>
     <dimen name="fragment_find_lift_side_margin">17dp</dimen>
+    <dimen name="activity_lift_details_num_et_width">100dp</dimen>
+    <dimen name="fragment_find_lift_input_label_top_margin">30dp</dimen>
 </resources>

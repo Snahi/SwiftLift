@@ -30,8 +30,8 @@ public class LiftPointsPickActivity extends FragmentActivity implements OnMapRea
 
 
     // fields //////////////////////////////////////////////////////////////////////////////////////
-    private GoogleMap m_map;
-    private LatLng m_userChoice;
+    private GoogleMap   m_map;
+    private LatLng      m_userChoice;
 
 
     @Override
@@ -43,6 +43,7 @@ public class LiftPointsPickActivity extends FragmentActivity implements OnMapRea
                 .findFragmentById(R.id.map);
         if (mapFragment == null)
         {
+            setResult(Activity.RESULT_CANCELED);
             finish();
             showNullFragmentManagerToast();
             Log.e(TAG, NULL_FRAGMENT_MANAGER_ERROR);
