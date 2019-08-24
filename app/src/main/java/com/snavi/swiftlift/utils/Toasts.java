@@ -150,4 +150,11 @@ public class Toasts {
     {
         Toast.makeText(context, R.string.you_must_be_signed_in, Toast.LENGTH_LONG).show();
     }
+
+
+
+    public static void showBadAddressToast(Context context)
+    {
+        Toast.makeText(context, R.string.bad_address, Toast.LENGTH_LONG).show();
+    }
 }

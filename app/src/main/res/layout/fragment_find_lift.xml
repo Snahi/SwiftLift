@@ -1,187 +1,258 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/signed_user_fragment_bg"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    tools:context=".signed_in_fragments.FindLiftFragment">
+    android:layout_width="0dp"
+    android:layout_height="0dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical"
+        android:paddingBottom="100dp"
+        tools:context=".signed_in_fragments.FindLiftFragment">
 
-        <EditText
-            android:id="@+id/fragment_find_lift_et_from"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/fragment_find_lift_tv_label_search_for_a_ride"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="@dimen/fragment_find_lift_side_margin"
-            android:ems="10"
-            android:hint="@string/from_street_city_country_etc"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/fragment_find_lift_et_to"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
-            android:layout_marginTop="27dp"
-            android:layout_marginEnd="@dimen/fragment_find_lift_side_margin"
-            android:ems="10"
-            android:hint="@string/to_street_city_country_post_code_etc"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_dist_from" />
-
-        <EditText
-            android:id="@+id/fragment_find_lift_et_earliest_dep_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
-            android:layout_marginTop="27dp"
-            android:layout_marginEnd="@dimen/fragment_find_lift_side_margin"
-            android:ems="10"
-            android:hint="@string/earliest_departure_date_text"
-            android:inputType="none"
-            android:focusable="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_dist_to" />
-
-        <EditText
-            android:id="@+id/fragment_find_lift_et_earliest_dep_time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="@dimen/fragment_find_lift_side_margin"
-            android:ems="10"
-            android:hint="@string/earliest_departure_time_text"
-            android:inputType="none"
-            android:focusable="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_earliest_dep_date"/>
-
-        <EditText
-            android:id="@+id/fragment_find_lift_et_dist_from"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:ems="10"
-            android:inputType="number"
-            android:text="@string/default_distance_range"
-            app:layout_constraintEnd_toStartOf="@+id/fragment_find_lift_tv_km_from"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_from" />
-
-        <EditText
-            android:id="@+id/fragment_find_lift_et_dist_to"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:ems="10"
-            android:inputType="number"
-            android:text="@string/default_distance_range"
-            app:layout_constraintEnd_toStartOf="@+id/fragment_find_lift_tv_km_to"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_to" />
-
-        <ImageButton
-            android:id="@+id/fragment_find_lift_but_search"
-            android:layout_width="100dp"
-            android:layout_height="70dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="17dp"
             android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:scaleType="center"
-            android:src="@drawable/search_icon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_latest_dep_time" />
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Search for a ride"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
 
         <TextView
-            android:id="@+id/fragment_find_lift_tv_km_from"
+            android:id="@+id/fragment_find_lift_tv_label_from_section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="37dp"
             android:layout_marginEnd="8dp"
-            android:text="@string/km"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_find_lift_et_dist_from"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/fragment_find_lift_et_dist_from" />
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="From"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+
+        <View
+            android:id="@+id/fragment_find_lift_div_from"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/colorPrimaryDark"
+            android:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/fragment_find_lift_tv_label_from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="17dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="From address:"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/fragment_find_lift_et_from"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/fragment_find_lift_side_margin"
+            android:ems="10"
+            android:fontFamily="sans-serif-smallcaps"
+            android:inputType="textPersonName" />
 
         <TextView
             android:id="@+id/fragment_find_lift_tv_max_dep_dist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
+            android:layout_marginTop="@dimen/fragment_find_lift_input_label_top_margin"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="@string/max_departure_distance"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_find_lift_et_dist_from"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/fragment_find_lift_et_dist_from" />
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/fragment_find_lift_et_dist_from"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="3dp"
+            android:ems="10"
+            android:fontFamily="sans-serif-smallcaps"
+            android:inputType="number"
+            android:text="@string/default_distance_range" />
+
+        <TextView
+            android:id="@+id/fragment_find_lift_tv_label_earliest_dep_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="@dimen/fragment_find_lift_input_label_top_margin"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="@string/earliest_departure_date"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/fragment_find_lift_et_earliest_dep_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/fragment_find_lift_side_margin"
+            android:ems="10"
+            android:focusable="false"
+            android:fontFamily="sans-serif-smallcaps"
+            android:inputType="none" />
+
+        <TextView
+            android:id="@+id/fragment_find_lift_tv_label_earliest_dep_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="@dimen/fragment_find_lift_input_label_top_margin"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="@string/earliest_departure_time"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/fragment_find_lift_et_earliest_dep_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/fragment_find_lift_side_margin"
+            android:ems="10"
+            android:focusable="false"
+            android:fontFamily="sans-serif-smallcaps"
+            android:inputType="none" />
+
+        <TextView
+            android:id="@+id/fragment_find_lift_tv_label_latest_dep_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="@dimen/fragment_find_lift_input_label_top_margin"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="@string/latest_departure_date"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/fragment_find_lift_et_latest_dep_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="17dp"
+            android:ems="10"
+            android:focusable="false"
+            android:fontFamily="sans-serif-smallcaps"
+            android:inputType="date"/>
+
+        <TextView
+            android:id="@+id/fragment_find_lift_tv_label_latest_dep_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="@dimen/fragment_find_lift_input_label_top_margin"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="@string/latest_departure_time"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/fragment_find_lift_et_latest_dep_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="17dp"
+            android:ems="10"
+            android:focusable="false"
+            android:inputType="time"/>
+
+        <TextView
+            android:id="@+id/fragment_find_lift_tv_label_destination_section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="37dp"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="@string/destination"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+
+        <View
+            android:id="@+id/fragment_find_lift_div_destination"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="17dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/colorPrimaryDark"/>
+
+        <TextView
+            android:id="@+id/fragment_find_lift_tv_label_to_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="37dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="@string/destination_address"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/fragment_find_lift_et_to"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:fontFamily="sans-serif-smallcaps"
+            android:inputType="textPersonName" />
 
         <TextView
             android:id="@+id/fragment_find_lift_tv_max_to_dist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fragment_find_lift_side_margin"
+            android:layout_marginTop="@dimen/fragment_find_lift_input_label_top_margin"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="@string/max_arrival_distance"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_find_lift_et_dist_to"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/fragment_find_lift_et_dist_to" />
+            android:textSize="20sp"/>
 
-        <TextView
-            android:id="@+id/fragment_find_lift_tv_km_to"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/fragment_find_lift_et_dist_to"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="@string/km"
-            android:textSize="19sp"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_find_lift_et_dist_to"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/fragment_find_lift_et_dist_to" />
-
-        <EditText
-            android:id="@+id/fragment_find_lift_et_latest_dep_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="17dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="17dp"
             android:ems="10"
-            android:focusable="false"
-            android:hint="@string/latest_departure_date"
-            android:inputType="date"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_earliest_dep_time" />
+            android:fontFamily="sans-serif-smallcaps"
+            android:inputType="number"
+            android:text="@string/default_distance_range"/>
 
-        <EditText
-            android:id="@+id/fragment_find_lift_et_latest_dep_time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="17dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="17dp"
-            android:ems="10"
-            android:focusable="false"
-            android:hint="@string/latest_departure_time"
-            android:inputType="time"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_find_lift_et_latest_dep_date" />
+        <ImageButton
+            android:id="@+id/fragment_find_lift_but_search"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/search_button_background"
+            android:scaleType="center"
+            android:src="@drawable/search_icon" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+    </LinearLayout>
 </ScrollView>

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SwiftLift</string>
-    <string name="log_in_text">log in</string>
+    <string name="sign_in">Sign in</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="email_text">email</string>
     <string name="sign_up_text">Sign up</string>
@@ -118,8 +118,8 @@
     <string name="search_completed">Search completed. Number of results: </string>
     <string name="no_results">Sorry, there aren\'t any results for this search</string>
     <string name="km">Km</string>
-    <string name="max_departure_distance">Max. departure distance</string>
-    <string name="max_arrival_distance">Max. arrival distance</string>
+    <string name="max_departure_distance">Max. distance [km]:</string>
+    <string name="max_arrival_distance">Max. arrival distance [km]:</string>
     <string name="e_g_3">e.g. 3</string>
     <string name="amount_of_passengers">amount of passengers</string>
     <string name="default_num_of_passengers">3</string>
@@ -145,7 +145,14 @@
     <string name="edit_description">edit description</string>
     <string name="lift_description_hint">Some additional info, like additional contact, requirements, limitations etc.</string>
     <string name="too_long_description">Max. number of letters is</string>
-    <string name="latest_departure_date">Latest departure date</string>
-    <string name="latest_departure_time">latest departure time</string>
+    <string name="latest_departure_date">Latest departure date:</string>
+    <string name="latest_departure_time">latest departure time:</string>
     <string name="you_must_be_signed_in">You must be signed in to perform this action!</string>
+    <string name="welcome_to_swiftlift">Welcome to SwiftLift!</string>
+    <string name="main_activity_welcome_text">With this app you can easily share car with others and it doesn\'t matter wheter you want to be a passenger or a driver. The best thing is that this app is totally FREE and it will never change! You can perform your first search for a ride by scrolling down or you can register and then use all the functionalities of this app. We hope you will enjoy SwiftLift!</string>
+    <string name="destination_address">Destination address:</string>
+    <string name="destination">Destination</string>
+    <string name="earliest_departure_time">Earliest departure time:</string>
+    <string name="earliest_departure_date">Earliest departure date:</string>
+    <string name="bad_address">Provided address cannot be found!</string>
 </resources>
