@@ -31,8 +31,8 @@ public class Stretch implements Serializable {
     // fields //////////////////////////////////////////////////////////////////////////////////////
     private String  m_id;
     private String  m_liftId;
-    private Address m_depAddr;
-    private Address m_arrAddr;
+    private transient Address m_depAddr;
+    private transient Address m_arrAddr;
     private Price   m_price;
     private Date    m_depDate;
     private Date    m_arrDate;
@@ -44,7 +44,7 @@ public class Stretch implements Serializable {
             String liftId)
     {
         LatLng locFrom = new LatLng(addrFrom.getLatitude(), addrFrom.getLongitude());
-        LatLng locTo   = new LatLng(addrTo.getLatitude(), addrTo.getLatitude());
+        LatLng locTo   = new LatLng(addrTo.getLatitude(), addrTo.getLongitude());
 
         commonInit(locFrom, locTo);
 
@@ -102,14 +102,15 @@ public class Stretch implements Serializable {
     private void initFromAddr(LatLng coordFrom, String addrLineFrom, String cityFrom,
                               String postCodeFrom, String streetFrom, String streetNumFrom)
     {
-        this.m_depAddr = new Address(Locale.getDefault());
-        m_depAddr.setLatitude(coordFrom.latitude);
-        m_depAddr.setLongitude(coordFrom.longitude);
-        m_depAddr.setAddressLine(0, addrLineFrom);
-        m_depAddr.setLocality(cityFrom);
-        m_depAddr.setPostalCode(postCodeFrom);
-        m_depAddr.setThoroughfare(streetFrom);
-        m_depAddr.setSubThoroughfare(streetNumFrom);
+        this.m_depAddr = createAddress(
+                coordFrom.latitude,
+                coordFrom.longitude,
+                addrLineFrom,
+                cityFrom,
+                postCodeFrom,
+                streetFrom,
+                streetNumFrom
+        );
     }
 
 
@@ -117,14 +118,15 @@ public class Stretch implements Serializable {
     private void initToAddr(LatLng coordTo, String addrLineTo, String cityTo, String postCodeTo,
                             String streetTo, String streetNumTo)
     {
-        this.m_arrAddr = new Address(Locale.getDefault());
-        m_arrAddr.setLatitude(coordTo.latitude);
-        m_arrAddr.setLongitude(coordTo.longitude);
-        m_arrAddr.setAddressLine(0, addrLineTo);
-        m_arrAddr.setLocality(cityTo);
-        m_arrAddr.setPostalCode(postCodeTo);
-        m_arrAddr.setThoroughfare(streetTo);
-        m_arrAddr.setSubThoroughfare(streetNumTo);
+        this.m_arrAddr = createAddress(
+                coordTo.latitude,
+                coordTo.longitude,
+                addrLineTo,
+                cityTo,
+                postCodeTo,
+                streetTo,
+                streetNumTo
+        );
     }
 
 
@@ -136,6 +138,34 @@ public class Stretch implements Serializable {
     private void writeObject(ObjectOutputStream out) throws IOException
     {
         out.defaultWriteObject();
+        writeDepAddress(out);
+        writeArrAddress(out);
+    }
+
+
+
+    private void writeDepAddress(ObjectOutputStream out) throws IOException
+    {
+        out.writeDouble(m_depAddr.getLatitude());
+        out.writeDouble(m_depAddr.getLongitude());
+        out.writeObject(m_depAddr.getAddressLine(0));
+        out.writeObject(m_depAddr.getLocality());
+        out.writeObject(m_depAddr.getPostalCode());
+        out.writeObject(m_depAddr.getThoroughfare());
+        out.writeObject(m_depAddr.getSubThoroughfare());
+    }
+
+
+
+    private void writeArrAddress(ObjectOutputStream out) throws IOException
+    {
+        out.writeDouble(m_arrAddr.getLatitude());
+        out.writeDouble(m_arrAddr.getLongitude());
+        out.writeObject(m_arrAddr.getAddressLine(0));
+        out.writeObject(m_arrAddr.getLocality());
+        out.writeObject(m_arrAddr.getPostalCode());
+        out.writeObject(m_arrAddr.getThoroughfare());
+        out.writeObject(m_arrAddr.getSubThoroughfare());
     }
 
 
@@ -143,11 +173,46 @@ public class Stretch implements Serializable {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
     {
         in.defaultReadObject();
+        m_depAddr = readAddress(in);
+        m_arrAddr = readAddress(in);
+    }
+
+
+
+    private Address readAddress(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+        return createAddress(
+                in.readDouble(),
+                in.readDouble(),
+                (String) in.readObject(),
+                (String) in.readObject(),
+                (String) in.readObject(),
+                (String) in.readObject(),
+                (String) in.readObject()
+        );
     }
 
 
 
     // end of serialization ///////////////////////////////////////////////////////////////////////
+
+
+
+    private Address createAddress(double lat, double lon, String addressLine, String city,
+                                  String postCode, String street, String houseNumber)
+    {
+        Address addr = new Address(Locale.getDefault());
+
+        addr.setLatitude(lat);
+        addr.setLongitude(lon);
+        addr.setAddressLine(0, addressLine);
+        addr.setLocality(city);
+        addr.setPostalCode(postCode);
+        addr.setThoroughfare(street);
+        addr.setSubThoroughfare(houseNumber);
+
+        return addr;
+    }
 
 
 
@@ -254,12 +319,10 @@ public class Stretch implements Serializable {
         res.put(Const.STRETCH_FROM_CITY, m_depAddr.getLocality());
         res.put(Const.STRETCH_FROM_POST_CODE, m_depAddr.getPostalCode());
         res.put(Const.STRETCH_FROM_STREET, m_depAddr.getThoroughfare());
-        res.put(Const.STRETCH_FROM_STREET_NUM, m_depAddr.getSubThoroughfare());
         res.put(Const.STRETCH_TO_ADDR, m_arrAddr.getAddressLine(0));
         res.put(Const.STRETCH_TO_CITY, m_arrAddr.getLocality());
         res.put(Const.STRETCH_TO_POST_CODE, m_arrAddr.getPostalCode());
         res.put(Const.STRETCH_TO_STREET, m_arrAddr.getThoroughfare());
-        res.put(Const.STRETCH_TO_STREET_NUM, m_arrAddr.getSubThoroughfare());
         res.put(Const.STRETCH_FROM_CELL, m_fromCell);
         res.put(Const.STRETCH_TO_CELL, m_toCell);
         res.put(Const.STRETCH_FROM_LAT, m_depAddr.getLatitude());
@@ -269,6 +332,18 @@ public class Stretch implements Serializable {
         res.put(Const.STRETCH_PRICE_MAIN, m_price.getMainPart());
         res.put(Const.STRETCH_PRICE_FRAC, m_price.getFractionalPart());
         res.put(Const.STRETCH_LIFT_ID, m_liftId);
+
+        String depStreetNum = m_depAddr.getSubThoroughfare();
+        if (depStreetNum != null)
+            res.put(Const.STRETCH_FROM_STREET_NUM, m_depAddr.getSubThoroughfare());
+        else
+            res.put(Const.STRETCH_FROM_STREET_NUM, "");
+
+        String toStreetNum = m_arrAddr.getSubThoroughfare();
+        if (toStreetNum != null)
+            res.put(Const.STRETCH_TO_STREET_NUM, m_arrAddr.getSubThoroughfare());
+        else
+            res.put(Const.STRETCH_TO_STREET_NUM, "");
 
         return res;
     }

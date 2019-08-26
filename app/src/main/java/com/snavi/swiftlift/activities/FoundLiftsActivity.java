@@ -510,7 +510,7 @@ public class FoundLiftsActivity extends AppCompatActivity {
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
         {
             LayoutInflater inflater = LayoutInflater.from(FoundLiftsActivity.this);
-            CardView card = (CardView) inflater.inflate(R.layout.card_view_found_lift, parent,
+            CardView card = (CardView) inflater.inflate(R.layout.card_view_route, parent,
                     false);
             return new ViewHolder(card);
         }
@@ -522,8 +522,15 @@ public class FoundLiftsActivity extends AppCompatActivity {
         {
             FoundLift fLift = m_foundLifts.get(position);
 
-            holder.bind(fLift.getFrom(), fLift.getDepDateString(), fLift.getTo(), fLift.getArrDateString(),
-                    fLift.getPrice());
+            holder.bind(
+                    fLift.getDepPostCode() + " " + fLift.getDepCity(),
+                    fLift.getDepStreet() + " " + fLift.getDepHouseNum(),
+                    fLift.getDepDateString(),
+                    fLift.getArrPostCode() + " " + fLift.getArrCity(),
+                    fLift.getArrStreet() + " " + fLift.getArrHouseNum(),
+                    fLift.getArrDateString(),
+                    fLift.getPrice()
+                    );
         }
 
 
@@ -542,10 +549,12 @@ public class FoundLiftsActivity extends AppCompatActivity {
         private class ViewHolder extends RecyclerView.ViewHolder {
 
             @NonNull private CardView m_card;
-            @NonNull private TextView m_tvFrom;
-            @NonNull private TextView m_tvDeparture;
-            @NonNull private TextView m_tvTo;
-            @NonNull private TextView m_tvArrival;
+            @NonNull private TextView m_tvDepCity;
+            @NonNull private TextView m_tvDepStreet;
+            @NonNull private TextView m_tvDepTime;
+            @NonNull private TextView m_tvArrCity;
+            @NonNull private TextView m_tvArrStreet;
+            @NonNull private TextView m_tvArrTime;
             @NonNull private TextView m_tvPrice;
 
             private ViewHolder(@NonNull CardView card)
@@ -553,23 +562,28 @@ public class FoundLiftsActivity extends AppCompatActivity {
                 super(card);
 
                 m_card          = card;
-                m_tvFrom        = card.findViewById(R.id.card_view_found_lift_tv_from);
-                m_tvDeparture   = card.findViewById(R.id.card_view_found_lift_tv_dep);
-                m_tvTo          = card.findViewById(R.id.card_view_found_lift_tv_to);
-                m_tvArrival     = card.findViewById(R.id.card_view_found_lift_tv_arr);
-                m_tvPrice       = card.findViewById(R.id.card_view_found_lift_tv_price);
+                m_tvDepCity     = card.findViewById(R.id.card_view_route_tv_departure_city);
+                m_tvDepStreet   = card.findViewById(R.id.card_view_route_tv_departure_street);
+                m_tvDepTime     = card.findViewById(R.id.card_view_route_tv_departure_time);
+                m_tvArrCity     = card.findViewById(R.id.card_view_route_tv_arrival_city);
+                m_tvArrStreet   = card.findViewById(R.id.card_view_route_tv_arrival_street);
+                m_tvArrTime     = card.findViewById(R.id.card_view_route_tv_arrival_time);
+                m_tvPrice       = card.findViewById(R.id.card_view_route_tv_price);
             }
 
 
 
-            private void bind(@NonNull String from, @NonNull String departureDate,
-                              @NonNull String to, @NonNull String arrivalDate,
+            private void bind(@NonNull String departureCity, @NonNull String departureStreet,
+                              @NonNull String departureTime, @NonNull String arrivalCity,
+                              @NonNull String arrivalStreet, @NonNull String arrivalTime,
                               @NonNull String price)
             {
-                m_tvFrom.setText(from);
-                m_tvDeparture.setText(departureDate);
-                m_tvTo.setText(to);
-                m_tvArrival.setText(arrivalDate);
+                m_tvDepCity.setText(departureCity);
+                m_tvDepStreet.setText(departureStreet);
+                m_tvDepTime.setText(departureTime);
+                m_tvArrCity.setText(arrivalCity);
+                m_tvArrStreet.setText(arrivalStreet);
+                m_tvArrTime.setText(arrivalTime);
                 m_tvPrice.setText(price);
 
                 setOnClickListener();
