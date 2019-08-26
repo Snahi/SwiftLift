@@ -7,7 +7,9 @@
     <color name="darkWhite70">#70e8efe9</color>
     <color name="dark">#454d66</color>
     <color name="top_bar_color">#008BD7</color>
+    <color name="route_card_color">#008BD7</color>
     <color name="signed_user_fragment_bg">#50B7CADB</color>
+    <color name="text_color_dark">#182628</color>
     <!--<color name="colorPrimary">#009975</color>-->
     <!--<color name="colorPrimaryDark">#58b368</color>-->
     <!--<color name="colorAccent">#d9d872</color>-->
