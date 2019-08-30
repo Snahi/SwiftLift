@@ -56,9 +56,11 @@ public class FoundLiftDetailsActivity extends AppCompatActivity {
     private ImageButton m_imgbutCall;
     private ImageButton m_imgbutMessage;
     private ImageButton m_imgbutEmail;
-    private TextView    m_tvDepAddr;
-    private TextView    m_tvArrAddr;
+    private TextView    m_tvDepCity;
+    private TextView    m_tvDepStreet;
     private TextView    m_tvDepDate;
+    private TextView    m_tvArrCity;
+    private TextView    m_tvArrStreet;
     private TextView    m_tvArrDate;
     private TextView    m_tvPrice;
     private TextView    m_tvOwnerName;
@@ -119,10 +121,12 @@ public class FoundLiftDetailsActivity extends AppCompatActivity {
         m_imgbutCall    = findViewById(R.id.activity_found_lift_details_imgBut_call);
         m_imgbutMessage = findViewById(R.id.activity_found_lift_details_imgBut_message);
         m_imgbutEmail   = findViewById(R.id.activity_found_lift_details_imgBut_email);
-        m_tvDepAddr     = findViewById(R.id.activity_found_lift_details_tv_from_address);
-        m_tvArrAddr     = findViewById(R.id.activity_found_lift_details_tv_to_address);
-        m_tvDepDate     = findViewById(R.id.activity_found_lift_details_tv_from_date);
-        m_tvArrDate     = findViewById(R.id.activity_found_lift_details_tv_to_date);
+        m_tvDepCity     = findViewById(R.id.activity_found_lift_details_tv_departure_city);
+        m_tvDepStreet   = findViewById(R.id.activity_found_lift_details_tv_departure_street);
+        m_tvDepDate     = findViewById(R.id.activity_found_lift_details_tv_departure_time);
+        m_tvArrCity     = findViewById(R.id.activity_found_lift_details_tv_arrival_city);
+        m_tvArrStreet   = findViewById(R.id.activity_found_lift_details_tv_arrival_street);
+        m_tvArrDate     = findViewById(R.id.activity_found_lift_details_tv_arrival_time);
         m_tvPrice       = findViewById(R.id.activity_found_lift_details_tv_price);
         m_tvOwnerName   = findViewById(R.id.activity_found_lift_details_tv_owner_name);
         m_tvDescription = findViewById(R.id.activity_found_lift_details_tv_description);
@@ -133,10 +137,18 @@ public class FoundLiftDetailsActivity extends AppCompatActivity {
 
     private void initViewsValues()
     {
-        m_tvDepAddr.setText(m_foundLift.getFrom());
-        m_tvArrAddr.setText(m_foundLift.getTo());
+        String depCityWithPostCode = m_foundLift.getDepPostCode() + " " + m_foundLift.getDepCity();
+        m_tvDepCity.setText(depCityWithPostCode);
+        String depStreetWithNum = m_foundLift.getDepStreet() + " " + m_foundLift.getDepHouseNum();
+        m_tvDepStreet.setText(depStreetWithNum);
         m_tvDepDate.setText(m_foundLift.getDepDateString());
+
+        String arrCityWithPostCode = m_foundLift.getArrPostCode() + " " + m_foundLift.getArrCity();
+        m_tvArrCity.setText(arrCityWithPostCode);
+        String arrStreetWithNum = m_foundLift.getArrStreet() + " " + m_foundLift.getArrHouseNum();
+        m_tvArrStreet.setText(arrStreetWithNum);
         m_tvArrDate.setText(m_foundLift.getArrDateString());
+
         m_tvPrice.setText(m_foundLift.getPrice());
         m_tvDescription.setText(m_foundLift.getDescription());
 

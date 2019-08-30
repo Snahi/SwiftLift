@@ -384,12 +384,18 @@ public class Stretch implements Serializable {
         return new LatLng(m_arrAddr.getLatitude(), m_arrAddr.getLongitude());
     }
 
-    public String getDepAddrLine() {
-        return m_depAddr.getAddressLine(0);
+    @NonNull
+    public String getDepAddrLine()
+    {
+        String ret = m_depAddr.getAddressLine(0);
+        return ret == null ? "" : ret;
     }
 
-    public String getArrAddrLine() {
-        return m_arrAddr.getAddressLine(0);
+    @NonNull
+    public String getArrAddrLine()
+    {
+        String ret = m_arrAddr.getAddressLine(0);
+        return ret == null ? "" : ret;
     }
 
     public Date getDepDate() {
@@ -437,44 +443,60 @@ public class Stretch implements Serializable {
         return m_id;
     }
 
+    @NonNull
     public String getCityFrom()
     {
-        return m_depAddr.getLocality();
+        String ret = m_depAddr.getLocality();
+        return ret == null ? "" : ret;
     }
 
+    @NonNull
     public String getCityTo()
     {
-        return m_arrAddr.getLocality();
+        String ret = m_arrAddr.getLocality();
+        return ret == null ? "" : ret;
     }
 
+    @NonNull
     public String getPostCodeFrom()
     {
-        return m_depAddr.getPostalCode();
+        String ret = m_depAddr.getPostalCode();
+        return ret == null ? "" : ret;
     }
 
+    @NonNull
     public String getPostCodeTo()
     {
-        return m_arrAddr.getPostalCode();
+        String ret = m_arrAddr.getPostalCode();
+        return ret == null ? "" : ret;
     }
 
+    @NonNull
     public String getStreetFrom()
     {
-        return m_depAddr.getThoroughfare();
+        String ret = m_depAddr.getThoroughfare();
+        return ret == null ? "" : ret;
     }
 
+    @NonNull
     public String getStreetTo()
     {
-        return m_arrAddr.getThoroughfare();
+        String ret = m_arrAddr.getThoroughfare();
+        return ret == null ? "" : ret;
     }
 
+    @NonNull
     public String getStreetNumFrom()
     {
-        return m_depAddr.getSubThoroughfare();
+        String ret = m_depAddr.getSubThoroughfare();
+        return ret == null ? "" : ret;
     }
 
+    @NonNull
     public String getStreetNumTo()
     {
-        return m_arrAddr.getSubThoroughfare();
+        String ret = m_arrAddr.getSubThoroughfare();
+        return ret == null ? "" : ret;
     }
 
     public Address getDepAddr()

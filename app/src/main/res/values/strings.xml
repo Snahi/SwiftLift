@@ -155,4 +155,5 @@
     <string name="earliest_departure_time">Earliest departure time:</string>
     <string name="earliest_departure_date">Earliest departure date:</string>
     <string name="bad_address">Provided address cannot be found!</string>
+    <string name="description">description:</string>
 </resources>
