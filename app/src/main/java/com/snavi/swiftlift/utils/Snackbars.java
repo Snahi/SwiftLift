@@ -13,8 +13,32 @@ public class Snackbars {
         Snackbar.make(view, context.getString(R.string.unsupported_localization),
                 Snackbar.LENGTH_INDEFINITE).setAction(R.string.snackbar_ok,
                 new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {}
-        });
+                    @Override
+                    public void onClick(View view) {}
+                });
+    }
+
+
+
+    public static void showPasswordResetSuccessSnackbar(Context context, View view)
+    {
+        Snackbar.make(view, context.getString(R.string.password_reset_success),
+                Snackbar.LENGTH_INDEFINITE).setAction(R.string.snackbar_ok,
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {}
+                }).show();
+    }
+
+
+
+    public static void showPasswordResetFailureSnackbar(Context context, View view)
+    {
+        Snackbar.make(view, context.getString(R.string.password_reset_failure),
+                Snackbar.LENGTH_INDEFINITE).setAction(R.string.snackbar_ok,
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {}
+                }).show();
     }
 }
