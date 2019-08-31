@@ -168,6 +168,7 @@ public class AddStretchDialogFragment extends DialogFragment {
     private void setupDepLoc()
     {
         m_depCoords = m_arguments.getParcelable(DEP_COORDS_KEY);
+
         if (m_depCoords == null)
             return;
 
@@ -609,6 +610,7 @@ public class AddStretchDialogFragment extends DialogFragment {
         int mainPart = splitted.length >= 1 ? Integer.parseInt(splitted[0]) :
                 Integer.parseInt(amountStr);
         String fracString = splitted.length == 2 ? splitted[1] : "0";
+        fracString = fracString.substring(0, 2);
         int fracPart = fracString.length() == 1 ? Integer.parseInt(fracString) * 10 :
                 Integer.parseInt(fracString);
 

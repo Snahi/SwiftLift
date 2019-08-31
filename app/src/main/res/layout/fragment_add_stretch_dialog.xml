@@ -39,7 +39,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_dep_date" />
+            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_dep_date"
+            tools:ignore="TextFields"
+            android:importantForAutofill="no" />
 
         <!-- time -->
         <TextView
@@ -68,7 +70,8 @@
             android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_dep_time" />
+            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_dep_time"
+            android:importantForAutofill="no" />
 
         <!-- location -->
         <TextView
@@ -94,7 +97,8 @@
             android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_dep_place" />
+            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_dep_place"
+            android:contentDescription="@string/departure_location" />
 
         <TextView
             android:id="@+id/fragment_add_stretch_dialog_tv_from_addr"
@@ -136,7 +140,9 @@
             android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_arr_date" />
+            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_arr_date"
+            android:importantForAutofill="no"
+            tools:ignore="TextFields" />
 
         <!-- time -->
         <TextView
@@ -165,7 +171,8 @@
             android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_arr_time" />
+            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_arr_time"
+            android:importantForAutofill="no" />
 
         <!-- location -->
         <TextView
@@ -191,7 +198,8 @@
             android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_arr_place" />
+            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_arr_place"
+            android:contentDescription="@string/arrival_location" />
 
         <TextView
             android:id="@+id/fragment_add_stretch_dialog_tv_to_addr"
@@ -233,7 +241,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.435"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_price" />
+            app:layout_constraintTop_toBottomOf="@+id/fragment_add_stretch_dialog_tv_price"
+            android:importantForAutofill="no" />
 
         <TextView
             android:id="@+id/fragment_add_stretch_dialog_tv_currency"

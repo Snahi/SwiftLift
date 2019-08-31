@@ -27,7 +27,8 @@
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline5"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/activity_email_update_tv_new_email"
@@ -53,7 +54,8 @@
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline5"
-        app:layout_constraintTop_toBottomOf="@+id/activity_email_update_et_new_email" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_email_update_et_new_email"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/activity_email_update_tv_confirm_email"

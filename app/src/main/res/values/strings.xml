@@ -62,7 +62,7 @@
     <string name="cant_sign_out">Can\'t sign out</string>
     <string name="resend_text">resend</string>
     <string name="title_activity_lift_points_pick">Map</string>
-    <string name="null_fragment_manager_error">"Error occured. Try again."</string>
+    <string name="null_fragment_manager_error">"Error occurred. Try again."</string>
     <string name="add_stretch_text">&#160;add stretch</string>
     <string name="use_add_stretch_button_text">use \"+ add stretch\" button in the top left corner to add new stretches</string>
     <string name="from_text">From</string>
@@ -158,4 +158,22 @@
     <string name="description">description:</string>
     <string name="password_reset_success">Check your email!</string>
     <string name="password_reset_failure">Couldn\'t reset password. Check if you provided correct email and if you have internet connection</string>
+    <string name="call">call</string>
+    <string name="text_message">text message</string>
+    <string name="route_symbol">route symbol</string>
+    <string name="departure">Departure:</string>
+    <string name="arrival">Arrival:</string>
+    <string name="profile_photo">profile photo</string>
+    <string name="reset_password">Reset password</string>
+    <string name="sample_email">your@email.com</string>
+    <string name="your_email">Your email:</string>
+    <string name="settings">settings</string>
+    <string name="cash">cash</string>
+    <string name="edit">edit</string>
+    <string name="delete">delete</string>
+    <string name="departure_location">departure location</string>
+    <string name="arrival_location">arrival location</string>
+    <string name="search_for_a_ride">Search for a ride</string>
+    <string name="from_address">From address:</string>
+    <string name="search">search</string>
 </resources>

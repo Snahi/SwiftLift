@@ -86,7 +86,7 @@
             android:backgroundTint="#16ba2a"
             app:layout_constraintStart_toStartOf="@id/activity_found_lift_details_cv_lift_owner"
             app:layout_constraintTop_toBottomOf="@id/activity_found_lift_details_cv_lift_owner"
-            />
+            android:contentDescription="@string/call" />
 
 
         <ImageButton
@@ -102,7 +102,7 @@
             app:layout_constraintStart_toEndOf="@id/activity_found_lift_details_imgBut_call"
             app:layout_constraintTop_toBottomOf="@id/activity_found_lift_details_cv_lift_owner"
             app:layout_constraintEnd_toStartOf="@id/activity_found_lift_details_imgBut_email"
-            />
+            android:contentDescription="@string/text_message" />
 
 
         <ImageButton
@@ -115,7 +115,7 @@
             android:backgroundTint="#FF921D"
             app:layout_constraintEnd_toEndOf="@id/activity_found_lift_details_cv_lift_owner"
             app:layout_constraintTop_toBottomOf="@id/activity_found_lift_details_cv_lift_owner"
-            />
+            android:contentDescription="@string/email_text" />
 
 
         <!-- route ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||-->
@@ -150,14 +150,15 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:srcCompat="@drawable/from_to_icon" />
+                    app:srcCompat="@drawable/from_to_icon"
+                    android:contentDescription="@string/route_symbol" />
 
                 <TextView
                     android:id="@+id/card_view_route_stretch_tv_departure_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
-                    android:text="Departure:"
+                    android:text="@string/departure"
                     app:layout_constraintBottom_toTopOf="@+id/card_view_route_stretch_tv_departure_city"
                     app:layout_constraintStart_toStartOf="@+id/card_view_route_stretch_tv_departure_city" />
 
@@ -166,7 +167,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:text="50-017 Wrocław"
                     android:textColor="@color/text_color_dark"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -177,7 +177,6 @@
                     android:id="@+id/card_view_route_stretch_tv_departure_street"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ul. Pułaskiego 52"
                     android:textColor="@color/text_color_dark"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="@+id/card_view_route_stretch_tv_departure_city"
@@ -187,7 +186,6 @@
                     android:id="@+id/card_view_route_stretch_tv_departure_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="25.08.2019 12:00"
                     android:textColor="@color/text_color_dark"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="@+id/card_view_route_stretch_tv_departure_street"
@@ -200,7 +198,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
-                    android:text="Arrival:"
+                    android:text="@string/arrival"
                     app:layout_constraintBottom_toTopOf="@+id/card_view_route_stretch_tv_arrival_city"
                     app:layout_constraintStart_toStartOf="@+id/card_view_route_stretch_tv_arrival_city" />
 
@@ -208,7 +206,6 @@
                     android:id="@+id/card_view_route_stretch_tv_arrival_city"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="55-017 Wałbrzych"
                     android:textColor="@color/text_color_dark"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -219,7 +216,6 @@
                     android:id="@+id/card_view_route_stretch_tv_arrival_street"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ul. Pułaskiego 52"
                     android:textColor="@color/text_color_dark"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toTopOf="@+id/card_view_route_stretch_tv_arrival_time"
@@ -229,7 +225,6 @@
                     android:id="@+id/card_view_route_stretch_tv_arrival_time"
                     android:layout_width="133dp"
                     android:layout_height="18dp"
-                    android:text="25.08.2019 13:00"
                     android:textColor="@color/text_color_dark"
                     android:textSize="16sp"
                     android:layout_marginBottom="8dp"
@@ -323,7 +318,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/cash" />
+                    app:srcCompat="@drawable/cash"
+                    android:contentDescription="@string/price_text" />
 
                 <TextView
                     android:id="@+id/activity_found_lift_details_tv_price"

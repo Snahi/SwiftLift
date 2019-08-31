@@ -32,7 +32,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/default_user_img" />
+        app:srcCompat="@drawable/default_user_img"
+        android:contentDescription="@string/profile_photo" />
 
     <EditText
         android:id="@+id/activity_personal_data_update_et_name"
@@ -46,7 +47,8 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toBottomOf="@+id/activity_personal_data_img_profile_photo" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_personal_data_img_profile_photo"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/activity_personal_data_update_tv_name"
@@ -72,7 +74,8 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toBottomOf="@+id/activity_personal_data_update_et_name" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_personal_data_update_et_name"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/activity_personal_data_update_tv_surname"
@@ -98,7 +101,8 @@
         android:inputType="phone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toBottomOf="@+id/activity_personal_data_update_et_surname" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_personal_data_update_et_surname"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/activity_personal_data_update_tv_phone"

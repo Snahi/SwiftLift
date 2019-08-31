@@ -15,7 +15,7 @@ public class Snackbars {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {}
-                });
+                }).show();
     }
 
 

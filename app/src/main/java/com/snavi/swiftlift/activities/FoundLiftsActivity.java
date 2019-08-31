@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 
-// TODO sort lifts
 public class FoundLiftsActivity extends AppCompatActivity {
 
     // CONST ///////////////////////////////////////////////////////////////////////////////////////

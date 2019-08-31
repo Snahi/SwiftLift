@@ -75,7 +75,6 @@ public class LiftActivity extends AppCompatActivity implements
 
 
 
-
     // fields /////////////////////////////////////////////////////////////////////////////////////
     private Lift                m_lift;
     private StretchesAdapter    m_adapter;

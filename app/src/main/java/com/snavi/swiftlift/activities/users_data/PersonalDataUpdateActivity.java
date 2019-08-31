@@ -17,8 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -330,9 +328,9 @@ public class PersonalDataUpdateActivity extends AppCompatActivity {
     {
         super.onActivityResult(reqCode, resCode, data);
 
-        switch (reqCode)
+        if (reqCode == REQ_PROFILE_PHOTO)
         {
-            case REQ_PROFILE_PHOTO : setUserPhoto(resCode, data); break;
+            setUserPhoto(resCode, data);
         }
     }
 

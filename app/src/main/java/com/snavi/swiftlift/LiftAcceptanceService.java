@@ -1,13 +1,10 @@
 package com.snavi.swiftlift;
 
 
-import android.util.Log;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -43,7 +40,6 @@ public class LiftAcceptanceService extends FirebaseMessagingService {
     /**
      * When new token is generated and user is signed in, the token will be set as current user
      * token. User can have only one token and token can be owned only by one user.
-     * @param newToken
      */
     @Override
     public void onNewToken(String newToken)

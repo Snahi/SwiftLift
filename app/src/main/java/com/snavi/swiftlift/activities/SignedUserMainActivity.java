@@ -32,7 +32,6 @@ import com.snavi.swiftlift.activities.users_data.SettingsActivity;
 import com.snavi.swiftlift.database_objects.Const;
 import com.snavi.swiftlift.signed_in_fragments.DriverFragment;
 import com.snavi.swiftlift.signed_in_fragments.FindLiftFragment;
-import com.snavi.swiftlift.signed_in_fragments.PassengerFragment;
 
 import java.util.HashMap;
 import java.util.List;

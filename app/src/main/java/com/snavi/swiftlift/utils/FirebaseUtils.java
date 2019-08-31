@@ -1,11 +1,9 @@
 package com.snavi.swiftlift.utils;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -19,7 +17,6 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.snavi.swiftlift.activities.users_data.PersonalDataUpdateActivity;
 import com.snavi.swiftlift.database_objects.StorageConst;
 import com.squareup.picasso.Picasso;
 
