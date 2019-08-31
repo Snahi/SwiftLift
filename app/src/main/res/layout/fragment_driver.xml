@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/signed_user_fragment_bg"
+    android:background="@color/colorPrimary"
     tools:context=".signed_in_fragments.DriverFragment">
 
     <androidx.recyclerview.widget.RecyclerView

@@ -43,7 +43,6 @@ import com.snavi.swiftlift.utils.Toasts;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -364,8 +363,7 @@ public class DriverFragment extends Fragment {
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position)
         {
             Lift lift = m_lifts.get(position);
-            holder.bind(lift.getFrom(), lift.getTo(), lift.getDepDateString(), lift.getArrDateString(),
-                    lift.getPrice(), lift.getId());
+            holder.bind(lift);
 
             if (getActivity() == null)
                 return;
@@ -411,38 +409,68 @@ public class DriverFragment extends Fragment {
 
         private class MyViewHolder extends RecyclerView.ViewHolder {
 
-            private TextView m_from;
-            private TextView m_to;
-            private TextView m_depDate;
-            private TextView m_arrDate;
-            private TextView m_price;
-            private ImageButton m_deleteButton;
-            private ImageButton m_editButton;
+            private TextView    m_tvDepCity;
+            private TextView    m_tvDepStreet;
+            private TextView    m_tvDepDate;
+            private TextView    m_tvArrCity;
+            private TextView    m_tvArrStreet;
+            private TextView    m_tvArrDate;
+            private TextView    m_tvPrice;
+            private ImageButton m_imgButDelete;
+            private ImageButton m_imgButEditButton;
 
             private MyViewHolder(CardView view)
             {
                 super(view);
-                m_from    = view.findViewById(R.id.card_view_route_stretch_tv_from);
-                m_to      = view.findViewById(R.id.card_view_route_stretch_tv_to);
-                m_depDate = view.findViewById(R.id.card_view_route_stretch_tv_date_time_from);
-                m_arrDate = view.findViewById(R.id.card_view_route_stretch_tv_date_time_to);
-                m_price   = view.findViewById(R.id.card_view_route_stretch_tv_price);
-                m_deleteButton = view.findViewById(R.id.card_view_route_stretch_but_delete);
-                m_editButton   = view.findViewById(R.id.card_view_route_stretch_but_edit);
+
+                m_tvDepCity     = view.findViewById(R.id.card_view_route_stretch_tv_departure_city);
+                m_tvDepStreet   = view.findViewById(R.id.card_view_route_stretch_tv_departure_street);
+                m_tvDepDate     = view.findViewById(R.id.card_view_route_stretch_tv_departure_time);
+
+                m_tvArrCity     = view.findViewById(R.id.card_view_route_stretch_tv_arrival_city);
+                m_tvArrStreet   = view.findViewById(R.id.card_view_route_stretch_tv_arrival_street);
+                m_tvArrDate     = view.findViewById(R.id.card_view_route_stretch_tv_arrival_time);
+
+                m_tvPrice           = view.findViewById(R.id.card_view_route_stretch_tv_price);
+                m_imgButDelete      = view.findViewById(R.id.card_view_route_stretch_but_delete);
+                m_imgButEditButton  = view.findViewById(R.id.card_view_route_stretch_but_edit);
             }
 
 
 
-            void bind(String from, String to, String depDate, String arrDate, String price,
-                      String liftId)
+            void bind(Lift lift)
             {
-                m_from.setText(from);
-                m_to.setText(to);
-                m_depDate.setText(depDate);
-                m_arrDate.setText(arrDate);
-                m_price.setText(price);
+                bindDeparture(lift);
+                bindArrival(lift);
 
-                setButtonsListener(liftId);
+                m_tvPrice.setText(lift.getPrice());
+                setButtonsListener(lift.getId());
+            }
+
+
+
+            private void bindDeparture(Lift lift)
+            {
+                String depCityAndPostCode = lift.getDepPostCode() + " " + lift.getDepCity();
+                m_tvDepCity.setText(depCityAndPostCode);
+
+                String depStreetAndNum = lift.getDepStreet() + " " + lift.getDepHouseNum();
+                m_tvDepStreet.setText(depStreetAndNum);
+
+                m_tvDepDate.setText(lift.getDepDateString());
+            }
+
+
+
+            private void bindArrival(Lift lift)
+            {
+                String arrCityAndPostCode = lift.getArrPostCode() + " " + lift.getArrCity();
+                m_tvArrCity.setText(arrCityAndPostCode);
+
+                String arrStreetAndNum = lift.getArrStreet() + " " + lift.getArrHouseNum();
+                m_tvArrStreet.setText(arrStreetAndNum);
+
+                m_tvArrDate.setText(lift.getArrDateString());
             }
 
 
@@ -457,7 +485,7 @@ public class DriverFragment extends Fragment {
 
             private void setDeleteButtonListener(final String liftId)
             {
-                m_deleteButton.setOnClickListener(new View.OnClickListener() {
+                m_imgButDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view)
                     {
@@ -507,7 +535,7 @@ public class DriverFragment extends Fragment {
 
             private void setEditButtonListener()
             {
-                m_editButton.setOnClickListener(new View.OnClickListener() {
+                m_imgButEditButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view)
                     {

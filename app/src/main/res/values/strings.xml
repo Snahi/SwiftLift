@@ -149,7 +149,7 @@
     <string name="latest_departure_time">latest departure time:</string>
     <string name="you_must_be_signed_in">You must be signed in to perform this action!</string>
     <string name="welcome_to_swiftlift">Welcome to SwiftLift!</string>
-    <string name="main_activity_welcome_text">With this app you can easily share car with others and it doesn\'t matter wheter you want to be a passenger or a driver. The best thing is that this app is totally FREE and it will never change! You can perform your first search for a ride by scrolling down or you can register and then use all the functionalities of this app. We hope you will enjoy SwiftLift!</string>
+    <string name="main_activity_welcome_text">With this app you can easily share car with others as a passenger or a driver. The best thing is that this app is totally FREE and it will never change! You can perform your first search for a ride by scrolling down or you can register and then use all the functionalities of this app. We hope you will enjoy SwiftLift!</string>
     <string name="destination_address">Destination address:</string>
     <string name="destination">Destination</string>
     <string name="earliest_departure_time">Earliest departure time:</string>

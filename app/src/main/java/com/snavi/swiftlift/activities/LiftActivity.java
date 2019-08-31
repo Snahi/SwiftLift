@@ -518,33 +518,37 @@ public class LiftActivity extends AppCompatActivity implements
 
         class StretchViewHolder extends RecyclerView.ViewHolder {
 
-            private TextView m_tvFrom;
-            private TextView m_tvTo;
-            private TextView m_tvDateFrom;
-            private TextView m_tvDateTo;
-            private TextView m_tvPrice;
+            private TextView    m_tvDepCity;
+            private TextView    m_tvDepStreet;
+            private TextView    m_tvDepTime;
+            private TextView    m_tvArrCity;
+            private TextView    m_tvArrStreet;
+            private TextView    m_tvArrTime;
+            private TextView    m_tvPrice;
             private ImageButton m_butDelete;
 
 
             private StretchViewHolder(CardView card)
             {
                 super(card);
-                m_tvFrom     = card.findViewById(R.id.card_view_route_stretch_tv_from);
-                m_tvTo       = card.findViewById(R.id.card_view_route_stretch_tv_to);
-                m_tvDateFrom = card.findViewById(R.id.card_view_route_stretch_tv_date_time_from);
-                m_tvDateTo   = card.findViewById(R.id.card_view_route_stretch_tv_date_time_to);
-                m_tvPrice    = card.findViewById(R.id.card_view_route_stretch_tv_price);
-                m_butDelete  = card.findViewById(R.id.card_view_route_stretch_but_delete);
+
+                m_tvDepCity     = card.findViewById(R.id.card_view_route_stretch_tv_departure_city);
+                m_tvDepStreet   = card.findViewById(R.id.card_view_route_stretch_tv_departure_street);
+                m_tvDepTime     = card.findViewById(R.id.card_view_route_stretch_tv_departure_time);
+                m_tvArrCity     = card.findViewById(R.id.card_view_route_stretch_tv_arrival_city);
+                m_tvArrStreet   = card.findViewById(R.id.card_view_route_stretch_tv_arrival_street);
+                m_tvArrTime     = card.findViewById(R.id.card_view_route_stretch_tv_arrival_time);
+                m_tvPrice       = card.findViewById(R.id.card_view_route_stretch_tv_price);
+                m_butDelete     = card.findViewById(R.id.card_view_route_stretch_but_delete);
             }
 
 
 
             private void bind(Stretch stretch)
             {
-                m_tvFrom.setText(stretch.getDepAddrLine());
-                m_tvTo.setText(stretch.getArrAddrLine());
-                m_tvDateFrom.setText(stretch.depDateDisplay(Locale.getDefault()));
-                m_tvDateTo.setText(stretch.arrDateDisplay(Locale.getDefault()));
+                bindDeparture(stretch);
+                bindArrival(stretch);
+
                 m_tvPrice.setText(stretch.getPrice().toString());
 
                 if (getAdapterPosition() != m_stretches.size() - 1)                                 // user can delete only the last stretch
@@ -554,6 +558,33 @@ public class LiftActivity extends AppCompatActivity implements
                     m_butDelete.setVisibility(View.VISIBLE);
                     setupDeleteButtonListener();
                 }
+            }
+
+
+
+            private void bindDeparture(Stretch stretch)
+            {
+                String depCityAndPostCode = stretch.getPostCodeFrom() + " " + stretch.getCityFrom();
+                m_tvDepCity.setText(depCityAndPostCode);
+
+                String depStreetAndNumber = stretch.getStreetFrom() + " " +
+                        stretch.getStreetNumFrom();
+                m_tvDepStreet.setText(depStreetAndNumber);
+
+                m_tvDepTime.setText(stretch.depDateDisplay(Locale.getDefault()));
+            }
+
+
+
+            private void bindArrival(Stretch stretch)
+            {
+                String arrCityAndPostCode = stretch.getPostCodeTo() + " " + stretch.getCityTo();
+                m_tvArrCity.setText(arrCityAndPostCode);
+
+                String arrStreetAndNumber = stretch.getStreetTo() + " " + stretch.getStreetNumTo();
+                m_tvArrStreet.setText(arrStreetAndNumber);
+
+                m_tvArrTime.setText(stretch.arrDateDisplay(Locale.getDefault()));
             }
 
 

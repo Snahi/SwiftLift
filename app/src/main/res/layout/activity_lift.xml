@@ -5,23 +5,15 @@
     android:id="@+id/activity_lift_cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context=".activities.LiftActivity">
-
-    <!-- bg image -->
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/road_signed_user" />
 
     <!-- top bar -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/activity_lift_cl_top_bar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="#B358b368"
+        android:background="@color/route_card_color"
         app:layout_constraintBottom_toTopOf="@id/activity_lift_gl_top_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -95,7 +87,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#a4cdfc">
 
 
             <TextView
@@ -116,7 +109,7 @@
                 android:id="@+id/activity_lift_actv_currency"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:hint="@string/i_e_eur_text"

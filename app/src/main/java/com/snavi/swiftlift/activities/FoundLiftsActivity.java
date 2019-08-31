@@ -561,13 +561,13 @@ public class FoundLiftsActivity extends AppCompatActivity {
                 super(card);
 
                 m_card          = card;
-                m_tvDepCity     = card.findViewById(R.id.activity_found_lift_details_tv_departure_city);
-                m_tvDepStreet   = card.findViewById(R.id.activity_found_lift_details_tv_departure_street);
-                m_tvDepTime     = card.findViewById(R.id.activity_found_lift_details_tv_departure_time);
-                m_tvArrCity     = card.findViewById(R.id.activity_found_lift_details_tv_arrival_city);
-                m_tvArrStreet   = card.findViewById(R.id.activity_found_lift_details_tv_arrival_street);
-                m_tvArrTime     = card.findViewById(R.id.activity_found_lift_details_tv_arrival_time);
-                m_tvPrice       = card.findViewById(R.id.card_view_route_tv_price);
+                m_tvDepCity     = card.findViewById(R.id.card_view_route_stretch_tv_departure_city);
+                m_tvDepStreet   = card.findViewById(R.id.card_view_route_stretch_tv_departure_street);
+                m_tvDepTime     = card.findViewById(R.id.card_view_route_stretch_tv_departure_time);
+                m_tvArrCity     = card.findViewById(R.id.card_view_route_stretch_tv_arrival_city);
+                m_tvArrStreet   = card.findViewById(R.id.card_view_route_stretch_tv_arrival_street);
+                m_tvArrTime     = card.findViewById(R.id.card_view_route_stretch_tv_arrival_time);
+                m_tvPrice       = card.findViewById(R.id.card_view_route_stretch_tv_price);
             }
 
 
