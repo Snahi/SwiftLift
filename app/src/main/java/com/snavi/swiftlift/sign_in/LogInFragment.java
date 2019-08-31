@@ -2,6 +2,7 @@ package com.snavi.swiftlift.sign_in;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.snavi.swiftlift.R;
+import com.snavi.swiftlift.ResetPasswordActivity;
 
 
 public class LogInFragment extends DialogFragment {
@@ -35,7 +37,8 @@ public class LogInFragment extends DialogFragment {
 
     // views
     private ProgressBar m_progressBar;
-    private View m_view;
+    private View        m_view;
+    private EditText    m_etEmail;
 
 
     public LogInFragment()
@@ -69,11 +72,22 @@ public class LogInFragment extends DialogFragment {
     {
         super.onActivityCreated(savedInstanceState);
 
-        m_view = getView();
-        m_activity = getActivity();
-        m_progressBar = m_view.findViewById(R.id.fragment_log_in_progress_bar);
+        m_activity      = getActivity();
 
+        initViews();
         setButtonsListeners();
+    }
+
+
+
+    private void initViews()
+    {
+        m_view          = getView();
+        if (m_view == null)
+            throw new RuntimeException("Null view");
+
+        m_progressBar   = m_view.findViewById(R.id.fragment_log_in_progress_bar);
+        m_etEmail       = m_view.findViewById(R.id.fragment_log_in_et_email);
     }
 
 
@@ -82,6 +96,26 @@ public class LogInFragment extends DialogFragment {
     {
         setSignInButtonListener();
         setSignUpButtonListener();
+        setResetPasswordButtonListener();
+    }
+
+
+
+    private void setResetPasswordButtonListener()
+    {
+        Button resetPassBut = m_view.findViewById(R.id.fragment_log_in_but_reset_password);
+        resetPassBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                String email = m_etEmail.getText().toString();
+                Intent intent = new Intent(m_activity, ResetPasswordActivity.class);
+                if (!email.isEmpty())
+                    intent.putExtra(ResetPasswordActivity.KEY_USER_EMAIL, email);
+
+                startActivity(intent);
+            }
+        });
     }
 
 
@@ -168,8 +202,7 @@ public class LogInFragment extends DialogFragment {
 
     private String getEmail()
     {
-        EditText emailEt = m_view.findViewById(R.id.fragment_log_in_et_email);
-        return emailEt.getText().toString();
+        return m_etEmail.getText().toString();
     }
 
 

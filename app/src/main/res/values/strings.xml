@@ -156,4 +156,6 @@
     <string name="earliest_departure_date">Earliest departure date:</string>
     <string name="bad_address">Provided address cannot be found!</string>
     <string name="description">description:</string>
+    <string name="password_reset_success">Check your email!</string>
+    <string name="password_reset_failure">Couldn\'t reset password. Check if you provided correct email and if you have internet connection</string>
 </resources>
