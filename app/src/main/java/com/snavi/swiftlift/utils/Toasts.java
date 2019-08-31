@@ -1,8 +1,10 @@
 package com.snavi.swiftlift.utils;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.snavi.swiftlift.R;
 
 public class Toasts {
@@ -156,5 +158,17 @@ public class Toasts {
     public static void showBadAddressToast(Context context)
     {
         Toast.makeText(context, R.string.bad_address, Toast.LENGTH_LONG).show();
+    }
+
+    public static void showPasswordResetSuccessToast(Context context)
+    {
+        Toast.makeText(context, R.string.password_reset_success, Toast.LENGTH_LONG).show();
+    }
+
+
+
+    public static void showPasswordResetFailureToast(Context context)
+    {
+        Toast.makeText(context, R.string.password_reset_failure, Toast.LENGTH_LONG).show();
     }
 }

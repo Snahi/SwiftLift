@@ -23,7 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.snavi.swiftlift.R;
-import com.snavi.swiftlift.ResetPasswordActivity;
+import com.snavi.swiftlift.activities.ResetPasswordActivity;
 
 
 public class LogInFragment extends DialogFragment {

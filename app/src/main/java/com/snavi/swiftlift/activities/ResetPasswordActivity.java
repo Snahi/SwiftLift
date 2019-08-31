@@ -1,4 +1,4 @@
-package com.snavi.swiftlift;
+package com.snavi.swiftlift.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +12,9 @@ import android.widget.EditText;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.snavi.swiftlift.R;
 import com.snavi.swiftlift.utils.Snackbars;
+import com.snavi.swiftlift.utils.Toasts;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
@@ -76,6 +78,8 @@ public class ResetPasswordActivity extends AppCompatActivity {
                                 Snackbars.showPasswordResetSuccessSnackbar(
                                         ResetPasswordActivity.this,
                                         findViewById(R.id.activity_reset_password_cl));
+                                Toasts.showPasswordResetSuccessToast(
+                                        ResetPasswordActivity.this);
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -85,6 +89,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
                                 Snackbars.showPasswordResetFailureSnackbar(
                                         ResetPasswordActivity.this,
                                         findViewById(R.id.activity_reset_password_cl)
+                                );
+                                Toasts.showPasswordResetFailureToast(
+                                        ResetPasswordActivity.this
                                 );
                             }
                         });
