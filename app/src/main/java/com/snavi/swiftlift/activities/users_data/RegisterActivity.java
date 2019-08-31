@@ -50,6 +50,8 @@ public class RegisterActivity extends AppCompatActivity {
     public static final int ACTIVITY_RESULT_ADDITIONAL_DATA_NOT_LOADED = 12712;
     // request codes
     private static final int REQ_PROFILE_PHOTO = 1232;
+    // error codes
+    private static final String EMAIL_ALREADY_IN_USE_ERROR = "ERROR_EMAIL_ALREADY_IN_USE";
 
 
     // fields /////////////////////////////////////////////////////////////////////////////////////
@@ -334,9 +336,10 @@ public class RegisterActivity extends AppCompatActivity {
                     FirebaseAuthException exc = (FirebaseAuthException) e;
                     String errorCode = exc.getErrorCode();
 
-                    switch (errorCode)
+                    if (EMAIL_ALREADY_IN_USE_ERROR.equals(errorCode))
                     {
-                        case "ERROR_EMAIL_ALREADY_IN_USE" : showSnackbarEmailAlreadyInUse(); return;
+                        showSnackbarEmailAlreadyInUse();
+                        return;
                     }
 
                     return;

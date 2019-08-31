@@ -1,6 +1,5 @@
 package com.snavi.swiftlift.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -10,16 +9,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.StorageReference;
 import com.snavi.swiftlift.R;
 import com.snavi.swiftlift.database_objects.Const;
@@ -27,10 +21,6 @@ import com.snavi.swiftlift.lift.FoundLift;
 import com.snavi.swiftlift.utils.FirebaseUtils;
 import com.snavi.swiftlift.utils.Toasts;
 import com.squareup.picasso.Picasso;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class FoundLiftDetailsActivity extends AppCompatActivity {
 
@@ -307,70 +297,70 @@ public class FoundLiftDetailsActivity extends AppCompatActivity {
     // firebase fcm listeners //////////////////////////////////////////////////////////////////////
 
 
-
-    private class OnSearchLiftOwnerTokenCompleteListener
-            implements OnCompleteListener<QuerySnapshot> {
-
-        @Override
-        public void onComplete(@NonNull Task<QuerySnapshot> task)
-        {
-            if (task.isSuccessful())
-            {
-                QuerySnapshot result = task.getResult();
-                if (result != null)
-                {
-                    List<DocumentSnapshot> docs = result.getDocuments();
-                    if (docs.isEmpty())
-                        Toasts.showReqSendErrorToast(FoundLiftDetailsActivity.this);
-                    else
-                    {
-                        DocumentSnapshot tokenSnap = docs.get(0);
-                        if (tokenSnap.contains(Const.FCM_TOKEN))
-                        {
-                            String liftOwnerToken = (String) tokenSnap.get(Const.FCM_TOKEN);
-                            sendEnrollMessage(liftOwnerToken);
-                        }
-                        else
-                            Toasts.showReqSendErrorToast(FoundLiftDetailsActivity.this);
-                    }
-                }
-                else
-                    Toasts.showReqSendErrorToast(FoundLiftDetailsActivity.this);
-            }
-            else
-                Toasts.showReqSendErrorToast(FoundLiftDetailsActivity.this);
-        }
-    }
-
-
-
-    private void sendEnrollMessage(String liftOwnerToken)
-    {
-        if (m_userId == null)
-        {
-            Toasts.showAuthErrorToast(this);
-            return;
-        }
-
-        Map<String, Object> message = new HashMap<>();
-        message.put(Const.REQ_LIFT_OWNER_TOKEN, liftOwnerToken);
-        message.put(Const.REQ_LIFT, m_foundLift.getId());
-        message.put(Const.REQ_SENDER, m_userId);
-        message.put(Const.REQ_FROM_STRETCH, m_foundLift.getStartStretch().getId());
-        message.put(Const.REQ_TO_STRETCH, m_foundLift.getEndStretch().getId());
-
-        m_db.collection(Const.REQ_COLLECTION)
-                .document()
-                .set(message)
-                .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e)
-                            {
-                                Toasts.showReqSendErrorToast(FoundLiftDetailsActivity.this);
-                            }
-                        }
-                );
-    }
+//
+//    private class OnSearchLiftOwnerTokenCompleteListener
+//            implements OnCompleteListener<QuerySnapshot> {
+//
+//        @Override
+//        public void onComplete(@NonNull Task<QuerySnapshot> task)
+//        {
+//            if (task.isSuccessful())
+//            {
+//                QuerySnapshot result = task.getResult();
+//                if (result != null)
+//                {
+//                    List<DocumentSnapshot> docs = result.getDocuments();
+//                    if (docs.isEmpty())
+//                        Toasts.showReqSendErrorToast(FoundLiftDetailsActivity.this);
+//                    else
+//                    {
+//                        DocumentSnapshot tokenSnap = docs.get(0);
+//                        if (tokenSnap.contains(Const.FCM_TOKEN))
+//                        {
+//                            String liftOwnerToken = (String) tokenSnap.get(Const.FCM_TOKEN);
+//                            sendEnrollMessage(liftOwnerToken);
+//                        }
+//                        else
+//                            Toasts.showReqSendErrorToast(FoundLiftDetailsActivity.this);
+//                    }
+//                }
+//                else
+//                    Toasts.showReqSendErrorToast(FoundLiftDetailsActivity.this);
+//            }
+//            else
+//                Toasts.showReqSendErrorToast(FoundLiftDetailsActivity.this);
+//        }
+//    }
+//
+//
+//
+//    private void sendEnrollMessage(String liftOwnerToken)
+//    {
+//        if (m_userId == null)
+//        {
+//            Toasts.showAuthErrorToast(this);
+//            return;
+//        }
+//
+//        Map<String, Object> message = new HashMap<>();
+//        message.put(Const.REQ_LIFT_OWNER_TOKEN, liftOwnerToken);
+//        message.put(Const.REQ_LIFT, m_foundLift.getId());
+//        message.put(Const.REQ_SENDER, m_userId);
+//        message.put(Const.REQ_FROM_STRETCH, m_foundLift.getStartStretch().getId());
+//        message.put(Const.REQ_TO_STRETCH, m_foundLift.getEndStretch().getId());
+//
+//        m_db.collection(Const.REQ_COLLECTION)
+//                .document()
+//                .set(message)
+//                .addOnFailureListener(
+//                        new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e)
+//                            {
+//                                Toasts.showReqSendErrorToast(FoundLiftDetailsActivity.this);
+//                            }
+//                        }
+//                );
+//    }
 
 }

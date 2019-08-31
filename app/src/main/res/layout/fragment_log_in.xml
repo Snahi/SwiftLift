@@ -26,7 +26,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/fragment_log_in_et_email"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/fragment_log_in_et_email" />
+        app:layout_constraintTop_toTopOf="@+id/fragment_log_in_et_email"
+        android:labelFor="@id/fragment_log_in_et_email"/>
 
     <EditText
         android:id="@+id/fragment_log_in_et_email"
@@ -39,7 +40,8 @@
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/fragment_log_in_tv_password"
@@ -51,7 +53,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/fragment_log_in_et_password"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/fragment_log_in_et_password" />
+        app:layout_constraintTop_toTopOf="@+id/fragment_log_in_et_password"
+        android:labelFor="@id/fragment_log_in_et_password"/>
 
     <EditText
         android:id="@+id/fragment_log_in_et_password"
@@ -64,7 +67,8 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_log_in_et_email" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_log_in_et_email"
+        android:importantForAutofill="no" />
 
     <Button
         android:id="@+id/fragment_log_but_log_in"
@@ -117,7 +121,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
-        android:text="Reset password"
+        android:text="@string/reset_password"
         android:textAllCaps="false"
         android:textColor="#710ba3"
         android:textStyle="italic"

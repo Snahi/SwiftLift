@@ -31,7 +31,8 @@
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/activity_register_img_profile_photo" />
+            app:layout_constraintTop_toBottomOf="@+id/activity_register_img_profile_photo"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/activity_register_et_surname"
@@ -45,7 +46,8 @@
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/activity_register_et_name" />
+            app:layout_constraintTop_toBottomOf="@+id/activity_register_et_name"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/activity_register_et_email"
@@ -59,7 +61,8 @@
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/activity_register_et_surname" />
+            app:layout_constraintTop_toBottomOf="@+id/activity_register_et_surname"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/activity_register_et_confirm_email"
@@ -73,7 +76,8 @@
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/activity_register_et_email" />
+            app:layout_constraintTop_toBottomOf="@+id/activity_register_et_email"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/activity_register_et_phone"
@@ -87,7 +91,8 @@
             android:inputType="phone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/activity_register_et_confirm_password" />
+            app:layout_constraintTop_toBottomOf="@+id/activity_register_et_confirm_password"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/activity_register_et_password"
@@ -101,7 +106,8 @@
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/activity_register_et_confirm_email" />
+            app:layout_constraintTop_toBottomOf="@+id/activity_register_et_confirm_email"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/activity_register_et_confirm_password"
@@ -116,7 +122,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toBottomOf="@+id/activity_register_et_password"
-            tools:ignore="LabelFor" />
+            tools:ignore="LabelFor"
+            android:importantForAutofill="no" />
 
         <TextView
             android:id="@+id/activity_register_tv_name"
@@ -218,7 +225,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/default_user_img" />
+            app:srcCompat="@drawable/default_user_img"
+            android:contentDescription="@string/profile_photo" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

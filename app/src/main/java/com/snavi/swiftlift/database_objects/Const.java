@@ -11,27 +11,32 @@ public interface Const {
     String USER_EMAIL           = "email";
 
     // lifts ///////////////////////////////////////////////////////////////////////////////////////
-    String LIFTS_COLLECTION     = "lifts";
-    String LIFT_OWNER           = "owner";
-    String LIFT_CURRENCY        = "currency";
-    String STRETCHES_COLLECTION = "stretches";
-    String STRETCH_LIFT_ID      = "liftId";
-    String STRETCH_FROM_LAT     = "flat";
-    String STRETCH_FROM_LON     = "flon";
-    String STRETCH_TO_LAT       = "tlat";
-    String STRETCH_TO_LON       = "tlon";
-    String STRETCH_FROM_ADDR    = "addrFrom";
-    String STRETCH_TO_ADDR      = "addrTo";
-    String STRETCH_DEP          = "depDate";
-    String STRETCH_ARR          = "arrDate";
-    String STRETCH_PRICE_MAIN   = "price_main";
-    String STRETCH_PRICE_FRAC   = "price_frac";
-    String STRETCH_FROM_CELL    = "from_cell";
-    String STRETCH_TO_CELL      = "to_cell";
-
-    // coordinates /////////////////////////////////////////////////////////////////////////////////
-    String COORDINATE_LATITUDE  = "latitude";
-    String COORDINATE_LONGITUDE = "longitude";
+    String LIFTS_COLLECTION             = "lifts";
+    String LIFT_OWNER                   = "owner";
+    String LIFT_CURRENCY                = "currency";
+    String LIFT_DESCRIPTION             = "desc";
+    String STRETCHES_COLLECTION         = "stretches";
+    String STRETCH_LIFT_ID              = "liftId";
+    String STRETCH_FROM_LAT             = "flat";
+    String STRETCH_FROM_LON             = "flon";
+    String STRETCH_TO_LAT               = "tlat";
+    String STRETCH_TO_LON               = "tlon";
+    String STRETCH_FROM_ADDR            = "addrFrom";
+    String STRETCH_FROM_CITY            = "cityFrom";
+    String STRETCH_FROM_POST_CODE       = "postCodeFrom";
+    String STRETCH_FROM_STREET          = "streetFrom";
+    String STRETCH_FROM_STREET_NUM      = "streetNumFrom";
+    String STRETCH_TO_ADDR              = "addrTo";
+    String STRETCH_TO_CITY              = "cityTo";
+    String STRETCH_TO_POST_CODE         = "postCodeTo";
+    String STRETCH_TO_STREET            = "streetTo";
+    String STRETCH_TO_STREET_NUM        = "streetNumTo";
+    String STRETCH_DEP                  = "depDate";
+    String STRETCH_ARR                  = "arrDate";
+    String STRETCH_PRICE_MAIN           = "price_main";
+    String STRETCH_PRICE_FRAC           = "price_frac";
+    String STRETCH_FROM_CELL            = "from_cell";
+    String STRETCH_TO_CELL              = "to_cell";
 
     // price ///////////////////////////////////////////////////////////////////////////////////////
     String PRICE_MAIN_PART     = "mainPart";
@@ -44,10 +49,10 @@ public interface Const {
     String FCM_TOKEN             = "token";
 
     // lift requests ///////////////////////////////////////////////////////////////////////////////
-    String REQ_COLLECTION       = "req_collection";
-    String REQ_SENDER           = "sender";
-    String REQ_LIFT             = "lift";
-    String REQ_LIFT_OWNER_TOKEN = "lift_owner_token";
-    String REQ_FROM_STRETCH     = "from";
-    String REQ_TO_STRETCH       = "to";
+//    String REQ_COLLECTION       = "req_collection";
+//    String REQ_SENDER           = "sender";
+//    String REQ_LIFT             = "lift";
+//    String REQ_LIFT_OWNER_TOKEN = "lift_owner_token";
+//    String REQ_FROM_STRETCH     = "from";
+//    String REQ_TO_STRETCH       = "to";
 }

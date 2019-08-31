@@ -7,8 +7,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.snavi.swiftlift.utils.Price;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Currency;
 import java.util.Date;
 
 import androidx.annotation.NonNull;
@@ -22,7 +20,6 @@ public class FoundLift extends Lift {
 
     // CONST ///////////////////////////////////////////////////////////////////////////////////////
     // errors
-    private static final String BAD_STRETCH_IDX_ERROR = "Fatal error. startStretchIdx or endStretchIdx is not valid (smaller than 0 or out of bounds of m_stretches.size()";
     private static final String PARCLABLE_START_STRETCH_LOAD_ERROR  = "Error occurred during reading from parcelable. You must provide start stretch as Serializable";
     private static final String PARCLEABLE_END_STRETCH_LOAD_ERROR   = "Error occurred during reading from parcelable. You must provide end stretch as Serializable";
 
@@ -103,7 +100,7 @@ public class FoundLift extends Lift {
 
 
 
-    public FoundLift(@NonNull Lift lift, @NonNull Stretch startStretch, @NonNull Stretch endStretch)
+    private FoundLift(@NonNull Lift lift, @NonNull Stretch startStretch, @NonNull Stretch endStretch)
     {
         super(lift.getStretches(), lift.getCurrency(), lift.getId(), lift.getOwnerId());
 

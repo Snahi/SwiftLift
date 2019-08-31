@@ -379,20 +379,20 @@ public class Stretch implements Serializable {
         return new LatLng(m_depAddr.getLatitude(), m_depAddr.getLongitude());
     }
 
-    public LatLng getCoordTo()
+    LatLng getCoordTo()
     {
         return new LatLng(m_arrAddr.getLatitude(), m_arrAddr.getLongitude());
     }
 
     @NonNull
-    public String getDepAddrLine()
+    String getDepAddrLine()
     {
         String ret = m_depAddr.getAddressLine(0);
         return ret == null ? "" : ret;
     }
 
     @NonNull
-    public String getArrAddrLine()
+    String getArrAddrLine()
     {
         String ret = m_arrAddr.getAddressLine(0);
         return ret == null ? "" : ret;
@@ -406,7 +406,7 @@ public class Stretch implements Serializable {
         m_depDate = depDate;
     }
 
-    public Date getArrDate()
+    Date getArrDate()
     {
         return m_arrDate;
     }
@@ -504,7 +504,7 @@ public class Stretch implements Serializable {
         return m_depAddr;
     }
 
-    public Address getArrAddr()
+    Address getArrAddr()
     {
         return m_arrAddr;
     }

@@ -7,12 +7,13 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+
 public class Price implements Serializable {
-    // TODO test too big fractional part
 
     // CONST //////////////////////////////////////////////////////////////////////////////////////
-    public static final Locale DEFAULT_LOCALE = Locale.US;
-    public static final int MAX_FRACTIONAL_PART = 99;
+    private static final Locale DEFAULT_LOCALE = Locale.US;
+    private static final int MAX_FRACTIONAL_PART = 99;
     public static final String[] CURRENCIES = {"LUL", "NZD", "BEC", "CUC", "RUR", "BGN", "MOP", "BMD", "DJF", "CYP", "AOK", "TRY", "DOP", "FIM", "INR", "BTN", "XAG", "MZM", "TRL", "FKP", "MDL", "BOL", "XAF", "SIT", "PTE", "ZRZ", "SKK", "NGN", "ISJ", "KHR", "SRD", "GQE", "TZS", "GRD", "BAD", "ALL", "LSL", "CHW", "JOD", "BAN", "BGM", "YUD", "XPD", "ETB", "BOV", "RUB", "SBD", "MAF", "XBC", "GHS", "AZM", "SOS", "LUF", "ZMK", "USD", "NAD", "CSD", "UYU", "SHP", "ADP", "MUR", "GYD", "XTS", "TJR", "BBD", "KPW", "HRK", "BHD", "JPY", "LAK", "UGX", "KYD", "KRO", "MTL", "PGK", "SDP", "DDM", "UYI", "LBP", "NLG", "GBP", "CUP", "SCR", "GEK", "BRN", "ECV", "SUR", "AOA", "VEF", "LYD", "KZT", "MDC", "XXX", "CVE", "ILR", "CHF", "TPE", "MMK", "BRB", "WST", "DZD", "CLF", "IEP", "ZWR", "CRC", "BWP", "TWD", "UGS", "LRD", "SSP", "GNS", "ALK", "GTQ", "XPF", "LTL", "EUR", "ZWD", "AOR", "ESB", "XBD", "YUR", "GWE", "YER", "HUF", "GNF", "BIF", "MCF", "KGS", "MGF", "CAD", "NIC", "PYG", "XSU", "BAM", "AED", "XFU", "AFN", "LVL", "ZMW", "BRL", "VUV", "BEF", "AWG", "RHD", "SGD", "HRD", "MKD", "MXV", "SRG", "ROL", "VND", "COP", "KMF", "SEK", "NIO", "MZN", "PEI", "MAD", "XFO", "PES", "BDT", "PKR", "GWP", "COU", "CDF", "TMM", "MGA", "CHE", "TTD", "LUC", "ARM", "AZN", "SYP", "XRE", "LVR", "HNL", "PAB", "HKD", "MNT", "ESP", "BEL", "PEN", "NOK", "XPT", "USN", "SVC", "XEU", "XDR", "XBA", "BSD", "CLE", "PLN", "ARP", "XBB", "KRW", "BRZ", "ZRN", "CZK", "UAK", "TOP", "UYP", "CNX", "MWK", "XOF", "ZWL", "BZD", "SDG", "MZE", "ARA", "BOP", "BRE", "BGL", "JMD", "SLL", "GHC", "RON", "VNN", "ISK", "BYB", "OMR", "BOB", "ARL", "XAU", "TND", "BND", "USS", "ITL", "EEK", "ARS", "MXP", "XUA", "MKN", "KES", "CSK", "STD", "BUK", "BRR", "UZS", "CNY", "VEB", "AON", "FJD", "MLF", "MRO", "ZAR", "PHP", "SAR", "GMD", "IDR", "RSD", "AUD", "DEM", "ERN", "TJS", "DKK", "CLP", "PLZ", "ILP", "BRC", "XCD", "YUM", "EGP", "RWF", "QAR", "GIP", "KRH", "FRF", "AFA", "GEL", "ECS", "SDD", "MTP", "IQD", "TMT", "NPR", "MVR", "AMD", "ZAL", "YDD", "THB", "ATS", "BGO", "LKR", "ANG", "UAH", "KWD", "MYR", "YUN", "MXN", "HTG", "ILS", "IRR", "BYR", "SZL", "ESA", "LTT"};
 
 
@@ -68,6 +69,7 @@ public class Price implements Serializable {
 
 
     @Override
+    @NonNull
     public String toString()
     {
         return String.format(m_locale,
