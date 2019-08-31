@@ -19,7 +19,7 @@
 
         <!-- |||||||||||||||||||||||||||||||||| departure |||||||||||||||||||||||||||||||||||||||-->
         <ImageView
-            android:id="@+id/activity_found_lift_details_img_route_image"
+            android:id="@+id/card_view_route_img_route_stretch_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -29,16 +29,16 @@
             app:srcCompat="@drawable/from_to_icon" />
 
         <TextView
-            android:id="@+id/activity_found_lift_details_tv_departure_label"
+            android:id="@+id/card_view_route_stretch_tv_departure_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:text="Departure:"
-            app:layout_constraintBottom_toTopOf="@+id/activity_found_lift_details_tv_departure_city"
-            app:layout_constraintStart_toStartOf="@+id/activity_found_lift_details_tv_departure_city" />
+            app:layout_constraintBottom_toTopOf="@+id/card_view_route_stretch_tv_departure_city"
+            app:layout_constraintStart_toStartOf="@+id/card_view_route_stretch_tv_departure_city" />
 
         <TextView
-            android:id="@+id/activity_found_lift_details_tv_departure_city"
+            android:id="@+id/card_view_route_stretch_tv_departure_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
@@ -46,87 +46,88 @@
             android:textColor="@color/text_color_dark"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/activity_found_lift_details_img_route_image"
-            app:layout_constraintTop_toTopOf="@+id/activity_found_lift_details_img_route_image" />
+            app:layout_constraintStart_toEndOf="@+id/card_view_route_img_route_stretch_image"
+            app:layout_constraintTop_toTopOf="@+id/card_view_route_img_route_stretch_image" />
 
         <TextView
-            android:id="@+id/activity_found_lift_details_tv_departure_street"
+            android:id="@+id/card_view_route_stretch_tv_departure_street"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ul. Pułaskiego 52"
             android:textColor="@color/text_color_dark"
             android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/activity_found_lift_details_tv_departure_city"
-            app:layout_constraintTop_toBottomOf="@+id/activity_found_lift_details_tv_departure_city" />
+            app:layout_constraintStart_toStartOf="@+id/card_view_route_stretch_tv_departure_city"
+            app:layout_constraintTop_toBottomOf="@+id/card_view_route_stretch_tv_departure_city" />
 
         <TextView
-            android:id="@+id/activity_found_lift_details_tv_departure_time"
+            android:id="@+id/card_view_route_stretch_tv_departure_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="25.08.2019 12:00"
             android:textColor="@color/text_color_dark"
             android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/activity_found_lift_details_tv_departure_street"
-            app:layout_constraintTop_toBottomOf="@+id/activity_found_lift_details_tv_departure_street" />
+            app:layout_constraintStart_toStartOf="@+id/card_view_route_stretch_tv_departure_street"
+            app:layout_constraintTop_toBottomOf="@+id/card_view_route_stretch_tv_departure_street" />
 
         <!-- ||||||||||||||||||||||||||||||||||| arrival ||||||||||||||||||||||||||||||||||||||||-->
 
         <TextView
-            android:id="@+id/activity_found_lift_details_tv_arrival_label"
+            android:id="@+id/card_view_route_stretch_tv_arrival_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:text="Arrival:"
-            app:layout_constraintBottom_toTopOf="@+id/activity_found_lift_details_tv_arrival_city"
-            app:layout_constraintStart_toStartOf="@+id/activity_found_lift_details_tv_arrival_city" />
+            app:layout_constraintBottom_toTopOf="@+id/card_view_route_stretch_tv_arrival_city"
+            app:layout_constraintStart_toStartOf="@+id/card_view_route_stretch_tv_arrival_city" />
 
         <TextView
-            android:id="@+id/activity_found_lift_details_tv_arrival_city"
+            android:id="@+id/card_view_route_stretch_tv_arrival_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="55-017 Wałbrzych"
             android:textColor="@color/text_color_dark"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/activity_found_lift_details_tv_arrival_street"
-            app:layout_constraintStart_toStartOf="@+id/activity_found_lift_details_tv_arrival_street" />
+            app:layout_constraintBottom_toTopOf="@+id/card_view_route_stretch_tv_arrival_street"
+            app:layout_constraintStart_toStartOf="@+id/card_view_route_stretch_tv_arrival_street" />
 
         <TextView
-            android:id="@+id/activity_found_lift_details_tv_arrival_street"
+            android:id="@+id/card_view_route_stretch_tv_arrival_street"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ul. Pułaskiego 52"
             android:textColor="@color/text_color_dark"
             android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/activity_found_lift_details_tv_arrival_time"
-            app:layout_constraintStart_toStartOf="@+id/activity_found_lift_details_tv_arrival_time" />
+            app:layout_constraintBottom_toTopOf="@+id/card_view_route_stretch_tv_arrival_time"
+            app:layout_constraintStart_toStartOf="@+id/card_view_route_stretch_tv_arrival_time" />
 
         <TextView
-            android:id="@+id/activity_found_lift_details_tv_arrival_time"
+            android:id="@+id/card_view_route_stretch_tv_arrival_time"
             android:layout_width="133dp"
             android:layout_height="18dp"
             android:text="25.08.2019 13:00"
             android:textColor="@color/text_color_dark"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/activity_found_lift_details_img_route_image"
-            app:layout_constraintStart_toEndOf="@+id/activity_found_lift_details_img_route_image"
-            card_view:layout_constraintStart_toStartOf="@+id/activity_found_lift_details_tv_departure_street" />
+            app:layout_constraintBottom_toBottomOf="@+id/card_view_route_img_route_stretch_image"
+            app:layout_constraintStart_toEndOf="@+id/card_view_route_img_route_stretch_image"
+            card_view:layout_constraintStart_toStartOf="@+id/card_view_route_stretch_tv_departure_street" />
 
         <!-- |||||||||||||||||||||||||||||||||||| price |||||||||||||||||||||||||||||||||||||||||-->
 
         <TextView
-            android:id="@+id/card_view_route_tv_price"
+            android:id="@+id/card_view_route_stretch_tv_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:text="10zł"
+            android:textColor="@color/text_color_dark"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/activity_found_lift_details_img_route_image" />
+            app:layout_constraintTop_toBottomOf="@+id/card_view_route_img_route_stretch_image" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

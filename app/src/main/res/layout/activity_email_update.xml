@@ -5,6 +5,7 @@
     android:id="@+id/activity_email_update_cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context=".activities.users_data.EmailUpdateActivity">
 
     <androidx.constraintlayout.widget.Guideline
